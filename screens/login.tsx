@@ -1,12 +1,6 @@
 import * as React from 'react';
 import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusBar,View, TextInput, TouchableOpacity ,Image} from 'react-native';
 
-const DismissKeyboard = ({ children }) => (
-<TouchableWithoutFeedback 
-accessible={false}
-onPress={() => Keyboard.dismiss() }> {children}
-</TouchableWithoutFeedback>
-);
 
 export default function login() {
 
