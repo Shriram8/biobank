@@ -1,27 +1,29 @@
 import * as React from 'react';
-import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusBar,View, TextInput, TouchableOpacity ,Image} from 'react-native';
-import { ApolloClient, InMemoryCache } from '@apollo/client';
-import { gql } from '@apollo/client';
+import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusBar,View, 
+  TextInput, TouchableOpacity ,Image} from 'react-native';
+import { useQuery, gql } from '@apollo/client';
 
-const client = new ApolloClient({
-  uri: 'http://localhost:1337/graphql',
-  cache: new InMemoryCache()
-});
 
-client
-  .query({
-    query: gql`
-      query GetRates {
-        rates(currency: "USD") {
-          currency
-        }
+
+const GetUserDetails = gql`
+  query {
+      appUser(id:"1"){
+        id,
+        name,
+        userType,
+        password
       }
-    `
-  })
-  .then(result => console.log(result));
+    }
+`;
 
 export default function login() {
-   return (  
+  const { loading, error, data } = useQuery(GetUserDetails);
+  if(data){
+    console.log("The data");
+    console.log(data);
+  }
+
+  return (  
        <>
        <StatusBar
         animated={true}
