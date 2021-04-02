@@ -1,37 +1,47 @@
-import * as React from 'react';
+import React, { useState, useRef, useEffect } from "react";
 import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusBar,View, 
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
+import {client} from '../src/graphql/ApolloClientProvider';
+import {GetUserDetails} from '../src/graphql/queries';
+import { Divider } from 'react-native-paper';
+import { createStackNavigator } from '@react-navigation/stack';
 
+const apolloClient = client;
+const LoginRootStack = createStackNavigator();
+export default function login({navigation}: {navigation: any}) {
 
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
 
-const GetUserDetails = gql`
-  query {
-      appUser(id:"1"){
-        id,
-        name,
-        userType,
-        password
-      }
-    }
-`;
-
-export default function login() {
-  const { loading, error, data } = useQuery(GetUserDetails);
-  if(data){
-    console.log("The data");
-    console.log(data);
+  const verifyLogin=()=>{
+   apolloClient
+        .query({
+          query: GetUserDetails,
+          variables:{
+            userID:parseInt(userId)
+          }
+        })
+        .then((Result) => {
+          if(Result.data.appUser.password === password){
+            console.log("Success");
+            navigation.navigate('homeScreen')
+          }
+          else{
+            console.log("failed");
+          }
+        })
+        .catch(() => { });
   }
 
   return (  
        <>
        <StatusBar
         animated={true}
-        backgroundColor="#0054aa"
+        backgroundColor="#006bcc"
         hidden={false} />
-        <ScrollView contentContainerStyle={{backgroundColor:'#ffffff',flex:1}} 
+        <ScrollView contentContainerStyle={{backgroundColor:'#006bcc',flex:1}} 
         keyboardShouldPersistTaps='handled'>
-      
        <View style={styles.header}>
        <Image
           style={styles.tinyLogo}
@@ -39,17 +49,21 @@ export default function login() {
         />
         </View>
       <View style={styles.container}>
+        <View style={styles.headerTextLabel} >
+        <Text style={styles.headerTextStyle}>Welcome.</Text>
+        </View>
+        <Divider style={{width:"80%",height:1,borderColor:'black',marginTop:25}}/>
         <View style={styles.textLabel} >
             <Text style={styles.textStyle}>Email/userId</Text>
         </View>
         <View style={styles.inputView} >
-         
         <TextInput  
             style={styles.inputText}
-            placeholder="UserID" 
-            placeholderTextColor="#003f5c"
+            onChangeText={(input) => setUserId(input)}
+            value = {userId}
         />
         </View>
+        <Divider style={{width:"80%",height:1,borderColor:'black'}}/>
         <View style={styles.textLabel} >
             <Text style={styles.textStyle}>Password</Text>
         </View>
@@ -57,11 +71,12 @@ export default function login() {
           <TextInput  
             secureTextEntry
             style={styles.inputText}
-            placeholder="Password" 
-            placeholderTextColor="#003f5c"
+            onChangeText={(input) => setPassword(input)}
+            value = {password}
             />
         </View>
-        <TouchableOpacity style={styles.loginBtn}>
+        <Divider style={{width:"80%",height:1,borderColor:'black'}}/>
+        <TouchableOpacity style={styles.loginBtn} onPress={verifyLogin}>
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>
       </View>
@@ -74,23 +89,38 @@ export default function login() {
 const styles = StyleSheet.create({
   header: {
     marginTop:StatusBar.currentHeight,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#006bcc',
     alignItems: 'center',
     justifyContent: 'center',
+    flex: 1,
   },
   container: {
     marginTop:150,
     backgroundColor: '#ffffff',
     alignItems: 'center',
-    justifyContent: 'center',
+    flex:6,
+    borderTopLeftRadius:30
   },
   tinyLogo: {
     resizeMode:"contain",
     width:200
   },
+  headerTextLabel:{
+    width:"80%",
+    height:25,
+    marginTop:25,
+    marginBottom:15,
+    justifyContent:"center",
+  },
+  headerTextStyle:{
+    fontWeight:'bold',
+    fontSize:18,
+    color:'#000000'
+  },
   textStyle:{
     fontWeight:'bold',
-    fontSize:16
+    fontSize:12,
+    color:'#9e9e9e'
   },
   logo:{
     fontWeight:"bold",
@@ -101,23 +131,21 @@ const styles = StyleSheet.create({
   textLabel:{
     width:"80%",
     height:20,
-    marginBottom:15,
+    marginTop:25,
     justifyContent:"center",
   },
   inputView:{
     width:"80%",
     borderColor:"#979797",
-    borderWidth:1.5,
-    borderRadius:6,
     height:50,
-    marginBottom:20,
     justifyContent:"center",
-    padding:20
   },
   inputText:{
     fontWeight:'bold',
     height:50,
-    color:"#170500"
+    color:"#170500",
+    backgroundColor:"#ffffff",
+    fontSize:12,
   },
   loginBtn:{
     width:"80%",
@@ -126,7 +154,8 @@ const styles = StyleSheet.create({
     height:50,
     justifyContent:"center",
     marginTop:40,
-    marginBottom:10
+    marginBottom:10,
+    elevation: 6,
   },
   loginText:{
     color:"white",
