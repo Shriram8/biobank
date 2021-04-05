@@ -3,20 +3,20 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetProcessesDetails} from '../src/graphql/queries';
-import { Divider } from 'react-native-paper';
+import {GetQuestionDetails} from '../src/graphql/queries';
+import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const apolloClient = client;
 
-export default function processScreen({route, navigation}: {navigation: any, route:any}) {
-    const { resourceID, resourceName } = route.params;
-    const { loading, error, refetch, data } = useQuery(GetProcessesDetails,{variables:{
-            resourceID:parseInt(resourceID)
+export default function questionsScreen({route, navigation}: {navigation: any, route:any}) {
+    const { processID, processName } = route.params;
+    const { loading, error, refetch, data } = useQuery(GetQuestionDetails,{variables:{
+            processID:parseInt(processID)
           }}); 
     if(data){
-        console.log("Data",data.appResource.process_details);
+        console.log("Data",data.processDetail.questions);
     }
     if(error){
         console.log("Error",error);
@@ -29,22 +29,19 @@ export default function processScreen({route, navigation}: {navigation: any, rou
 
     return (
       
-    <View style={styles.item}>
-      <TouchableOpacity
-      style={[styles.appButtonContainer]}onPress={()=>{
-        navigation.navigate('questionsScreen',{
-            processID: item.id,
-            processName: "Process-"+item.Number,
-          })}}>
-      <Text style={[styles.appButtonText]}>
-        {"Process-"+item.Number}
-      </Text>
-      <View style={{marginRight:20,justifyContent:"center"}}>
-      <MaterialCommunityIcons
-      name='arrow-right' size={30}/>
-      </View>
-      </TouchableOpacity>
-    </View>
+    
+      <Card>
+    
+    <Card.Content>
+      <Title>{item.Question}</Title>
+      {/* <Paragraph>Card content</Paragraph> */}
+    </Card.Content>
+    <Card.Actions>
+      <Button>Confirm</Button>
+      <Button>No</Button>
+    </Card.Actions>
+  </Card>
+    
     );
   };
 
@@ -59,7 +56,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
         <View style={{width:"100%",}}>
           <FlatList
             style={{width:"90%",alignSelf: "center",}}
-            data={data.appResource.process_details}
+            data={data.processDetail.questions}
             keyExtractor={(item, index) => item.id}
             renderItem={renderResources}
           />

@@ -27,4 +27,14 @@ query($resourceID:ID!){
       }
     }
 `;
- 
+
+export const GetQuestionDetails = gql`
+query($processID:ID!){
+      processDetail(id: $processID){
+    		questions{
+          id,
+          Question
+        }
+      }
+    }
+`;

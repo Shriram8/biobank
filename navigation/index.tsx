@@ -5,7 +5,8 @@ import { ColorSchemeName,Image } from 'react-native';
 import {Button} from 'react-native-paper';
 import LoginScreen from '../screens/login';
 import HomeScreen from '../screens/homeScreen'
-import ProcessScreen from '../screens/processScreen'
+import ProcessScreen from '../screens/processScreen';
+import QuestionsScreen from '../screens/questionsScreen';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -55,13 +56,18 @@ function MainStackNavigator() {
           headerStyle: {
             backgroundColor: 'white',
           },
-          headerLeft: () => (
-            <Button icon={() => (
-              <MaterialCommunityIcons
-              name='chevron-left' size={30} color="black"/>
-              )}>
-            </Button>
-          )})}
+          })}
+        />
+        <MainStack.Screen name="questionsScreen"
+        component={QuestionsScreen}
+        initialParams={{ resourceName: "" }}
+        options={({ route }) => ({ 
+          title: route.params.resourceName,
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: 'white',
+          },
+          })}
         />
     </MainStack.Navigator>
   );
