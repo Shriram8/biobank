@@ -3,19 +3,20 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetResourcesDetails} from '../src/graphql/queries';
+import {GetProcessesDetails} from '../src/graphql/queries';
 import { Divider } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const apolloClient = client;
-export default function homeScreen({navigation}: {navigation: any}) {
 
-  const [userId, setUserId] = useState("");
-  const [password, setPassword] = useState("");
-    const { loading, error, refetch, data } = useQuery(GetResourcesDetails); 
+export default function processScreen({route, navigation}: {navigation: any, route:any}) {
+    const { resourceID, resourceName } = route.params;
+    const { loading, error, refetch, data } = useQuery(GetProcessesDetails,{variables:{
+            resourceID:parseInt(resourceID)
+          }}); 
     if(data){
-        console.log("Data",data.appResources);
+        console.log("Data",data.appResource.process_details);
     }
     if(error){
         console.log("Error",error);
@@ -30,13 +31,9 @@ export default function homeScreen({navigation}: {navigation: any}) {
       
     <View style={styles.item}>
       <TouchableOpacity
-      style={[styles.appButtonContainer]} onPress={()=>{
-        navigation.navigate('processScreen',{
-            resourceID: item.id,
-            resourceName: item.name,
-          })}}>
+      style={[styles.appButtonContainer]}>
       <Text style={[styles.appButtonText]}>
-        {item.name}
+        {"Process-"+item.Number}
       </Text>
       <View style={{marginRight:20,justifyContent:"center"}}>
       <MaterialCommunityIcons
@@ -54,29 +51,16 @@ export default function homeScreen({navigation}: {navigation: any}) {
         animated={true}
         backgroundColor="#006bcc"
         hidden={false} />
-        <ScrollView contentContainerStyle={{backgroundColor:'#006bcc',flex:1}} 
-        keyboardShouldPersistTaps='handled'>
-        <View style={styles.header}>
-        <View style={styles.headerTextLabel}>
-        <Text style={{fontWeight:'bold',fontSize:18,color:"#ffffff"}}>Hello Varun</Text>
-        </View>
-        </View>
-        <View style={styles.container}>
-         <View style={styles.headerTextLabel}>
-        <Text style={styles.headerTextStyle}>Today's Progress</Text>
-        </View>
         {data && (
         <View style={{width:"100%",}}>
           <FlatList
             style={{width:"90%",alignSelf: "center",}}
-            data={data.appResources}
+            data={data.appResource.process_details}
             keyExtractor={(item, index) => item.id}
             renderItem={renderResources}
           />
         </View>
       )}
-        </View>
-        </ScrollView>
       </>
     );
 }
@@ -105,7 +89,6 @@ const styles = StyleSheet.create({
     marginTop:150,
     backgroundColor: '#ffffff',
     alignItems: 'center',
-    flex:20,
     borderTopLeftRadius:30
   },
   item: {

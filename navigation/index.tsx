@@ -1,9 +1,13 @@
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
-import { ColorSchemeName } from 'react-native';
+import { ColorSchemeName,Image } from 'react-native';
+import {Button} from 'react-native-paper';
 import LoginScreen from '../screens/login';
 import HomeScreen from '../screens/homeScreen'
+import ProcessScreen from '../screens/processScreen'
+
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
@@ -17,12 +21,48 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const MainStack = createStackNavigator();
 function MainStackNavigator() {
   return (
-    <MainStack.Navigator screenOptions={{
-    headerShown: false}} initialRouteName="login">
+    <MainStack.Navigator  initialRouteName="login">
       <MainStack.Screen name="login"
-        component={LoginScreen}/>
+        component={LoginScreen} options={{headerShown:false}}/>
         <MainStack.Screen name="homeScreen"
-        component={HomeScreen}/>
+        component={HomeScreen}
+        options={{
+          title: '',
+          headerStyle: {
+            backgroundColor: '#006bcc',
+          },
+          headerLeft: () => (
+            <Button icon={() => (
+              <MaterialCommunityIcons
+              name='menu' size={30} color="white"/>
+              )}>
+            </Button>
+          ),
+          headerRight: () => (
+            <Button icon={() => (
+              <MaterialCommunityIcons
+              name='bell' size={30} color="white"/>
+              )}>
+            </Button>
+          ),
+        }}/>
+        <MainStack.Screen name="processScreen"
+        component={ProcessScreen}
+        initialParams={{ resourceName: "" }}
+        options={({ route }) => ({ 
+          title: route.params.resourceName,
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: 'white',
+          },
+          headerLeft: () => (
+            <Button icon={() => (
+              <MaterialCommunityIcons
+              name='chevron-left' size={30} color="black"/>
+              )}>
+            </Button>
+          )})}
+        />
     </MainStack.Navigator>
   );
 }

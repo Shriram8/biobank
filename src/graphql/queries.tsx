@@ -17,3 +17,14 @@ query{
       }
     }
 `;
+export const GetProcessesDetails = gql`
+query($resourceID:ID!){
+      appResource(id: $resourceID){
+        process_details{
+          id,
+          Number
+        }
+      }
+    }
+`;
+ 
