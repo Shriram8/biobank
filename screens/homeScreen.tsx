@@ -10,7 +10,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { ReactReduxContext } from 'react-redux'
 
 const apolloClient = client;
-
+const date = new Date();
 
 export default function homeScreen({navigation}: {navigation: any}) {
 const {store} = useContext(ReactReduxContext)
@@ -52,18 +52,22 @@ const {store} = useContext(ReactReduxContext)
   };
 
 
+  
   return (  
        <>
        <StatusBar
         animated={true}
         backgroundColor="#006bcc"
         hidden={false} />
-        <ScrollView contentContainerStyle={{backgroundColor:'#006bcc',flex:1}} 
-        keyboardShouldPersistTaps='handled'>
+        <View style={{backgroundColor:"#006bcc",flex:1}}>
         <View style={styles.header}>
-        <View style={styles.headerTextLabel}>
-        <Text style={{fontWeight:'bold',fontSize:18,color:"#ffffff"}}>Hello Varun</Text>
-        </View>
+          <View style={styles.headerTextLabel}>
+            <Text style={{fontWeight:'bold',fontSize:30,color:"#ffffff"}}>Hello Varun</Text>
+            <Divider style={{width:"100%",height:1,backgroundColor:'white'}}/>
+          </View>
+          <View style={{flexDirection:"row"}}>
+            <Text style={{fontWeight:'bold',fontSize:14,color:"#ffffff"}}>{date.toDateString()}</Text>
+          </View>
         </View>
         <View style={styles.container}>
          <View style={styles.headerTextLabel}>
@@ -79,8 +83,8 @@ const {store} = useContext(ReactReduxContext)
           />
         </View>
       )}
-        </View>
-        </ScrollView>
+      </View>
+      </View>
       </>
     );
 }
