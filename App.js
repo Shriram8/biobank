@@ -11,10 +11,11 @@ import {client} from "./src/graphql/ApolloClientProvider";
 import { AppRegistry } from 'react-native';
 import { Provider } from 'react-redux';
 import configureStore from './src/Store/ConfigureStore';
-
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
 
 import {createStore} from 'redux';
-
+import { PersistGate } from 'redux-persist/integration/react'
 
 const apolloClient = client;
 const initialState ={
@@ -33,7 +34,14 @@ const reducer = (state = initialState, action) =>{
   }
   return state
 }
-const store = createStore(reducer);
+ 
+const persistConfig = {
+  key: 'root',
+  storage,
+}
+const persistedReducer = persistReducer(persistConfig, reducer)
+const store = createStore(persistedReducer);
+const persister = persistStore(store)
 
 
 export default function App() {
@@ -45,13 +53,15 @@ export default function App() {
   } else {
     return (
     <Provider store = { store }>
-      <ApolloProvider client={apolloClient}>
-        <SafeAreaProvider>
-          <Navigation colorScheme={colorScheme}/>
-          {/* <LoginScreen/> */}
-          <StatusBar />
-        </SafeAreaProvider>
-      </ApolloProvider>
+      
+        <ApolloProvider client={apolloClient}>
+          <SafeAreaProvider>
+            <Navigation colorScheme={colorScheme}/>
+            {/* <LoginScreen/> */}
+            <StatusBar />
+          </SafeAreaProvider>
+        </ApolloProvider>
+      
     </Provider>
   
     );
