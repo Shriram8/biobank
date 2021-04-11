@@ -14,8 +14,7 @@ const date = new Date();
 
 export default function homeScreen({navigation}: {navigation: any}) {
 const {store} = useContext(ReactReduxContext)
-  const [userId, setUserId] = useState("");
-  const [password, setPassword] = useState("");
+
     const { loading, error, refetch, data } = useQuery(GetResourcesDetails); 
     if(data){
         console.log("Data",data.appResources);
@@ -31,18 +30,21 @@ const {store} = useContext(ReactReduxContext)
     const renderResources = ({item}: {item: any}) => {
 
     return (
-      
     <View style={styles.item}>
       <TouchableOpacity
-      style={[styles.appButtonContainer]} onPress={()=>{
+      style={[styles.appButtonContainer,{flex:1}]}onPress={()=>{
         navigation.navigate('processScreen',{
             resourceID: item.id,
             resourceName: item.name,
           })}}>
-      <Text style={[styles.appButtonText]}>
+      <View style={{width:30,height:30,marginLeft:14}}>
+      <MaterialCommunityIcons
+      name='minus-box' size={30} color='#959595'/>
+      </View>
+      <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
         {item.name}
       </Text>
-      <View style={{marginRight:20,justifyContent:"center"}}>
+      <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
       <MaterialCommunityIcons
       name='arrow-right' size={30}/>
       </View>
@@ -74,7 +76,7 @@ const {store} = useContext(ReactReduxContext)
         <Text style={styles.headerTextStyle}>Today's Progress</Text>
         </View>
         {data && (
-        <View style={{width:"100%",}}>
+        <View style={{width:"100%"}}>
           <FlatList
             style={{width:"90%",alignSelf: "center",}}
             data={data.appResources}
@@ -116,6 +118,41 @@ const styles = StyleSheet.create({
     flex:20,
     borderTopLeftRadius:30
   },
+  // item: {
+  //   backgroundColor: 'white',
+  //   width:"100%",
+  //   height:60,
+  // },
+  // title: {
+  //   fontSize: 32,
+  // },
+  // appButtonContainer: {
+  //   flexDirection:"row",
+  //   // justifyContent: 'space-between',
+  //   backgroundColor:"#ffffff",
+  //   borderRadius:6,
+  //   height:50,
+  //   margin:10,
+  //   alignItems: "center",
+  //   shadowColor: "#000",
+  //   shadowOffset: {
+  //   	width: 0,
+  //   	height: 2,
+  //   },
+  //   shadowOpacity: 1,
+  //   shadowRadius: 2,
+  //   elevation: 6,
+  // },
+  // appButtonText: {
+  //   fontSize: 18,
+  //   color: "#000000",
+  //   fontWeight: "bold",
+  //   textAlign: "left",
+  //   textAlignVertical:"center",
+  //   marginLeft:20,
+  //   width:200,
+  //   marginRight:20,
+  // }
   item: {
     backgroundColor: 'white',
     width:"100%",
@@ -126,11 +163,11 @@ const styles = StyleSheet.create({
   },
   appButtonContainer: {
     flexDirection:"row",
-    justifyContent: 'space-between',
     backgroundColor:"#ffffff",
     borderRadius:6,
     height:50,
     margin:10,
+    alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
     	width: 0,
@@ -146,8 +183,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "left",
     textAlignVertical:"center",
-    marginLeft:20,
+    marginLeft:14,
     width:200,
-    marginRight:20,
   }
+
 });
