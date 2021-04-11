@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusBar,View, 
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
@@ -7,15 +7,19 @@ import {GetResourcesDetails} from '../src/graphql/queries';
 import { Divider } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ReactReduxContext } from 'react-redux'
 
 const apolloClient = client;
-export default function homeScreen({navigation}: {navigation: any}) {
 
+
+export default function homeScreen({navigation}: {navigation: any}) {
+const {store} = useContext(ReactReduxContext)
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
     const { loading, error, refetch, data } = useQuery(GetResourcesDetails); 
     if(data){
         console.log("Data",data.appResources);
+        console.log("Store",store)
     }
     if(error){
         console.log("Error",error);

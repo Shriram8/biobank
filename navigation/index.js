@@ -7,24 +7,32 @@ import LoginScreen from '../screens/login';
 import HomeScreen from '../screens/homeScreen'
 import ProcessScreen from '../screens/processScreen';
 import QuestionsScreen from '../screens/questionsScreen';
-
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { connect } from 'react-redux';
 
 
-export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
+const Navigation = (props) => {
   return (
     <NavigationContainer>
-      <MainStackNavigator />
+      <MainStackNavigator isLoggedIn={props.isLoggedIn}/>
     </NavigationContainer>
   );
 }
 
+const mapStateToProps = (state) => ({
+  isLoggedIn: state.isLoggedIn,
+});
+export default connect(mapStateToProps)(Navigation);
+
 const MainStack = createStackNavigator();
-function MainStackNavigator() {
+const MainStackNavigator = (props) => {
   return (
     <MainStack.Navigator  initialRouteName="login">
-      <MainStack.Screen name="login"
+      {console.log("Logged in ----",props.isLoggedIn)}
+      {!props.isLoggedIn?(<> 
+       <MainStack.Screen name="login"
         component={LoginScreen} options={{headerShown:false}}/>
+        </>):(<>
         <MainStack.Screen name="homeScreen"
         component={HomeScreen}
         options={{
@@ -69,6 +77,8 @@ function MainStackNavigator() {
           },
           })}
         />
+        </>)
+    }  
     </MainStack.Navigator>
   );
 }
