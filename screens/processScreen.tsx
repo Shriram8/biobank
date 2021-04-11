@@ -31,18 +31,37 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       
     <View style={styles.item}>
       <TouchableOpacity
-      style={[styles.appButtonContainer]}onPress={()=>{
+      style={[styles.appButtonContainer,{flex:1}]}onPress={()=>{
         navigation.navigate('questionsScreen',{
             processID: item.id,
             processName: "Process-"+item.Number,
           })}}>
-      <Text style={[styles.appButtonText]}>
-        {"Process-"+item.Number}
+
+      <View style={{width:30,height:30,marginLeft:14}}>
+      <MaterialCommunityIcons
+      name='minus-box' size={30} color='#959595'/>
+      </View>
+
+      <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
+        {"P"+item.Number+"-"+item.process_name}
       </Text>
-      <View style={{marginRight:20,justifyContent:"center"}}>
+
+      <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
       <MaterialCommunityIcons
       name='arrow-right' size={30}/>
       </View>
+
+      {/* <Text style={[styles.appButtonText]}>
+        {"Process-"+item.Number}
+      </Text>
+      <View style={{marginLeft:14,justifyContent:"flex-start"}}>
+      <MaterialCommunityIcons
+      name='minus-box' size={30}/>
+      </View>
+      <View style={{marginRight:20,justifyContent:"center"}}>
+      <MaterialCommunityIcons
+      name='arrow-right' size={30}/>
+      </View> */}
       </TouchableOpacity>
     </View>
     );
@@ -56,7 +75,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
         backgroundColor="#006bcc"
         hidden={false} />
         {data && (
-        <View style={{width:"100%",}}>
+        <View style={{width:"100%",height:"100%",backgroundColor:"white"}}>
           <FlatList
             style={{width:"90%",alignSelf: "center",}}
             data={data.appResource.process_details}
@@ -105,11 +124,11 @@ const styles = StyleSheet.create({
   },
   appButtonContainer: {
     flexDirection:"row",
-    justifyContent: 'space-between',
     backgroundColor:"#ffffff",
     borderRadius:6,
     height:50,
     margin:10,
+    alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
     	width: 0,
@@ -125,8 +144,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "left",
     textAlignVertical:"center",
-    marginLeft:20,
+    marginLeft:14,
     width:200,
-    marginRight:20,
   }
 });
