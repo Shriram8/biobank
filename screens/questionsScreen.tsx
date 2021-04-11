@@ -34,7 +34,6 @@ export default function questionsScreen({route, navigation}: {navigation: any, r
     
     <Card.Content>
       <Title>{item.Question}</Title>
-      {/* <Paragraph>Card content</Paragraph> */}
     </Card.Content>
     <Card.Actions>
       <Button>Confirm</Button>
