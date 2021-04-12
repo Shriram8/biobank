@@ -28,7 +28,6 @@ const {store} = useContext(ReactReduxContext)
     }
 
     const renderResources = ({item}: {item: any}) => {
-
     return (
     <View style={styles.item}>
       <TouchableOpacity
@@ -118,45 +117,10 @@ const styles = StyleSheet.create({
     flex:20,
     borderTopLeftRadius:30
   },
-  // item: {
-  //   backgroundColor: 'white',
-  //   width:"100%",
-  //   height:60,
-  // },
-  // title: {
-  //   fontSize: 32,
-  // },
-  // appButtonContainer: {
-  //   flexDirection:"row",
-  //   // justifyContent: 'space-between',
-  //   backgroundColor:"#ffffff",
-  //   borderRadius:6,
-  //   height:50,
-  //   margin:10,
-  //   alignItems: "center",
-  //   shadowColor: "#000",
-  //   shadowOffset: {
-  //   	width: 0,
-  //   	height: 2,
-  //   },
-  //   shadowOpacity: 1,
-  //   shadowRadius: 2,
-  //   elevation: 6,
-  // },
-  // appButtonText: {
-  //   fontSize: 18,
-  //   color: "#000000",
-  //   fontWeight: "bold",
-  //   textAlign: "left",
-  //   textAlignVertical:"center",
-  //   marginLeft:20,
-  //   width:200,
-  //   marginRight:20,
-  // }
   item: {
     backgroundColor: 'white',
     width:"100%",
-    height:60,
+    height:90,
   },
   title: {
     fontSize: 32,
@@ -165,7 +129,7 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     backgroundColor:"#ffffff",
     borderRadius:6,
-    height:50,
+    height:90,
     margin:10,
     alignItems: "center",
     shadowColor: "#000",

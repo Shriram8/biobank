@@ -11,7 +11,6 @@ import { changeUserLogin } from '../src/Actions/UserLogin';
 import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 
 
-
 const apolloClient = client;
 const LoginRootStack = createStackNavigator();
 function login(props,navigation) {
@@ -40,7 +39,7 @@ function login(props,navigation) {
         .catch(() => { });
   }
 
-  return (  
+  return (
        <>
        <StatusBar
         animated={true}

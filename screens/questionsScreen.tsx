@@ -7,13 +7,25 @@ import {GetQuestionDetails} from '../src/graphql/queries';
 import { Avatar, Button, Card, Title, Paragraph } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { RadioGroup, RadioButton } from 'react-native-radio-btn';
 
 const apolloClient = client;
-
-export default function questionsScreen({route, navigation}: {navigation: any, route:any}) {
+const radioItems= [
+      {
+        id: 1,
+        label: 'Confirm',
+        selected: false,
+      },
+      {
+        id: 2,
+        label: 'No',
+        selected: false,
+      },
+    ];
+export default function questionsScreen({route,navigation}: {route: any,navigation: any}) {
     const { processID, processName } = route.params;
-    const { loading, error, refetch, data } = useQuery(GetQuestionDetails,{variables:{
-            processID:parseInt(processID)
+    const { loading, error, data } = useQuery(GetQuestionDetails,{variables:{
+            processID:3
           }}); 
     if(data){
         console.log("Data",data.processDetail.questions);
@@ -25,44 +37,69 @@ export default function questionsScreen({route, navigation}: {navigation: any, r
         console.log("loading",loading);
     }
 
-    const renderResources = ({item}: {item: any}) => {
 
+  const renderResources = ({item}: {item: any}) => {
     return (
-      
-    
-      <Card>
-    
-    <Card.Content>
-      <Title>{item.Question}</Title>
-    </Card.Content>
-    <Card.Actions>
-      <Button>Confirm</Button>
-      <Button>No</Button>
-    </Card.Actions>
-  </Card>
-    
+    <View style={styles.item}>
+      <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
+        {item.Question}
+      </Text>
+       <RadioGroup 
+          //selectedIndex={1}
+          //onSelect={(index, value) => this.onSelect(index, value)}
+          style={{flexDirection:"row",justifyContent: 'space-between'}}
+          >
+          {radioItems.map((item, index) => {
+            return (
+              <RadioButton
+                key={index}
+                value={item.label}
+                displayText={item.label}
+                displayTextColor="#959595"
+                displayTextActiveColor="#fff"
+                prefixColor="#006bcc"
+                prefixActiveColor="#006bcc"
+                style={{width:150,alignContent: "center",borderWidth:1,
+                borderColor:"#979797"}}
+              />
+            );
+          })}
+        </RadioGroup>
+    </View>
     );
   };
 
 
+         
   return (  
-       <>
+    <>
        <StatusBar
         animated={true}
         backgroundColor="#006bcc"
         hidden={false} />
+        <View style={{backgroundColor:"#006bcc"}}>
+        <View style={styles.header}>
+
+        </View>
+        <View style={styles.container}>
+         <View style={styles.headerTextLabel}>
+        <Text style={styles.headerTextStyle}>{processName}</Text>
+        </View>
         {data && (
-        <View style={{width:"100%",}}>
+         <View style={{width:"100%"}}>
           <FlatList
-            style={{width:"90%",alignSelf: "center",}}
+            style={{width:"90%",alignSelf: "center"}}
             data={data.processDetail.questions}
             keyExtractor={(item, index) => item.id}
             renderItem={renderResources}
           />
         </View>
       )}
+      </View>
+      </View>
       </>
     );
+
 }
 
 const styles = StyleSheet.create({
@@ -92,9 +129,8 @@ const styles = StyleSheet.create({
     borderTopLeftRadius:30
   },
   item: {
-    backgroundColor: 'white',
+    marginBottom:15,
     width:"100%",
-    height:60,
   },
   title: {
     fontSize: 32,
@@ -104,7 +140,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor:"#ffffff",
     borderRadius:6,
-    height:50,
     margin:10,
     shadowColor: "#000",
     shadowOffset: {
@@ -118,11 +153,8 @@ const styles = StyleSheet.create({
   appButtonText: {
     fontSize: 18,
     color: "#000000",
-    fontWeight: "bold",
+    fontWeight: "normal",
     textAlign: "left",
     textAlignVertical:"center",
-    marginLeft:20,
-    width:200,
-    marginRight:20,
   }
 });

@@ -12,7 +12,7 @@ const apolloClient = client;
 
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
     const { resourceID, resourceName } = route.params;
-    const { loading, error, refetch, data } = useQuery(GetProcessesDetails,{variables:{
+    const { loading, error, data } = useQuery(GetProcessesDetails,{variables:{
             resourceID:parseInt(resourceID)
           }}); 
     if(data){
@@ -34,7 +34,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       style={[styles.appButtonContainer,{flex:1}]}onPress={()=>{
         navigation.navigate('questionsScreen',{
             processID: item.id,
-            processName: "Process-"+item.Number,
+            processName: item.process_name,
           })}}>
 
       <View style={{width:30,height:30,marginLeft:14}}>
@@ -50,18 +50,6 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       <MaterialCommunityIcons
       name='arrow-right' size={30}/>
       </View>
-
-      {/* <Text style={[styles.appButtonText]}>
-        {"Process-"+item.Number}
-      </Text>
-      <View style={{marginLeft:14,justifyContent:"flex-start"}}>
-      <MaterialCommunityIcons
-      name='minus-box' size={30}/>
-      </View>
-      <View style={{marginRight:20,justifyContent:"center"}}>
-      <MaterialCommunityIcons
-      name='arrow-right' size={30}/>
-      </View> */}
       </TouchableOpacity>
     </View>
     );

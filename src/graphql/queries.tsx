@@ -32,9 +32,10 @@ query($resourceID:ID!){
 export const GetQuestionDetails = gql`
 query($processID:ID!){
       processDetail(id: $processID){
+        id,
     		questions{
           id,
-          Question
+          Question,
         }
       }
     }
