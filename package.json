@@ -30,6 +30,7 @@
     "expo-status-bar": "~1.0.3",
     "expo-web-browser": "~8.6.0",
     "graphql": "^15.5.0",
+    "patch-package": "^6.4.7",
     "radio-buttons-react-native": "^1.0.4",
     "radio-buttons-react-native-expo": "^1.0.0",
     "react": "16.13.1",

@@ -1,0 +1,25 @@
+diff --git a/node_modules/react-native-radio-btn/lib/radioButton.js b/node_modules/react-native-radio-btn/lib/radioButton.js
+index 5d86953..e1e5ebf 100644
+--- a/node_modules/react-native-radio-btn/lib/radioButton.js
++++ b/node_modules/react-native-radio-btn/lib/radioButton.js
+@@ -67,9 +67,9 @@ export default class RadioButton extends Component {
+               this.props.style,
+               this.props.isSelected
+                 ? {
+-                    backgroundColor: "#E08036",
++                    backgroundColor: "#006bcc",
+                     borderWidth: 1,
+-                    borderRadius: 5,
++                    borderRadius: 7,
+                     borderColor: "#E08036",
+                     margin: 4,
+                     color: "#fff !important"
+@@ -77,7 +77,7 @@ export default class RadioButton extends Component {
+                 : {
+                     backgroundColor: "#F3F3F3",
+                     borderWidth: 1,
+-                    borderRadius: 5,
++                    borderRadius: 7,
+                     borderColor: "#E3E3E3",
+                     margin: 4
+                 }
