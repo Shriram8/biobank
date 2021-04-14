@@ -42,7 +42,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       
     <View style={styles.item}>
       <TouchableOpacity
-      style={[styles.appButtonContainer,{flex:1}]}onPress={()=>{
+      style={[styles.appButtonContainer,{flex:1}]} onPress={()=>{
         navigation.navigate('questionsScreen',{
             processID: item.id,
             processName: item.process_name,
@@ -62,6 +62,17 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       name='arrow-right' size={30}/>
       </View>
       </TouchableOpacity>
+      {(item.processOrder >= preSurgeryProcessCount)?(
+      <View style={[styles.appFlagContainer,{flex:1}]} >
+      <View style={{width:30,height:30,marginLeft:14}}>
+      <MaterialCommunityIcons
+      name='minus-box' size={30} color='#959595'/>
+      </View>
+
+      <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
+        {(item.processOrder == preSurgeryProcessCount)?"Cleared for start of day":
+        ((item.processOrder == 3)?("Cleared for Surgery"):("Cleared for end of the day"))}
+      </Text></View>):(<></>)}
     </View>
     );
   };
@@ -116,7 +127,6 @@ const styles = StyleSheet.create({
   item: {
     backgroundColor: 'white',
     width:"100%",
-    height:60,
   },
   title: {
     fontSize: 32,
@@ -125,7 +135,7 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     backgroundColor:"#ffffff",
     borderRadius:6,
-    height:50,
+    height:60,
     margin:10,
     alignItems: "center",
     shadowColor: "#000",
@@ -136,6 +146,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 2,
     elevation: 6,
+  },
+  appFlagContainer: {
+    flexDirection:"row",
+    backgroundColor:"#ffffff",
+    height:60,
+    margin:10,
+    alignItems: "center",
   },
   appButtonText: {
     fontSize: 18,
