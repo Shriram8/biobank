@@ -1,24 +1,33 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusBar,View, 
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetResourcesDetails} from '../src/graphql/queries';
-import {GetSharedResource_OperationTheaters,ENUM_RESOURCE_TYPE} from '../src/graphql/queries';
+import {GetSurgeryDetails} from '../src/graphql/queries';
 import { Divider } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { ReactReduxContext } from 'react-redux'
 
 const apolloClient = client;
-const date = new Date();
-var _data: readonly any[] | null | undefined;
-export default function homeScreen({navigation}: {navigation: any}) {
-const {store} = useContext(ReactReduxContext)
-    const { loading, error, refetch, data } = useQuery(GetSharedResource_OperationTheaters); 
+let _data: any[] = [];
+const preSurgeryProcessCount = 2;
+const preSurgeryProcessID = 3; //id from order.
+export default function preProcessScreen({route, navigation}: {navigation: any, route:any}) {
+    const { operationTheaterID, operationTheaterName } = route.params;
+    const { loading, error, data } = useQuery(GetSurgeryDetails,{variables:{
+            operationTheaterID:parseInt(operationTheaterID)
+          }}); 
     if(data){
-      _data = data.appResources.concat(data.operationTheaters);
-      console.log("Data",_data);
+        _data = [];
+        for(var i = 0;i<2;i++){
+            _data.push(data.appResources[i]);
+        }
+        for(var i =0; i< data.operationTheater.surgeries.length;i++){
+            _data.push(data.appResources[preSurgeryProcessID-1]);
+        }
+        _data.push(data.appResources[data.appResources.length-1]);
+        console.log("Data",data);
+        console.log("New Data", _data);
     }
     if(error){
         console.log("Error",error);
@@ -28,25 +37,26 @@ const {store} = useContext(ReactReduxContext)
     }
 
     const renderResources = ({item}: {item: any}) => {
+
     return (
+      
     <View style={styles.item}>
       <TouchableOpacity
       style={[styles.appButtonContainer,{flex:1}]}onPress={()=>{
-        (item.__typename == "AppResource")?
-        navigation.navigate('processScreen',{
-            resourceID: item.id,
-            resourceName: item.name,
-          }):navigation.navigate('preProcessScreen',{
-            operationTheaterID: item.id,
-            operationTheaterName: item.name,
+        navigation.navigate('questionsScreen',{
+            processID: item.id,
+            processName: item.process_name,
           })}}>
+
       <View style={{width:30,height:30,marginLeft:14}}>
       <MaterialCommunityIcons
       name='minus-box' size={30} color='#959595'/>
       </View>
+
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
         {item.name}
       </Text>
+
       <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
       <MaterialCommunityIcons
       name='arrow-right' size={30}/>
@@ -56,28 +66,15 @@ const {store} = useContext(ReactReduxContext)
     );
   };
 
+
   return (  
        <>
        <StatusBar
         animated={true}
         backgroundColor="#006bcc"
         hidden={false} />
-        <View style={{backgroundColor:"#006bcc",flex:1}}>
-        <View style={styles.header}>
-          <View style={styles.headerTextLabel}>
-            <Text style={{fontWeight:'bold',fontSize:30,color:"#ffffff"}}>Hello Varun</Text>
-            <Divider style={{width:"100%",height:1,backgroundColor:'white'}}/>
-          </View>
-          <View style={{flexDirection:"row"}}>
-            <Text style={{fontWeight:'bold',fontSize:14,color:"#ffffff"}}>{date.toDateString()}</Text>
-          </View>
-        </View>
-        <View style={styles.container}>
-         <View style={styles.headerTextLabel}>
-        <Text style={styles.headerTextStyle}>Today's Progress</Text>
-        </View>
-        {_data && (
-        <View style={{width:"100%"}}>
+        {data && (
+        <View style={{width:"100%",height:"100%",backgroundColor:"white"}}>
           <FlatList
             style={{width:"90%",alignSelf: "center",}}
             data={_data}
@@ -86,8 +83,6 @@ const {store} = useContext(ReactReduxContext)
           />
         </View>
       )}
-      </View>
-      </View>
       </>
     );
 }
@@ -116,13 +111,12 @@ const styles = StyleSheet.create({
     marginTop:150,
     backgroundColor: '#ffffff',
     alignItems: 'center',
-    flex:20,
     borderTopLeftRadius:30
   },
   item: {
     backgroundColor: 'white',
     width:"100%",
-    height:90,
+    height:60,
   },
   title: {
     fontSize: 32,
@@ -131,7 +125,7 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     backgroundColor:"#ffffff",
     borderRadius:6,
-    height:90,
+    height:50,
     margin:10,
     alignItems: "center",
     shadowColor: "#000",
@@ -152,5 +146,4 @@ const styles = StyleSheet.create({
     marginLeft:14,
     width:200,
   }
-
 });

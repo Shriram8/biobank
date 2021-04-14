@@ -40,3 +40,38 @@ query($processID:ID!){
       }
     }
 `;
+
+export const GetSharedResource_OperationTheaters = gql`
+query{
+      appResources(where:{resourceType:"SharedResource"}){
+        id,
+        name
+      },
+      operationTheaters{
+        id,
+      	name
+      }
+    }
+`;
+
+export const GetSurgeryDetails = gql`
+query($operationTheaterID:ID!){
+  appResources(sort: "processOrder:asc",where:{resourceType:"OperationTheater" }){
+        id,
+        name,
+  			processOrder,
+  },
+  operationTheater(id:$operationTheaterID){
+      id,
+    	name,
+      surgeries{
+        id
+      }
+  }
+}
+`;
+
+export enum ENUM_RESOURCE_TYPE {
+  SharedResource,
+  OperationTheater,
+}

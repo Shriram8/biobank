@@ -6,6 +6,7 @@ import {Button} from 'react-native-paper';
 import LoginScreen from '../screens/login';
 import HomeScreen from '../screens/homeScreen'
 import ProcessScreen from '../screens/processScreen';
+import PreProcessScreen from '../screens/preProcessScreen';
 import QuestionsScreen from '../screens/questionsScreen';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { connect } from 'react-redux';
@@ -55,6 +56,17 @@ const MainStackNavigator = (props) => {
             </Button>
           ),
         }}/>
+        <MainStack.Screen name="preProcessScreen"
+        component={PreProcessScreen}
+        initialParams={{ operationTheaterName: "" }}
+        options={({ route }) => ({ 
+          title: route.params.operationTheaterName,
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: 'white',
+          },
+          })}
+        />
         <MainStack.Screen name="processScreen"
         component={ProcessScreen}
         initialParams={{ resourceName: "" }}

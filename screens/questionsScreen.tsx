@@ -25,7 +25,7 @@ const radioItems= [
 export default function questionsScreen({route,navigation}: {route: any,navigation: any}) {
     const { processID, processName } = route.params;
     const { loading, error, data } = useQuery(GetQuestionDetails,{variables:{
-            processID:3
+            processID:processID
           }}); 
     if(data){
         console.log("Data",data.processDetail.questions);
