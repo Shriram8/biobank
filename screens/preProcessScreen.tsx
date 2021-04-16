@@ -35,24 +35,33 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
     if(loading){
         console.log("loading",loading);
     }
+    const jewelStyle = (item: number | undefined)=>{
+      return (item == 1)?{backgroundColor:"white"}:{backgroundColor:"#b6b6b6"}
+    }
+    
 
     const renderResources = ({item}: {item: any}) => {
 
     return (
       
     <View style={styles.item}>
+      <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",height:80}}>
+      <View style={{height:"100%", justifyContent:"center",alignItems:"center"}}>
+        <View style={[{width:2,height:40},jewelStyle(item.processOrder)]}>
+        </View>
+        <View style={{width:30,height:30}}>
+        <MaterialCommunityIcons
+        name='minus-box' size={30} color='#959595'/>
+        </View>
+        <View style={{width:2,height:40,backgroundColor:"#b6b6b6"}}>
+        </View>
+      </View>
       <TouchableOpacity
       style={[styles.appButtonContainer,{flex:1}]} onPress={()=>{
         navigation.navigate('questionsScreen',{
             processID: item.id,
             processName: item.process_name,
           })}}>
-
-      <View style={{width:30,height:30,marginLeft:14}}>
-      <MaterialCommunityIcons
-      name='minus-box' size={30} color='#959595'/>
-      </View>
-
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
         {item.name}
       </Text>
@@ -62,11 +71,12 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       name='arrow-right' size={30}/>
       </View>
       </TouchableOpacity>
+      </View>
       {(item.processOrder >= preSurgeryProcessCount)?(
       <View style={[styles.appFlagContainer,{flex:1}]} >
-      <View style={{width:30,height:30,marginLeft:14}}>
+      <View style={{width:30,height:30}}>
       <MaterialCommunityIcons
-      name='minus-box' size={30} color='#959595'/>
+      name='flag' size={30} color='#959595'/>
       </View>
 
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
@@ -151,7 +161,7 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     backgroundColor:"#ffffff",
     height:60,
-    margin:10,
+    marginVertical:10,
     alignItems: "center",
   },
   appButtonText: {
