@@ -1,19 +1,25 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusBar,View, 
-  TextInput, TouchableOpacity ,Image} from 'react-native';
+  TextInput, TouchableOpacity ,Image, } from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
 import {GetResourcesDetails} from '../src/graphql/queries';
 import {GetSharedResource_OperationTheaters,ENUM_RESOURCE_TYPE} from '../src/graphql/queries';
-import { Divider } from 'react-native-paper';
+import { Divider, Button } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ReactReduxContext } from 'react-redux'
+// import SlidingPane from "react-sliding-pane";
+// import "react-sliding-pane/dist/react-sliding-pane.css";
 
 const apolloClient = client;
 const date = new Date();
+var location = "Coles Road";
 var _data: readonly any[] | null | undefined;
 export default function homeScreen({navigation}: {navigation: any}) {
+  // const [state, setState] = useState({
+  //   isPaneOpenLeft: false,
+  // });
 const {store} = useContext(ReactReduxContext)
     const { loading, error, refetch, data } = useQuery(GetSharedResource_OperationTheaters); 
     if(data){
@@ -68,10 +74,35 @@ const {store} = useContext(ReactReduxContext)
             <Text style={{fontWeight:'bold',fontSize:30,color:"#ffffff"}}>Hello Varun</Text>
             <Divider style={{width:"100%",height:1,backgroundColor:'white'}}/>
           </View>
-          <View style={{flexDirection:"row"}}>
-            <Text style={{fontWeight:'bold',fontSize:14,color:"#ffffff"}}>{date.toDateString()}</Text>
-          </View>
+          
+          {/* <Button icon={() => (
+              <MaterialCommunityIcons
+              name='menu' size={30} color="white"/>
+              )} onPress={
+                () => setState({ isPaneOpenLeft: true })
+              }>
+            </Button> */}
+
+
+
+          <View style={styles.subHeader}>
+            <View style={{ width:100,height:30,marginEnd:14, justifyContent:'center',flexDirection:'row',backgroundColor:"red",}}>
+              <MaterialCommunityIcons
+              name='map-marker-outline' color= "white" size={20}/>
+              <Text style={styles.location}>{location}</Text>
+              </View>
+              <View style={styles.verticleLine}></View>
+              <View style={{ width:'50%',height:30,marginEnd:14, alignContent:'flex-end', flexDirection:'row',backgroundColor:"pink"}}>
+              <MaterialCommunityIcons
+              name='calendar-text' color= "white" size={20}/>
+               <Text style={styles.location}>{date.toDateString()}</Text>
+              </View>
+              {/* <Text style={{fontWeight:'bold', textAlign: "right",fontSize:14,color:"#ffffff"}}>{date.toDateString()}</Text> */}
+            </View>
+
         </View>
+        
+        
         <View style={styles.container}>
          <View style={styles.headerTextLabel}>
         <Text style={styles.headerTextStyle}>Today's Progress</Text>
@@ -88,6 +119,18 @@ const {store} = useContext(ReactReduxContext)
       )}
       </View>
       </View>
+
+      {/* <SlidingPane
+        closeIcon={<div>Some div containing custom close icon.</div>}
+        isOpen={state.isPaneOpenLeft}
+        title="Hey, it is optional pane title.  I can be React component too."
+        from="left"
+        width="200px"
+        onRequestClose={() => setState({ isPaneOpenLeft: false })}
+      >
+        
+      </SlidingPane> */}
+
       </>
     );
 }
@@ -97,13 +140,15 @@ const styles = StyleSheet.create({
     width:"90%",
     height:25,
     marginTop:25,
-    marginBottom:15,
+    marginBottom:25,
     justifyContent:"center",
+    paddingTop:50,
   },
   headerTextStyle:{
     fontWeight:'bold',
     fontSize:18,
-    color:'#000000'
+    color:'#000000',
+
   },
   header: {
     marginTop:StatusBar.currentHeight,
@@ -111,6 +156,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+  },
+  subHeader:{
+    
+    alignItems: "flex-start",
+    flexDirection: 'row',
+    // justifyContent: 'space-evenly',
+    width: '90%',
+   backgroundColor:"black",
+   textAlignVertical:"center",
+  //  alignSelf: "center",
+  //  justifyContent: 'center',  
+
+  },
+  location:{
+    fontSize: 14,
+    color: 'white',
+    fontWeight: "bold",
+    textAlignVertical:"center",
+    
+   
+  },
+
+  verticleLine:{
+    height: '100%',
+    width: 1,
+    backgroundColor: 'yellow',  
+
   },
   container: {
     marginTop:150,
