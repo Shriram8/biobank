@@ -22,7 +22,7 @@ function login(props,navigation) {
         .query({
           query: GetUserDetails,
           variables:{
-            userID:parseInt(userId)
+            userID:userId
           }
         })
         .then((Result) => {

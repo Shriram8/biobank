@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 export const GetUserDetails = gql`
-  query($userID:ID!){
+  query($userID:String){
       appUsers(where: { uid: $userID }){
         id,
         name,
