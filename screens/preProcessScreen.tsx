@@ -13,7 +13,7 @@ let _data: any[] = [];
 const preSurgeryProcessCount = 2;
 const preSurgeryProcessID = 3; //id from order.
 export default function preProcessScreen({route, navigation}: {navigation: any, route:any}) {
-    const { operationTheaterID, operationTheaterName } = route.params;
+    const { userId, operationTheaterID, operationTheaterName } = route.params;
     const { loading, error, data } = useQuery(GetSurgeryDetails,{variables:{
             operationTheaterID:parseInt(operationTheaterID)
           }}); 
@@ -21,12 +21,12 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         _data = [];
         for(var i = 0;i<2;i++){
             _data.push(data.appResources[i]);
+            console.log("-----------",userId);
         }
         for(var i =0; i< data.operationTheater.surgeries.length;i++){
             _data.push(data.appResources[preSurgeryProcessID-1]);
         }
         _data.push(data.appResources[data.appResources.length-1]);
-        console.log("Data",data);
         console.log("New Data", _data);
     }
     if(error){
@@ -41,9 +41,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
     
 
     const renderResources = ({item}: {item: any}) => {
-
     return (
-      
     <View style={styles.item}>
       <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",height:80}}>
       <View style={{height:"100%", justifyContent:"center",alignItems:"center"}}>
@@ -58,9 +56,10 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       </View>
       <TouchableOpacity
       style={[styles.appButtonContainer,{flex:1}]} onPress={()=>{
-        navigation.navigate('questionsScreen',{
-            processID: item.id,
-            processName: item.process_name,
+        navigation.navigate('processScreen',{
+            userId: userId,
+            resourceID: item.id,
+            operationTheaterID: operationTheaterID,
           })}}>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
         {item.name}

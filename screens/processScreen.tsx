@@ -11,12 +11,11 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 const apolloClient = client;
 
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
-    const { resourceID, resourceName } = route.params;
+    const { userId,operationTheaterID,resourceID, resourceName } = route.params;
     const { loading, error, data } = useQuery(GetProcessesDetails,{variables:{
             resourceID:parseInt(resourceID)
           }}); 
     if(data){
-        console.log("Data",data.appResource.process_details);
     }
     if(error){
         console.log("Error",error);
@@ -33,8 +32,10 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       <TouchableOpacity
       style={[styles.appButtonContainer,{flex:1}]}onPress={()=>{
         navigation.navigate('questionsScreen',{
+            userId:userId,
             processID: item.id,
             processName: item.process_name,
+            operationTheaterID: operationTheaterID
           })}}>
 
       <View style={{width:30,height:30,marginLeft:14}}>

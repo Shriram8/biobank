@@ -18,15 +18,17 @@ import { PersistGate } from 'redux-persist/integration/react'
 
 const apolloClient = client;
 const initialState ={
-  isLoggedIn : false
+  isLoggedIn : false,
+  userId:''
 }
 const reducer = (state = initialState, action) =>{
   console.log("Action type__",action.type);
   switch (action.type) {
     case 'CHANGE_LOGIN':
-      console.log("Trying to change login");
+      console.log("Trying to change login",action.payload.userId);
       return {
-        isLoggedIn: true
+        isLoggedIn: true,
+        userId: action.payload.userId,
       }
     default:
       break;

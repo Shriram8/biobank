@@ -26,12 +26,12 @@ function login(props,navigation) {
           }
         })
         .then((Result) => {
-
-          if(Result.data.appUser.password === password){
-            props.changeLogin();
-            console.log("Login state----",props.isLoggedIn);
-            navigation.navigate('homeScreen')
-          }
+          if(Result.data.appUsers[0].password === password){
+            props.changeLogin(Result.data.appUsers[0].id);
+            navigation.navigate('homeScreen',{
+            userId: userId,
+          })
+        }
           else{
             console.log("failed");
           }
@@ -176,7 +176,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    changeLogin:()=>dispatch({type:'CHANGE_LOGIN'})
+    changeLogin:(userId)=>dispatch({type:'CHANGE_LOGIN',payload: {
+    userId
+  }})
   }
 };
 

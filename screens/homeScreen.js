@@ -8,50 +8,48 @@ import {GetSharedResource_OperationTheaters,ENUM_RESOURCE_TYPE} from '../src/gra
 import { Divider, Button } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { ReactReduxContext } from 'react-redux'
-// import SlidingPane from "react-sliding-pane";
-// import "react-sliding-pane/dist/react-sliding-pane.css";
+import  {connect}  from 'react-redux'
+import { withNavigation } from "react-navigation";
+
 
 const apolloClient = client;
 const date = new Date();
 var location = "Coles Road";
-var _data: readonly any[] | null | undefined;
-export default function homeScreen({navigation}: {navigation: any}) {
-  // const [state, setState] = useState({
-  //   isPaneOpenLeft: false,
-  // });
-const {store} = useContext(ReactReduxContext)
+var _data;
+function homeScreen(props,route){
     const { loading, error, refetch, data } = useQuery(GetSharedResource_OperationTheaters); 
-    if(data){
+    if(data){  
       _data = data.appResources.concat(data.operationTheaters);
-      console.log("Data",_data);
+      console.log(date);
     }
-    if(error){
+    if(error){GetSharedResource_OperationTheaters
         console.log("Error",error);
     }
     if(loading){
         console.log("loading",loading);
     }
 
-    const renderResources = ({item}: {item: any}) => {
+    const renderResources = (item) => {
     return (
     <View style={styles.item}>
       <TouchableOpacity
       style={[styles.appButtonContainer,{flex:1}]}onPress={()=>{
-        (item.__typename == "AppResource")?
-        navigation.navigate('processScreen',{
-            resourceID: item.id,
-            resourceName: item.name,
-          }):navigation.navigate('preProcessScreen',{
-            operationTheaterID: item.id,
-            operationTheaterName: item.name,
+        (item.item.__typename == "AppResource")?
+        props.navigation.navigate('processScreen',{
+            userId: props.userId,
+            resourceID: item.item.id,
+            resourceName: item.item.name,
+          }):props.navigation.navigate('preProcessScreen',{
+            userId: props.userId,
+            operationTheaterID: item.item.id,
+            operationTheaterName: item.item.name,
           })}}>
       <View style={{width:30,height:30,marginLeft:14}}>
       <MaterialCommunityIcons
       name='minus-box' size={30} color='#959595'/>
       </View>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
-        {item.name}
+        {item.item.name}
       </Text>
       <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
       <MaterialCommunityIcons
@@ -71,28 +69,17 @@ const {store} = useContext(ReactReduxContext)
         <View style={{backgroundColor:"#006bcc",flex:1}}>
         <View style={styles.header}>
           <View style={styles.headerTextLabel}>
-            <Text style={{fontWeight:'bold',fontSize:30,color:"#ffffff"}}>Hello Varun</Text>
+            <Text style={{fontWeight:'bold',fontSize:30,color:"#ffffff"}}>Hello, John</Text>
             <Divider style={{width:"100%",height:1,backgroundColor:'white'}}/>
           </View>
-          
-          {/* <Button icon={() => (
-              <MaterialCommunityIcons
-              name='menu' size={30} color="white"/>
-              )} onPress={
-                () => setState({ isPaneOpenLeft: true })
-              }>
-            </Button> */}
-
-
-
           <View style={styles.subHeader}>
-            <View style={{ width:100,height:30,marginEnd:14, justifyContent:'center',flexDirection:'row',backgroundColor:"red",}}>
+            <View style={{ width:100,height:30,marginEnd:14, justifyContent:'center',flexDirection:'row',}}>
               <MaterialCommunityIcons
               name='map-marker-outline' color= "white" size={20}/>
               <Text style={styles.location}>{location}</Text>
               </View>
               <View style={styles.verticleLine}></View>
-              <View style={{ width:'50%',height:30,marginEnd:14, alignContent:'flex-end', flexDirection:'row',backgroundColor:"pink"}}>
+              <View style={{ width:'50%',height:30,marginEnd:14, alignContent:'flex-end', flexDirection:'row'}}>
               <MaterialCommunityIcons
               name='calendar-text' color= "white" size={20}/>
                <Text style={styles.location}>{date.toDateString()}</Text>
@@ -120,20 +107,16 @@ const {store} = useContext(ReactReduxContext)
       </View>
       </View>
 
-      {/* <SlidingPane
-        closeIcon={<div>Some div containing custom close icon.</div>}
-        isOpen={state.isPaneOpenLeft}
-        title="Hey, it is optional pane title.  I can be React component too."
-        from="left"
-        width="200px"
-        onRequestClose={() => setState({ isPaneOpenLeft: false })}
-      >
-        
-      </SlidingPane> */}
-
       </>
     );
 }
+
+
+const mapStateToProps = (state) => ({
+  userId: state.userId,
+});
+export default connect(mapStateToProps)(withNavigation(homeScreen));
+
 
 const styles = StyleSheet.create({
   headerTextLabel:{
@@ -163,8 +146,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     // justifyContent: 'space-evenly',
     width: '90%',
-   backgroundColor:"black",
-   textAlignVertical:"center",
+    textAlignVertical:"center",
   //  alignSelf: "center",
   //  justifyContent: 'center',  
 
@@ -174,10 +156,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: "bold",
     textAlignVertical:"center",
-    
+    width: 50,
+    height:60
+
    
   },
-
   verticleLine:{
     height: '100%',
     width: 1,

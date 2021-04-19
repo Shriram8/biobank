@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 export const GetUserDetails = gql`
   query($userID:ID!){
-      appUser(id: $userID){
+      appUsers(where: { uid: $userID }){
         id,
         name,
         userType,
@@ -30,13 +30,30 @@ query($resourceID:ID!){
 `;
 
 export const GetQuestionDetails = gql`
-query($processID:ID!){
+query($processID:ID!,
+      $operation_theater: ID!
+      $app_user: ID!
+      $Date:String){
       processDetail(id: $processID){
         id,
     		questions{
           id,
           Question,
+          type,
         }
+      }
+      processesData(where:{
+        app_user:$app_user,
+        process_detail:$processID,
+        operation_theater:$operation_theater,
+        Date:$Date}){
+        id,
+        question{
+          id
+        }
+        Answer,
+        created_at,
+        Date
       }
     }
 `;
@@ -75,3 +92,31 @@ export enum ENUM_RESOURCE_TYPE {
   SharedResource,
   OperationTheater,
 }
+
+export const SubmitAnswerForQuestion = gql`
+mutation(
+    $operation_theater: ID!
+    $question: ID!
+    $app_user: ID!
+    $process_detail: ID!
+    $Date:Date
+  ){
+  createProcessesDatum(input: { data:{operation_theater:$operation_theater,
+    question:$question,app_user:$app_user,process_detail:$process_detail,Date:$Date} }) {
+    processesDatum{
+      id,
+      Answer,
+      question{
+        id
+      },
+      operation_theater{
+        id
+      }
+      created_at,
+      process_detail{
+        id
+      }
+    }
+  }
+}
+`;
