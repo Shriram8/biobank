@@ -3,19 +3,27 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetProcessesDetails} from '../src/graphql/queries';
-import { Divider } from 'react-native-paper';
+import {GetProcessesDetails,GetAnswersProgress} from '../src/graphql/queries';
+import { Divider,ProgressBar } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const apolloClient = client;
-
+var progress: any[] = [];
+var questionsCount: any[] = [];
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId,operationTheaterID,resourceID, resourceName } = route.params;
-    const { loading, error, data } = useQuery(GetProcessesDetails,{variables:{
-            resourceID:parseInt(resourceID)
-          }}); 
+    const[_progress,setProgress] = useState([]);
+    const[_questionsCount,setQuestionsCount]=useState([]);
+    let [refresh,setRefresh] = useState(true);
+    let [val,setval]=useState([]);
+    //const[data,setData]=useState(null);
+    //const[color,setColor]=useState("white");
+    let { loading, error, data } = useQuery(GetProcessesDetails,{variables:{
+        resourceID:parseInt(resourceID)
+    }}); 
     if(data){
+      
     }
     if(error){
         console.log("Error",error);
@@ -24,34 +32,113 @@ export default function processScreen({route, navigation}: {navigation: any, rou
         console.log("loading",loading);
     }
 
+    React.useEffect(() => {
+      const unsubscribe = navigation.addListener('focus', () => {
+        apolloClient
+        .query({
+          query: GetProcessesDetails,
+          variables:{
+            resourceID:parseInt(resourceID)
+          }
+        })
+        .then((Result) => {
+           data = Result.data; 
+           console.log("--",data)
+            questionsCount =[];
+            progress = []
+                for(var i= 0; i<data.appResource.process_details.length; i++){
+                questionsCount[data.appResource.process_details[i].id] = data.appResource.process_details[i].questions.length;
+                console.log("Questions Log----"+questionsCount);
+                apolloClient
+                  .query({
+                    query: GetAnswersProgress,
+                    variables:{
+                      processID:data.appResource.process_details[i].id,
+                      Date:new Date().toISOString().slice(0, 10),
+                      app_user:userId,
+                      operation_theater:operationTheaterID
+                    },
+                    fetchPolicy: "network-only"
+                  })
+                  .then((Result) => {
+                    try{
+                      if(Result.data.processesData[0].id){
+                        console.log("Progress Log-------",Result.data);
+                        progress[Result.data.processesData[0].process_detail.id] = Result.data.processesData.length;  
+                      }
+                      console.log("My dictionary-11-"+progress);
+                      var t = !refresh;
+                      console.log(t);
+                      setRefresh(t);
+                      console.log("set state"+refresh);
+                      setval([...val,1]);
+                      
+                    }catch{
+                    }
+                  })
+                  
+              }
+              console.log("My dictionary22--"+questionsCount);
+        })
+        
+
+      });
+      return unsubscribe;
+    }, [navigation]);
+
+    useEffect(()=>{
+      console.log("set state---",val)
+    },[val]);
+
+    const getProgressValue = (id) =>{
+      console.log("Progress bar",progress[id]/questionsCount[id])
+      try{
+        if(progress[id]){
+          return (progress[id]/questionsCount[id]);
+        }
+      }
+      catch{
+        return 0;
+      }
+      return 0; 
+    }
+
+    useEffect(() => {
+
+    },[data]);
+
     const renderResources = ({item}: {item: any}) => {
 
     return (
       
     <View style={styles.item}>
       <TouchableOpacity
-      style={[styles.appButtonContainer,{flex:1}]}onPress={()=>{
+      style={[styles.appButtonContainer,{flex:1,zIndex:1}]}onPress={()=>{
         navigation.navigate('questionsScreen',{
             userId:userId,
             processID: item.id,
             processName: item.process_name,
             operationTheaterID: operationTheaterID
           })}}>
-
+      
       <View style={{width:30,height:30,marginLeft:14}}>
       <MaterialCommunityIcons
       name='minus-box' size={30} color='#959595'/>
       </View>
-
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
         {"P"+item.Number+"-"+item.process_name}
       </Text>
-
       <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
       <MaterialCommunityIcons
-      name='arrow-right' size={30}/>
+        name='arrow-right' size={30}/>
       </View>
+      
       </TouchableOpacity>
+      <View style={{height:10,marginTop:-11}}>
+        <ProgressBar progress={getProgressValue(item.id)} color={"green"} style={{width:'92%',alignSelf:"center",
+        height:4,backgroundColor:"white",alignContent:"center"}} />
+      </View>
+      
     </View>
     );
   };
@@ -66,6 +153,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
         {data && (
         <View style={{width:"100%",height:"100%",backgroundColor:"white"}}>
           <FlatList
+            extraData = {refresh}
             style={{width:"90%",alignSelf: "center",}}
             data={data.appResource.process_details}
             keyExtractor={(item, index) => item.id}
@@ -106,16 +194,16 @@ const styles = StyleSheet.create({
   item: {
     backgroundColor: 'white',
     width:"100%",
-    height:60,
+    height:80,
   },
   title: {
     fontSize: 32,
   },
   appButtonContainer: {
     flexDirection:"row",
-    backgroundColor:"#ffffff",
+    backgroundColor:'#ffffff',
     borderRadius:6,
-    height:50,
+    height:60,
     margin:10,
     alignItems: "center",
     shadowColor: "#000",

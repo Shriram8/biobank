@@ -11,7 +11,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import  {connect}  from 'react-redux'
 import { withNavigation } from "react-navigation";
 
-
 const apolloClient = client;
 const date = new Date();
 var location = "Coles Road";
@@ -38,6 +37,7 @@ function homeScreen(props,route){
         props.navigation.navigate('processScreen',{
             userId: props.userId,
             resourceID: item.item.id,
+            operationTheaterID: item.item.id,
             resourceName: item.item.name,
           }):props.navigation.navigate('preProcessScreen',{
             userId: props.userId,
@@ -95,9 +95,9 @@ function homeScreen(props,route){
         <Text style={styles.headerTextStyle}>Today's Progress</Text>
         </View>
         {_data && (
-        <View style={{width:"100%"}}>
+        <View style={{width:"100%",marginBottom:50}}>
           <FlatList
-            style={{width:"90%",alignSelf: "center",}}
+            style={{width:"90%",alignSelf: "center",marginBottom:50}}
             data={_data}
             keyExtractor={(item, index) => index.toString()}
             renderItem={renderResources}

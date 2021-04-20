@@ -3,7 +3,7 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql, useMutation } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetQuestionDetails,SubmitAnswerForQuestion} from '../src/graphql/queries';
+import {GetQuestionDetails,SubmitAnswerForQuestion,UpdateSubmittedAnswerForQuestion} from '../src/graphql/queries';
 import { Avatar, Button, Card, Title, Paragraph,List } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -27,51 +27,107 @@ const radioItems= [
 var dict: string[] = [];
 var key;
 var value;
-export default function questionsScreen({route}: {route: any,navigation: any}) {
+var dictId:string[] = [];
+var temp = new Array();
+export default function questionsScreen({route,navigation}: {route: any,navigation: any}) {
+
     const { userId,operationTheaterID,processID, processName } = route.params;
-    const [expanded, setExpanded] = React.useState(true);
     const [surgeryCount,setSurgeryCount] = React.useState('');
-    const { loading, error, data:questions_data } = useQuery(GetQuestionDetails,{variables:{
+    const [_data,setfetchData] = React.useState(false);
+    let { loading, error, data:questions_data ,refetch} = useQuery(GetQuestionDetails,{variables:{
             processID:processID,
             Date:new Date().toISOString().slice(0, 10),
             app_user:userId,
             operation_theater:operationTheaterID
           }}); 
-    if(questions_data){
-        dict = []
-        console.log("Data",questions_data.processesData);
-        for(var i =0; i< questions_data.processesData.length;i++){
-            
-                key =  questions_data.processesData[i].question.id,
-                value = questions_data.processesData[i].Answer
-                dict[key] = value;
-        }
-        console.log("--------",dict);
-    }
 
-    let [mutateFunction, {data }] = useMutation(SubmitAnswerForQuestion);
-    if (data) {
-      console.log("DATA",data);
-    }
-  const callQuery = (index: any,value: any) => {
-    console.log("Index--"+operationTheaterID+"--value--"+userId+"--",processID);
-    mutateFunction({
-      variables: {
+  useEffect(() => {
+    if(questions_data){
         
-        operation_theater: parseInt(operationTheaterID),
-        question: parseInt(index),
-        app_user: parseInt(userId),
-        process_detail: parseInt(processID),
-        Date:new Date().toISOString().slice(0, 10)
+    }
+  },[questions_data]);
+
+   React.useEffect(() => {
+      const unsubscribe = navigation.addListener('focus', () => {
+        apolloClient
+        .query({
+          query: GetQuestionDetails,
+          variables:{
+            processID:processID,
+            Date:new Date().toISOString().slice(0, 10),
+            app_user:userId,
+            operation_theater:operationTheaterID
+          },
+          fetchPolicy: "network-only"
+        })
+        .then((Result) => {
+            questions_data = Result.data;
+            dict = []
+            dictId = []
+            temp=[]
+            for(var i =0; i< questions_data.processesData.length;i++){
+              //console.log("Questions screen--",questions_data.processesData);
+              key =  questions_data.processesData[i].question.id,
+              //console.log("Key-------",key);
+              value = questions_data.processesData[i].Answer,
+              dict[key] = value;
+              dictId[key] = questions_data.processesData[i].id;
+              temp.push(key);
+            }
+            setfetchData(true);
+        });
+      });
+      return unsubscribe;
+    }, [navigation]);
+
+
+
+  const [mutateFunction, {data }] = useMutation(SubmitAnswerForQuestion);
+
+  useEffect(()=>{
+      if (data) {
+            dictId[ data.createProcessesDatum.processesDatum.question.id] = data.createProcessesDatum.processesDatum.id;
+        }
+  },[data]);
+  
+  const callQuery = (index: any,value: any) => {
+      temp.push(index);
+      dictId[index];
+      mutateFunction({
+        variables: {
+          operation_theater: parseInt(operationTheaterID),
+          question: parseInt(index),
+          app_user: parseInt(userId),
+          process_detail: parseInt(processID),
+          Date:new Date().toISOString().slice(0, 10),
+          Answer: (value == 0 ? false: true)
+        }
+      });
+    
+  };
+
+  let [updateFunction, {data:updateFunctiondata }] = useMutation(UpdateSubmittedAnswerForQuestion);
+
+
+  const updateQuery = (index: any,value: any) => {
+    updateFunction({
+      variables: {
+        question_Id: parseInt(index),
+        Answer: (value == 0 ? false: true)
       }
     });
   };
+
+
    const sendQuery=(index: any,value: any)=>{
-    callQuery(index,value);
+     if(temp.indexOf(index)!=-1){
+       updateQuery(dictId[index],value);
+     }
+     else callQuery(index,value);
    }
 
   const renderResources = ({item}: {item: any}) => {
-    console.log("Item ..."+item.id+"dict"+dict[item.id]);
+    
     return (
     <View style={styles.item}>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
@@ -106,7 +162,7 @@ export default function questionsScreen({route}: {route: any,navigation: any}) {
               <RadioButton
                 key={index}
                 value={item.label}
-                //isSelected={item.selected}
+                
                 displayText={item.label}
                 displayTextColor="#959595"
                 displayTextActiveColor="#fff"
@@ -131,27 +187,29 @@ export default function questionsScreen({route}: {route: any,navigation: any}) {
         backgroundColor="#006bcc"
         hidden={false} />
         <View style={{backgroundColor:"#006bcc"}}>
-        <View style={styles.header}>
+          <View style={styles.header}>
 
-        </View>
-        <View style={styles.container}>
-         <View style={styles.headerTextLabel}>
-        <Text style={styles.headerTextStyle}>{processName}</Text>
-        </View>
-        {questions_data && (
-         <View style={{width:"100%"}}>
-          <FlatList
-            style={{width:"90%",alignSelf: "center"}}
-            data={questions_data.processDetail.questions}
-            keyExtractor={(item, index) => item.id}
-            renderItem={renderResources}
-          />
-          <Button  mode="contained" style={{width:200,height:50, alignSelf:"center"}} onPress={() => console.log('Pressed')}>
-            Submit
-          </Button>
-        </View>
-      )}
-      </View>
+          </View>
+          <View style={styles.container}>
+            <View style={styles.headerTextLabel}>
+              <Text style={styles.headerTextStyle}>{processName}</Text>
+            </View>
+              {_data && (
+              <View style={{width:"100%",height:"70%",marginBottom:150}}>
+                <FlatList
+                  style={{width:"90%",alignSelf: "center",marginBottom:150}}
+                  data={questions_data.processDetail.questions}
+                  keyExtractor={(item, index) => item.id}
+                  renderItem={renderResources}
+                />
+                
+              </View>
+              
+              )}
+                <Button  mode="contained" style={{width:200,height:50, alignSelf:"center"}} onPress={() => console.log('Pressed')}>
+                  Submit
+                </Button>
+            </View>
       </View>
       </>
     );
@@ -182,7 +240,8 @@ const styles = StyleSheet.create({
     marginTop:150,
     backgroundColor: '#ffffff',
     alignItems: 'center',
-    borderTopLeftRadius:30
+    borderTopLeftRadius:30,
+    height:"100%"
   },
   item: {
     marginBottom:15,

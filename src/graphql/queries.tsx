@@ -24,10 +24,15 @@ query($resourceID:ID!){
           id,
           Number,
           process_name,
+          questions{
+            id
+          }
         }
       }
     }
 `;
+
+
 
 export const GetQuestionDetails = gql`
 query($processID:ID!,
@@ -57,6 +62,25 @@ query($processID:ID!,
       }
     }
 `;
+
+export const GetAnswersProgress = gql`
+query( $operation_theater: ID!
+    $app_user: ID!
+    $processID: ID!
+    $Date:Date){
+  processesData(where:{
+        app_user:$app_user,
+        process_detail:$processID,
+        operation_theater:$operation_theater,
+        Date:$Date}){
+        id,
+        process_detail{
+        id
+      }
+      }
+  }
+`;
+
 
 export const GetSharedResource_OperationTheaters = gql`
 query{
@@ -100,8 +124,10 @@ mutation(
     $app_user: ID!
     $process_detail: ID!
     $Date:Date
+    $Answer:Boolean
   ){
   createProcessesDatum(input: { data:{operation_theater:$operation_theater,
+    Answer:$Answer,
     question:$question,app_user:$app_user,process_detail:$process_detail,Date:$Date} }) {
     processesDatum{
       id,
@@ -116,6 +142,22 @@ mutation(
       process_detail{
         id
       }
+    }
+  }
+}
+`;
+
+export const UpdateSubmittedAnswerForQuestion = gql`
+mutation(
+    $question_Id: ID!
+    $Answer:Boolean
+  ){
+  updateProcessesDatum(input: {
+    where: {id:$question_Id}
+    data:{Answer:$Answer} }){
+    processesDatum{
+      id,
+      Answer,
     }
   }
 }
