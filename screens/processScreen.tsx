@@ -11,14 +11,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 const apolloClient = client;
 var progress: any[] = [];
 var questionsCount: any[] = [];
+var colorValue: any [] = [];
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId,operationTheaterID,resourceID, resourceName } = route.params;
     const[_progress,setProgress] = useState([]);
     const[_questionsCount,setQuestionsCount]=useState([]);
     let [refresh,setRefresh] = useState(true);
     let [val,setval]=useState([]);
-    //const[data,setData]=useState(null);
-    //const[color,setColor]=useState("white");
+
     let { loading, error, data } = useQuery(GetProcessesDetails,{variables:{
         resourceID:parseInt(resourceID)
     }}); 
@@ -49,6 +49,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
                 for(var i= 0; i<data.appResource.process_details.length; i++){
                 questionsCount[data.appResource.process_details[i].id] = data.appResource.process_details[i].questions.length;
                 console.log("Questions Log----"+questionsCount);
+                colorValue[data.appResource.process_details[i].id] = "#ff8d48";
                 apolloClient
                   .query({
                     query: GetAnswersProgress,
@@ -63,9 +64,13 @@ export default function processScreen({route, navigation}: {navigation: any, rou
                   .then((Result) => {
                     try{
                       if(Result.data.processesData[0].id){
-                        console.log("Progress Log-------",Result.data);
+                        console.log("Progress Log-------",Result.data.processesData);
                         progress[Result.data.processesData[0].process_detail.id] = Result.data.processesData.length;  
                       }
+                       if(checkIfAnswer_No(Result.data.processesData)){
+                         console.log("Get data");
+                         colorValue[Result.data.processesData[0].process_detail.id] = "#f40000";
+                       }
                       console.log("My dictionary-11-"+progress);
                       var t = !refresh;
                       console.log(t);
@@ -90,10 +95,25 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       console.log("set state---",val)
     },[val]);
 
+    const checkIfAnswer_No = (data)=>{
+      for(var i = 0; i<data.length;i++){
+        if(data[i].Answer == "No"){
+          console.log("return red color");
+          return true
+        }
+      }
+      return false;
+    }
+
     const getProgressValue = (id) =>{
       console.log("Progress bar",progress[id]/questionsCount[id])
       try{
         if(progress[id]){
+          var value = progress[id]/questionsCount[id];
+          if(value == 1){
+            if(colorValue[id] != "#f40000")
+              colorValue[id] = "#0fbb5b"
+          }
           return (progress[id]/questionsCount[id]);
         }
       }
@@ -135,8 +155,8 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       
       </TouchableOpacity>
       <View style={{height:10,marginTop:-11}}>
-        <ProgressBar progress={getProgressValue(item.id)} color={"green"} style={{width:'92%',alignSelf:"center",
-        height:4,backgroundColor:"white",alignContent:"center"}} />
+        <ProgressBar progress={getProgressValue(item.id)} color={colorValue[item.id]} style={{width:'92%',alignSelf:"center",
+        height:14,backgroundColor:"white",alignContent:"center"}} />
       </View>
       
     </View>

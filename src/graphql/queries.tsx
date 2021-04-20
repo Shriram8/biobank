@@ -74,6 +74,7 @@ query( $operation_theater: ID!
         operation_theater:$operation_theater,
         Date:$Date}){
         id,
+        Answer,
         process_detail{
         id
       }
@@ -124,7 +125,7 @@ mutation(
     $app_user: ID!
     $process_detail: ID!
     $Date:Date
-    $Answer:Boolean
+    $Answer:String
   ){
   createProcessesDatum(input: { data:{operation_theater:$operation_theater,
     Answer:$Answer,
@@ -150,7 +151,7 @@ mutation(
 export const UpdateSubmittedAnswerForQuestion = gql`
 mutation(
     $question_Id: ID!
-    $Answer:Boolean
+    $Answer:String
   ){
   updateProcessesDatum(input: {
     where: {id:$question_Id}

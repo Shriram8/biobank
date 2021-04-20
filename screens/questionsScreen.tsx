@@ -86,8 +86,8 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
 
   useEffect(()=>{
       if (data) {
-            dictId[ data.createProcessesDatum.processesDatum.question.id] = data.createProcessesDatum.processesDatum.id;
-        }
+        dictId[ data.createProcessesDatum.processesDatum.question.id] = data.createProcessesDatum.processesDatum.id;
+      }
   },[data]);
   
   const callQuery = (index: any,value: any) => {
@@ -100,7 +100,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
           app_user: parseInt(userId),
           process_detail: parseInt(processID),
           Date:new Date().toISOString().slice(0, 10),
-          Answer: (value == 0 ? false: true)
+          Answer: (value == 0 ? "Confirm": "No")
         }
       });
     
@@ -113,7 +113,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
     updateFunction({
       variables: {
         question_Id: parseInt(index),
-        Answer: (value == 0 ? false: true)
+        Answer: (value == 0 ? "Confirm": "No")
       }
     });
   };
@@ -136,9 +136,9 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       </Text>
       {item.type == "value_based"?(<>
         <Picker
-        selectedValue={surgeryCount}
-        style={{ height: 30,}}
-        onValueChange={(itemValue, itemIndex) => setSurgeryCount(itemValue)}
+          selectedValue={surgeryCount}
+          style={{ height: 30,}}
+          onValueChange={(itemValue, itemIndex) => setSurgeryCount(itemValue)}
         >
         <Picker.Item label="0" value="0" />
         <Picker.Item label="1" value="1" />
@@ -153,7 +153,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       </Picker>
       </>):(
        <RadioGroup 
-          selectedIndex={dict[item.id]}
+          selectedIndex={dict[item.id] == "Confirm"? 0 : (dict[item.id]=="No"?1:null)}
           onSelect={(index: any, value: any) => sendQuery(item.id,index)}
           style={{flexDirection:"row",justifyContent: 'space-between'}}
           >
@@ -162,7 +162,6 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
               <RadioButton
                 key={index}
                 value={item.label}
-                
                 displayText={item.label}
                 displayTextColor="#959595"
                 displayTextActiveColor="#fff"
