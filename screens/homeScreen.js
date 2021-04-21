@@ -60,53 +60,52 @@ function homeScreen(props,route){
     );
   };
 
+
   return (  
        <>
        <StatusBar
         animated={true}
         backgroundColor="#006bcc"
         hidden={false} />
-        <View style={{backgroundColor:"#006bcc",flex:1}}>
-        <View style={styles.header}>
-          <View style={styles.headerTextLabel}>
-            <Text style={{fontWeight:'bold',fontSize:30,color:"#ffffff"}}>Hello, John</Text>
-            <Divider style={{width:"100%",height:1,backgroundColor:'white'}}/>
-          </View>
-          <View style={styles.subHeader}>
-            <View style={{ width:100,height:30,marginEnd:14, justifyContent:'center',flexDirection:'row',}}>
-              <MaterialCommunityIcons
-              name='map-marker-outline' color= "white" size={20}/>
-              <Text style={styles.location}>{location}</Text>
-              </View>
-              <View style={styles.verticleLine}></View>
-              <View style={{ width:'50%',height:30,marginEnd:14, alignContent:'flex-end', flexDirection:'row'}}>
-              <MaterialCommunityIcons
-              name='calendar-text' color= "white" size={20}/>
-               <Text style={styles.location}>{date.toDateString()}</Text>
-              </View>
-              {/* <Text style={{fontWeight:'bold', textAlign: "right",fontSize:14,color:"#ffffff"}}>{date.toDateString()}</Text> */}
+        <View style={{backgroundColor:"#006bcc",width:"100%",height:"100%"}}>
+          <View style={styles.header}>
+            <View style={styles.headerTextLabel}>
+             <Text style={{fontWeight:'bold',fontSize:30,color:"#ffffff"}}>Hello, John</Text>
+             <Divider style={{width:"100%",height:1,backgroundColor:'white'}}/>
             </View>
-
+            <View style={styles.subHeader}>
+                <View style={styles.flexContainer}>
+                <View style={styles.box1}>
+                  <MaterialCommunityIcons
+                      name='map-marker-outline' style={{alignSelf:"center",marginHorizontal:5}} color= "white" size={20}/>
+                  <Text style={styles.location}>{location}</Text>
+                </View>
+                <View style={styles.box2}></View>
+                <View style={styles.box3}>
+                  <MaterialCommunityIcons
+                      name='calendar-text' style={{alignSelf:"center",marginHorizontal:5}} color= "white" size={20}/>
+                  <Text style={styles.location}>{date.toDateString()}</Text>
+                </View>
+                </View>
+            </View>
+          </View>
+          <View style={{flex:1,backgroundColor:'white',borderTopLeftRadius:30,}}>
+            <View style={{justifyContent:'space-around',height:50,margin:10}}>  
+            <Text style={styles.headerTextStyle}>Todays Progress.</Text>
+            </View>
+            <View style={{flex:1,alignItems:'center',justifyContent:'center',alignSelf:'stretch',marginVertical:10,marginTop:10}}>
+              {_data && (
+                  <FlatList
+                    style={{width:"90%",alignSelf: "center"}}
+                    data={_data}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={renderResources}
+                  /> 
+              )}
+            </View>
+          </View>
         </View>
         
-        
-        <View style={styles.container}>
-         <View style={styles.headerTextLabel}>
-        <Text style={styles.headerTextStyle}>Today's Progress</Text>
-        </View>
-        {_data && (
-        <View style={{width:"100%",marginBottom:50}}>
-          <FlatList
-            style={{width:"90%",alignSelf: "center",marginBottom:50}}
-            data={_data}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={renderResources}
-          />
-        </View>
-      )}
-      </View>
-      </View>
-
       </>
     );
 }
@@ -119,47 +118,53 @@ export default connect(mapStateToProps)(withNavigation(homeScreen));
 
 
 const styles = StyleSheet.create({
+  subHeader: {
+    justifyContent: 'center',
+    width:"90%"
+  },
+  flexContainer: {
+    height: 30,
+    flexDirection: 'row'
+  },
+  box1: {
+    width: 120,
+    height: '100%',
+    flexDirection:"row",
+  },
+  box2: {
+    width: 1,
+    height: '100%',
+    backgroundColor:'#ffffff',
+  },
+  box3: {
+    height: '100%',
+    flexGrow: 1,
+    flexDirection:"row"
+  },
   headerTextLabel:{
     width:"90%",
-    height:25,
-    marginTop:25,
-    marginBottom:25,
+    height:50,
     justifyContent:"center",
-    paddingTop:50,
   },
   headerTextStyle:{
     fontWeight:'bold',
-    fontSize:18,
+    fontSize:22,
     color:'#000000',
 
   },
   header: {
-    marginTop:StatusBar.currentHeight,
     backgroundColor: '#006bcc',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-  },
-  subHeader:{
-    
-    alignItems: "flex-start",
-    flexDirection: 'row',
-    // justifyContent: 'space-evenly',
-    width: '90%',
-    textAlignVertical:"center",
-  //  alignSelf: "center",
-  //  justifyContent: 'center',  
-
+    height:150
   },
   location:{
     fontSize: 14,
     color: 'white',
     fontWeight: "bold",
     textAlignVertical:"center",
-    width: 50,
-    height:60
-
-   
+    width: "100%",
+    height:30,
   },
   verticleLine:{
     height: '100%',
