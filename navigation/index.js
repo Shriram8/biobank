@@ -85,6 +85,7 @@ const MainStackNavigator = (props) => {
           title: route.params.resourceName,
           headerTitleAlign: 'center',
           headerStyle: {
+            elevation: 0,
             backgroundColor: '#ff8d48',
           },
           })}

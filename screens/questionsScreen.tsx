@@ -206,7 +206,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
     <>
        <StatusBar
         animated={true}
-        backgroundColor="#006bcc"
+        backgroundColor="#ff8d48"
         hidden={false} />
          <View style={{backgroundColor:"#ff8d48",width:"100%",height:"100%"}}>
           <View style={styles.header}>
