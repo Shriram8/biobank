@@ -12,6 +12,7 @@ const apolloClient = client;
 var progress: any[] = [];
 var questionsCount: any[] = [];
 var colorValue: any [] = [];
+var IconValue: any [] = [];
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId,operationTheaterID,resourceID, resourceName } = route.params;
     const[_progress,setProgress] = useState([]);
@@ -50,6 +51,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
                 questionsCount[data.appResource.process_details[i].id] = data.appResource.process_details[i].questions.length;
                 console.log("Questions Log----"+questionsCount);
                 colorValue[data.appResource.process_details[i].id] = "#ff8d48";
+                IconValue[data.appResource.process_details[i].id] = "minus-box";
                 apolloClient
                   .query({
                     query: GetAnswersProgress,
@@ -95,7 +97,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       console.log("set state---",val)
     },[val]);
 
-    const checkIfAnswer_No = (data)=>{
+    const checkIfAnswer_No = (data: string | any[])=>{
       for(var i = 0; i<data.length;i++){
         if(data[i].Answer == "No"){
           console.log("return red color");
@@ -105,7 +107,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       return false;
     }
 
-    const getProgressValue = (id) =>{
+    const getProgressValue = (id: number) =>{
       console.log("Progress bar",progress[id]/questionsCount[id])
       try{
         if(progress[id]){
@@ -127,10 +129,29 @@ export default function processScreen({route, navigation}: {navigation: any, rou
 
     },[data]);
 
+    const changeIconSet=(id: number)=>{
+      try{
+        if(progress[id]){
+          var value = progress[id]/questionsCount[id];
+          if(value == 1){
+            if(colorValue[id] != "#f40000"){
+              colorValue[id] = "#0fbb5b"
+              return "checkbox-marked";
+            }
+              
+          }
+           return "alert-box"
+        }
+      }
+      catch{
+        return "minus-box"
+      }
+      return "minus-box"
+    }
+
     const renderResources = ({item}: {item: any}) => {
 
     return (
-      
     <View style={styles.item}>
       <TouchableOpacity
       style={[styles.appButtonContainer,{flex:1,zIndex:1}]}onPress={()=>{
@@ -142,8 +163,9 @@ export default function processScreen({route, navigation}: {navigation: any, rou
           })}}>
       
       <View style={{width:30,height:30,marginLeft:14}}>
-      <MaterialCommunityIcons
-      name='minus-box' size={30} color='#959595'/>
+      <MaterialCommunityIcons 
+      
+        name={changeIconSet(item.id) }size={30} color={colorValue[item.id]}/>
       </View>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
         {"P"+item.Number+"-"+item.process_name}
@@ -156,7 +178,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       </TouchableOpacity>
       <View style={{height:10,marginTop:-11}}>
         <ProgressBar progress={getProgressValue(item.id)} color={colorValue[item.id]} style={{width:'92%',alignSelf:"center",
-        height:14,backgroundColor:"white",alignContent:"center"}} />
+        height:4,backgroundColor:"white",alignContent:"center"}} />
       </View>
       
     </View>

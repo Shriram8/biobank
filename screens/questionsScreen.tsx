@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusBar,View, 
-  TextInput, TouchableOpacity ,Image} from 'react-native';
+  TextInput, TouchableOpacity ,Image, DevSettings} from 'react-native';
 import { useQuery, gql, useMutation } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
 import {GetQuestionDetails,SubmitAnswerForQuestion,UpdateSubmittedAnswerForQuestion} from '../src/graphql/queries';
@@ -29,17 +29,19 @@ var key;
 var value;
 var dictId:string[] = [];
 var temp = new Array();
+var questionCount: number;
 export default function questionsScreen({route,navigation}: {route: any,navigation: any}) {
 
-    const { userId,operationTheaterID,processID, processName } = route.params;
-    const [surgeryCount,setSurgeryCount] = React.useState('');
-    const [_data,setfetchData] = React.useState(false);
-    let { loading, error, data:questions_data ,refetch} = useQuery(GetQuestionDetails,{variables:{
+  const { userId,operationTheaterID,processID, processName } = route.params;
+  const [surgeryCount,setSurgeryCount] = React.useState('');
+  const [_data,setfetchData] = React.useState(false);
+  const [disbaleCompleted,setDisableCompleted] = React.useState(true);
+  let { loading, error, data:questions_data ,refetch} = useQuery(GetQuestionDetails,{variables:{
             processID:processID,
             Date:new Date().toISOString().slice(0, 10),
             app_user:userId,
             operation_theater:operationTheaterID
-          }}); 
+  }}); 
 
   useEffect(() => {
     if(questions_data){
@@ -47,8 +49,9 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
     }
   },[questions_data]);
 
-   React.useEffect(() => {
+  React.useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {
+        setDisableCompleted(true);
         apolloClient
         .query({
           query: GetQuestionDetails,
@@ -64,11 +67,13 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
             questions_data = Result.data;
             dict = []
             dictId = []
-            temp=[]
+            temp=[];
+            questionCount = questions_data.processDetail.questions.length;
+            if(questions_data.processesData.length == questionCount){
+              setDisableCompleted(false);
+            }
             for(var i =0; i< questions_data.processesData.length;i++){
-              //console.log("Questions screen--",questions_data.processesData);
               key =  questions_data.processesData[i].question.id,
-              //console.log("Key-------",key);
               value = questions_data.processesData[i].Answer,
               dict[key] = value;
               dictId[key] = questions_data.processesData[i].id;
@@ -93,6 +98,9 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   const callQuery = (index: any,value: any) => {
       temp.push(index);
       dictId[index];
+      if(Object.keys(dictId).length == questionCount){
+        setDisableCompleted(false);
+      }
       mutateFunction({
         variables: {
           operation_theater: parseInt(operationTheaterID),
@@ -103,11 +111,9 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
           Answer: (value == 0 ? "Confirm": "No")
         }
       });
-    
   };
 
   let [updateFunction, {data:updateFunctiondata }] = useMutation(UpdateSubmittedAnswerForQuestion);
-
 
   const updateQuery = (index: any,value: any) => {
     updateFunction({
@@ -119,20 +125,18 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   };
 
 
-   const sendQuery=(index: any,value: any)=>{
+  const sendQuery=(index: any,value: any)=>{
      if(temp.indexOf(index)!=-1){
        updateQuery(dictId[index],value);
      }
      else callQuery(index,value);
-   }
+  }
 
   const renderResources = ({item}: {item: any}) => {
-    
     return (
     <View style={styles.item}>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
         {item.Question}
-        
       </Text>
       {item.type == "value_based"?(<>
         <Picker
@@ -176,31 +180,6 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
     </View>
     );
   };
-
-{/* <View style={{backgroundColor:"#006bcc"}}>
-          <View style={styles.header}>
-
-          </View> 
-          <View style={styles.container}>
-             <View style={styles.headerTextLabel}>
-              <Text style={styles.headerTextStyle}>{processName}</Text>
-            </View>
-              {_data && (
-                <View style={{width:"100%",marginBottom:50,flexGrow: 1}}>
-                <FlatList
-                  style={{width:"90%",alignSelf: "center",marginBottom:50}}
-                  data={questions_data.processDetail.questions}
-                  keyExtractor={(item, index) => item.id}
-                  renderItem={renderResources}
-                  ListFooterComponent={() => 
-                  <Button  mode="contained" style={{width:200,height:50,marginBottom:50,backgroundColor:"#006bcc", justifyContent:"center",alignSelf:"center"}} onPress={() => console.log('Pressed')}>
-                  Submit
-                </Button>}
-                />
-                </View>
-              )}
-            </View> 
-      </View> */}
          
   return (  
     <>
@@ -221,22 +200,23 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
           </View>
         <View style={{flex:1,alignItems:'center',justifyContent:'center',alignSelf:'stretch',marginVertical:10,marginTop:10}}>
         {_data && (
-                <FlatList
+          <FlatList
                   style={{width:"90%",alignSelf: "center"}}
                   data={questions_data.processDetail.questions}
                   keyExtractor={(item, index) => item.id}
                   renderItem={renderResources}
-                  />)}
+          />)}
+
         </View>
         <View style={{justifyContent:'space-around'}}>
-          <Button  mode="contained" style={{width:"100%",height:40,backgroundColor:"#006bcc", justifyContent:"center",alignSelf:"center"}} onPress={() => console.log('Pressed')}>
+          <Button  mode="contained" color ={"#006bcc"} disabled={disbaleCompleted}  style={{width:"100%",height:40, justifyContent:"center",alignSelf:"center"}} onPress={() => console.log('Pressed')}>
             Completed
           </Button> 
         </View>
         </View>
         </View>
       </>
-    );
+  );
 
 }
 
@@ -254,14 +234,12 @@ const styles = StyleSheet.create({
     color:'#000000'
   },
   header: {
-    //marginTop:StatusBar.currentHeight,
     backgroundColor: '#ff8d48',
     alignItems: 'center',
     justifyContent: 'center',
     height:150
   },
   container: {
-    //flexDirection:"column",
     marginTop:150,
     backgroundColor: '#ffffff',
     alignItems: 'center',
