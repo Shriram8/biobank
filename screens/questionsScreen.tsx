@@ -177,7 +177,30 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
     );
   };
 
+{/* <View style={{backgroundColor:"#006bcc"}}>
+          <View style={styles.header}>
 
+          </View> 
+          <View style={styles.container}>
+             <View style={styles.headerTextLabel}>
+              <Text style={styles.headerTextStyle}>{processName}</Text>
+            </View>
+              {_data && (
+                <View style={{width:"100%",marginBottom:50,flexGrow: 1}}>
+                <FlatList
+                  style={{width:"90%",alignSelf: "center",marginBottom:50}}
+                  data={questions_data.processDetail.questions}
+                  keyExtractor={(item, index) => item.id}
+                  renderItem={renderResources}
+                  ListFooterComponent={() => 
+                  <Button  mode="contained" style={{width:200,height:50,marginBottom:50,backgroundColor:"#006bcc", justifyContent:"center",alignSelf:"center"}} onPress={() => console.log('Pressed')}>
+                  Submit
+                </Button>}
+                />
+                </View>
+              )}
+            </View> 
+      </View> */}
          
   return (  
     <>
@@ -185,31 +208,33 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         animated={true}
         backgroundColor="#006bcc"
         hidden={false} />
-        <View style={{backgroundColor:"#006bcc"}}>
+         <View style={{backgroundColor:"#ff8d48",width:"100%",height:"100%"}}>
           <View style={styles.header}>
-
+            <Image
+                style={{width:"100%",height:"100%",resizeMode: 'cover'}}
+               source={require('../Images/S-2-Autoclave.png')}
+            />
           </View>
-          <View style={styles.container}>
-            <View style={styles.headerTextLabel}>
-              <Text style={styles.headerTextStyle}>{processName}</Text>
-            </View>
-              {_data && (
-              <View style={{width:"100%",height:"70%",marginBottom:150}}>
+        <View style={{flex:1,backgroundColor:'white',borderTopLeftRadius:30,}}>
+          <View style={{justifyContent:'space-around',height:50,margin:10}}>  
+            <Text style={styles.headerTextStyle}>{processName}</Text>
+          </View>
+        <View style={{flex:1,alignItems:'center',justifyContent:'center',alignSelf:'stretch',marginVertical:10,marginTop:10}}>
+        {_data && (
                 <FlatList
-                  style={{width:"90%",alignSelf: "center",marginBottom:150}}
+                  style={{width:"90%",alignSelf: "center"}}
                   data={questions_data.processDetail.questions}
                   keyExtractor={(item, index) => item.id}
                   renderItem={renderResources}
-                />
-                
-              </View>
-              
-              )}
-                <Button  mode="contained" style={{width:200,height:50, alignSelf:"center"}} onPress={() => console.log('Pressed')}>
-                  Submit
-                </Button>
-            </View>
-      </View>
+                  />)}
+        </View>
+        <View style={{justifyContent:'space-around'}}>
+          <Button  mode="contained" style={{width:"100%",height:40,backgroundColor:"#006bcc", justifyContent:"center",alignSelf:"center"}} onPress={() => console.log('Pressed')}>
+            Completed
+          </Button> 
+        </View>
+        </View>
+        </View>
       </>
     );
 
@@ -229,18 +254,19 @@ const styles = StyleSheet.create({
     color:'#000000'
   },
   header: {
-    marginTop:StatusBar.currentHeight,
-    backgroundColor: '#006bcc',
+    //marginTop:StatusBar.currentHeight,
+    backgroundColor: '#ff8d48',
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
+    height:150
   },
   container: {
+    //flexDirection:"column",
     marginTop:150,
     backgroundColor: '#ffffff',
     alignItems: 'center',
     borderTopLeftRadius:30,
-    height:"100%"
+    height:"100%",
   },
   item: {
     marginBottom:15,
