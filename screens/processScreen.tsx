@@ -27,10 +27,10 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       
     }
     if(error){
-        console.log("Error",error);
+        //console.log("Error",error);
     }
     if(loading){
-        console.log("loading",loading);
+        //console.log("loading",loading);
     }
 
     React.useEffect(() => {
@@ -44,13 +44,13 @@ export default function processScreen({route, navigation}: {navigation: any, rou
         })
         .then((Result) => {
            data = Result.data; 
-           console.log("--",data)
+           //console.log("--",data)
             questionsCount =[];
             progress = []
+            colorValue =[]
                 for(var i= 0; i<data.appResource.process_details.length; i++){
                 questionsCount[data.appResource.process_details[i].id] = data.appResource.process_details[i].questions.length;
-                console.log("Questions Log----"+questionsCount);
-                colorValue[data.appResource.process_details[i].id] = "#ff8d48";
+                colorValue[data.appResource.process_details[i].id] = "#959595";
                 IconValue[data.appResource.process_details[i].id] = "minus-box";
                 apolloClient
                   .query({
@@ -66,18 +66,22 @@ export default function processScreen({route, navigation}: {navigation: any, rou
                   .then((Result) => {
                     try{
                       if(Result.data.processesData[0].id){
-                        console.log("Progress Log-------",Result.data.processesData);
-                        progress[Result.data.processesData[0].process_detail.id] = Result.data.processesData.length;  
+                        //console.log("Progress Log-------",Result.data);
+                        progress[Result.data.processesData[0].process_detail.id] = Result.data.processesData.length;
+                        colorValue[Result.data.processesData[0].process_detail.id] = "#ff8d48";
                       }
-                       if(checkIfAnswer_No(Result.data.processesData)){
-                         console.log("Get data");
+                      
+                      if(Result.data.processesData[0].check_editable){
+                        colorValue[Result.data.processesData[0].process_detail.id] = "#0fbb5b";
+                      }
+                      if(checkIfAnswer_No(Result.data.processesData)){
                          colorValue[Result.data.processesData[0].process_detail.id] = "#f40000";
-                       }
-                      console.log("My dictionary-11-"+progress);
+                      }
+                      //console.log("My dictionary-11-"+progress);
                       var t = !refresh;
-                      console.log(t);
+                      //console.log(t);
                       setRefresh(t);
-                      console.log("set state"+refresh);
+                      //console.log("set state"+refresh);
                       setval([...val,1]);
                       
                     }catch{
@@ -85,7 +89,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
                   })
                   
               }
-              console.log("My dictionary22--"+questionsCount);
+              //console.log("My dictionary22--"+questionsCount);
         })
         
 
@@ -94,13 +98,12 @@ export default function processScreen({route, navigation}: {navigation: any, rou
     }, [navigation]);
 
     useEffect(()=>{
-      console.log("set state---",val)
+      //console.log("set state---",val)
     },[val]);
 
     const checkIfAnswer_No = (data: string | any[])=>{
       for(var i = 0; i<data.length;i++){
-        if(data[i].Answer == "No"){
-          console.log("return red color");
+        if(data[i].Answer == "False"){
           return true
         }
       }
@@ -108,14 +111,14 @@ export default function processScreen({route, navigation}: {navigation: any, rou
     }
 
     const getProgressValue = (id: number) =>{
-      console.log("Progress bar",progress[id]/questionsCount[id])
+      //console.log("Progress bar",progress[id]/questionsCount[id])
       try{
         if(progress[id]){
           var value = progress[id]/questionsCount[id];
-          if(value == 1){
-            if(colorValue[id] != "#f40000")
-              colorValue[id] = "#0fbb5b"
-          }
+          // if(value == 1){
+          //   if(colorValue[id] != "#f40000")
+          //     colorValue[id] = "#0fbb5b"
+          // }
           return (progress[id]/questionsCount[id]);
         }
       }
@@ -133,14 +136,13 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       try{
         if(progress[id]){
           var value = progress[id]/questionsCount[id];
-          if(value == 1){
-            if(colorValue[id] != "#f40000"){
-              colorValue[id] = "#0fbb5b"
+            if(colorValue[id] == "#0fbb5b"){
               return "checkbox-marked";
             }
-              
-          }
-           return "alert-box"
+            else if(colorValue[id] == "#f40000")
+              return "alert-box"
+            else if(value != 1 )
+              return "minus-box"
         }
       }
       catch{
@@ -164,7 +166,6 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       
       <View style={{width:30,height:30,marginLeft:14}}>
       <MaterialCommunityIcons 
-      
         name={changeIconSet(item.id) }size={30} color={colorValue[item.id]}/>
       </View>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
@@ -178,7 +179,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       </TouchableOpacity>
       <View style={{height:10,marginTop:-11}}>
         <ProgressBar progress={getProgressValue(item.id)} color={colorValue[item.id]} style={{width:'92%',alignSelf:"center",
-        height:4,backgroundColor:"white",alignContent:"center"}} />
+        height:14,backgroundColor:"white",alignContent:"center"}} />
       </View>
       
     </View>
