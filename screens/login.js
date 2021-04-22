@@ -33,7 +33,7 @@ function login(props,navigation) {
           })
         }
           else{
-            console.log("failed");
+            //console.log("failed");
           }
         })
         .catch(() => { });

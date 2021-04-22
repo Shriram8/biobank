@@ -22,10 +22,10 @@ const initialState ={
   userId:''
 }
 const reducer = (state = initialState, action) =>{
-  console.log("Action type__",action.type);
+  //console.log("Action type__",action.type);
   switch (action.type) {
     case 'CHANGE_LOGIN':
-      console.log("Trying to change login",action.payload.userId);
+      //console.log("Trying to change login",action.payload.userId);
       return {
         isLoggedIn: true,
         userId: action.payload.userId,
@@ -58,7 +58,6 @@ export default function App() {
         <ApolloProvider client={apolloClient}>
           <SafeAreaProvider>
             <Navigation colorScheme={colorScheme}/>
-            {/* <LoginScreen/> */}
             <StatusBar />
           </SafeAreaProvider>
         </ApolloProvider>

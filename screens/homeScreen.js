@@ -19,13 +19,13 @@ function homeScreen(props,route){
     const { loading, error, refetch, data } = useQuery(GetSharedResource_OperationTheaters); 
     if(data){  
       _data = data.appResources.concat(data.operationTheaters);
-      console.log(date);
+      //console.log(date);
     }
     if(error){GetSharedResource_OperationTheaters
-        console.log("Error",error);
+        //console.log("Error",error);
     }
     if(loading){
-        console.log("loading",loading);
+        //console.log("loading",loading);
     }
 
     const renderResources = (item) => {
@@ -90,7 +90,7 @@ function homeScreen(props,route){
             </View>
           </View>
           <View style={{flex:1,backgroundColor:'white',borderTopLeftRadius:30,}}>
-            <View style={{justifyContent:'space-around',height:50,margin:10}}>  
+            <View style={{justifyContent:'space-around',height:50,marginLeft:22,marginTop:26}}>  
             <Text style={styles.headerTextStyle}>Todays Progress.</Text>
             </View>
             <View style={{flex:1,alignItems:'center',justifyContent:'center',alignSelf:'stretch',marginVertical:10,marginTop:10}}>

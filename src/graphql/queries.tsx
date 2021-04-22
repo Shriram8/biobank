@@ -53,6 +53,9 @@ query($processID:ID!,
         operation_theater:$operation_theater,
         Date:$Date}){
         id,
+        check_editable{
+          id
+        },
         question{
           id
         }
@@ -75,6 +78,9 @@ query( $operation_theater: ID!
         Date:$Date}){
         id,
         Answer,
+        check_editable{
+          id
+        },
         process_detail{
         id
       }
@@ -133,6 +139,9 @@ mutation(
     processesDatum{
       id,
       Answer,
+      check_editable{
+        id
+      },
       question{
         id
       },
@@ -143,6 +152,19 @@ mutation(
       process_detail{
         id
       }
+    }
+  }
+}
+`;
+
+export const SubmitCompleted =gql`
+mutation(
+  $processes_data:[ID]
+){
+  createCheckEditable(input:{data:{editable:true,processes_data:$processes_data}}){
+    checkEditable{
+      id,
+      editable
     }
   }
 }

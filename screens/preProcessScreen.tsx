@@ -21,19 +21,19 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         _data = [];
         for(var i = 0;i<2;i++){
             _data.push(data.appResources[i]);
-            console.log("-----------",userId);
+            //console.log("-----------",userId);
         }
         for(var i =0; i< data.operationTheater.surgeries.length;i++){
             _data.push(data.appResources[preSurgeryProcessID-1]);
         }
         _data.push(data.appResources[data.appResources.length-1]);
-        console.log("New Data", _data);
+       // console.log("New Data", _data);
     }
     if(error){
-        console.log("Error",error);
+        //console.log("Error",error);
     }
     if(loading){
-        console.log("loading",loading);
+        //console.log("loading",loading);
     }
     const jewelStyle = (item: number | undefined)=>{
       return (item == 1)?{backgroundColor:"white"}:{backgroundColor:"#b6b6b6"}
@@ -60,6 +60,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             userId: userId,
             resourceID: item.id,
             operationTheaterID: operationTheaterID,
+            resourceName: item.name,
           })}}>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
         {item.name}

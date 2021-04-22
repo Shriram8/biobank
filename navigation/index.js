@@ -29,7 +29,6 @@ const MainStack = createStackNavigator();
 const MainStackNavigator = (props) => {
   return (
     <MainStack.Navigator  initialRouteName="login">
-      {console.log("Logged in ----",props.isLoggedIn)}
       {!props.isLoggedIn?(<> 
        <MainStack.Screen name="login"
         component={LoginScreen} options={{headerShown:false}}/>
@@ -39,6 +38,7 @@ const MainStackNavigator = (props) => {
         options={{
           title: '',
           headerStyle: {
+            elevation: 0,
             backgroundColor: '#006bcc',
           },
           headerLeft: () => (
