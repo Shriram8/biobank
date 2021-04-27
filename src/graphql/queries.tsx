@@ -36,8 +36,9 @@ query($resourceID:ID!){
 
 export const GetQuestionDetails = gql`
 query($processID:ID!,
-      $operation_theater: ID!
-      $app_user: ID!
+      $operation_theater: ID!,
+      $app_user: ID!,
+      $instance: Int,
       $Date:String){
       processDetail(id: $processID){
         id,
@@ -51,6 +52,7 @@ query($processID:ID!,
         app_user:$app_user,
         process_detail:$processID,
         operation_theater:$operation_theater,
+        instance:$instance,
         Date:$Date}){
         id,
         check_editable{
@@ -70,11 +72,13 @@ export const GetAnswersProgress = gql`
 query( $operation_theater: ID!
     $app_user: ID!
     $processID: ID!
+    $instance: Int
     $Date:Date){
   processesData(where:{
         app_user:$app_user,
         process_detail:$processID,
         operation_theater:$operation_theater,
+        instance:$instance,
         Date:$Date}){
         id,
         Answer,
@@ -103,21 +107,30 @@ query{
 `;
 
 export const GetSurgeryDetails = gql`
-query($operationTheaterID:ID!){
+query($operation_theater:ID!,$app_user:ID!,$Date:Date){
   appResources(sort: "processOrder:asc",where:{resourceType:"OperationTheater" }){
         id,
         name,
   			processOrder,
   },
-  operationTheater(id:$operationTheaterID){
+	questions(where:{id:6}){
+    processes_data(where:{operation_theater:$operation_theater,app_user:$app_user,Date:$Date}){
       id,
-    	name,
-      surgeries{
+      Answer,
+      Date,
+      operation_theater{
         id
-      }
+      },
+    }
   }
 }
 `;
+
+// export const GetPreProcessDetails = gql`
+// query($operationTheaterID:ID!){
+  
+// }
+// `;
 
 export enum ENUM_RESOURCE_TYPE {
   SharedResource,
@@ -132,10 +145,11 @@ mutation(
     $process_detail: ID!
     $Date:Date
     $Answer:String
+    $instance:Int,
   ){
   createProcessesDatum(input: { data:{operation_theater:$operation_theater,
     Answer:$Answer,
-    question:$question,app_user:$app_user,process_detail:$process_detail,Date:$Date} }) {
+    question:$question,app_user:$app_user,process_detail:$process_detail,Date:$Date,instance:$instance} }) {
     processesDatum{
       id,
       Answer,
@@ -185,3 +199,5 @@ mutation(
   }
 }
 `;
+
+

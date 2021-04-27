@@ -32,7 +32,7 @@ var processDataId: any[];
 
 export default function questionsScreen({route,navigation}: {route: any,navigation: any}) {
 
-  const { userId,operationTheaterID,processID, processName } = route.params;
+  const { userId,operationTheaterID,processID, processName,instance } = route.params;
   //const [surgeryCount,setSurgeryCount] = React.useState('');
   //const [surgeon,setSergeon] = React.useState('');
   const [_data,setfetchData] = React.useState(false);
@@ -42,7 +42,8 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
             processID:processID,
             Date:new Date().toISOString().slice(0, 10),
             app_user:userId,
-            operation_theater:operationTheaterID
+            operation_theater:operationTheaterID,
+            instance:instance,
   }}); 
 
   useEffect(() => {
@@ -54,6 +55,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   React.useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {
         setDisableCompleted(true);
+        console.log("Instance-----",instance)
         apolloClient
         .query({
           query: GetQuestionDetails,
@@ -61,7 +63,8 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
             processID:processID,
             Date:new Date().toISOString().slice(0, 10),
             app_user:userId,
-            operation_theater:operationTheaterID
+            operation_theater:operationTheaterID,
+            instance:instance,
           },
           fetchPolicy: "network-only"
         })
@@ -118,6 +121,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
           process_detail: parseInt(processID),
           Date:new Date().toISOString().slice(0, 10),
           Answer: value,
+          instance: instance,
         }
       });
   };
@@ -134,8 +138,8 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   };
 
 
-  const sendQuery=(index: any,value: any)=>{
-    if(value == 0 || value == 1){
+  const sendQuery=(index: any,value: any,type:number)=>{
+    if(type){
       value = (value == 0 ? "True": "False")
     }
     if(temp.indexOf(index)!=-1){ 
@@ -168,7 +172,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
           enabled = {!disableButtons}
           style={{ height: 40,borderRadius:7,backgroundColor:"white",
           borderColor:"#959595",borderWidth:1,fontSize: 16,color: '#959595',fontWeight:"bold"}}
-          onValueChange={(itemValue, itemIndex) => sendQuery(item.id,itemValue)}
+          onValueChange={(itemValue, itemIndex) => sendQuery(item.id,itemValue,0)}
         >
         <Picker.Item label="0" value="0" />
         <Picker.Item label="01" value="1" />
@@ -188,7 +192,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
           enabled = {!disableButtons}
           style={{ height: 40,borderRadius:7,backgroundColor:"white",
           borderColor:"#959595",borderWidth:1,fontSize: 16,color: '#959595',fontWeight:"bold"}}
-          onValueChange={(itemValue, itemIndex) => sendQuery(item.id,itemValue)}
+          onValueChange={(itemValue, itemIndex) => sendQuery(item.id,itemValue,0)}
         >
         <Picker.Item label="Surgeon 1" value="Surgeon 1" />
         <Picker.Item label="Surgeon 2" value="Surgeon 2" />
@@ -204,7 +208,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       </>):(
        <RadioGroup 
           selectedIndex={dict[item.id] == "True"? 0 : (dict[item.id]=="False"?1:null)}
-          onSelect={(index: any, value: any) => sendQuery(item.id,index)}
+          onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
           style={{flexDirection:"row",justifyContent: 'space-between'}}
           >
           {radioItems.map((item, index) => {

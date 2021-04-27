@@ -14,33 +14,47 @@ const preSurgeryProcessCount = 2;
 const preSurgeryProcessID = 3; //id from order.
 export default function preProcessScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId, operationTheaterID, operationTheaterName } = route.params;
-    const { loading, error, data } = useQuery(GetSurgeryDetails,{variables:{
-            operationTheaterID:parseInt(operationTheaterID)
-          }}); 
-    if(data){
-        _data = [];
-        for(var i = 0;i<2;i++){
-            _data.push(data.appResources[i]);
-            //console.log("-----------",userId);
-        }
-        for(var i =0; i< data.operationTheater.surgeries.length;i++){
-            _data.push(data.appResources[preSurgeryProcessID-1]);
-        }
-        _data.push(data.appResources[data.appResources.length-1]);
-       // console.log("New Data", _data);
-    }
-    if(error){
-        //console.log("Error",error);
-    }
-    if(loading){
-        //console.log("loading",loading);
-    }
+    const [renderFlatlistData,setRenderFlatlistData] = useState();
+    
     const jewelStyle = (item: number | undefined)=>{
       return (item == 1)?{backgroundColor:"white"}:{backgroundColor:"#b6b6b6"}
     }
     
+    React.useEffect(() => {
+      const unsubscribe = navigation.addListener('focus', () => {
+        apolloClient
+        .query({
+          query: GetSurgeryDetails,
+          variables:{
+            operation_theater:parseInt(operationTheaterID),
+            Date:new Date().toISOString().slice(0, 10),
+            app_user:parseInt(userId),
+          },
+          fetchPolicy:"network-only"
+        })
+        .then((Result) => {
+          console.log(Result.data)
+          
+          _data = [];
+            for(var i = 0;i<2;i++){
+                _data.push(Result.data.appResources[i]);
+            }
+            try{
+              for(var i =0; i< Result.data.questions[0].processes_data[0].Answer;i++){
+                  _data.push(Result.data.appResources[preSurgeryProcessID-1]);
+              }
+            }catch{
 
-    const renderResources = ({item}: {item: any}) => {
+            }
+            _data.push(Result.data.appResources[Result.data.appResources.length-1]);
+             setRenderFlatlistData(Result.data);
+            })
+           
+      });
+      return unsubscribe;
+    }, [navigation]);
+
+    const renderResources = ({item,index}: {item: any,index:any}) => {
     return (
     <View style={styles.item}>
       <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",height:80}}>
@@ -61,9 +75,10 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             resourceID: item.id,
             operationTheaterID: operationTheaterID,
             resourceName: item.name,
+            instance: (item.id == 4 ?(index-1):1)
           })}}>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
-        {item.name}
+        {item.id == 4 ?item.name+"-0"+(index-1):item.name}
       </Text>
 
       <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
@@ -94,7 +109,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         animated={true}
         backgroundColor="#006bcc"
         hidden={false} />
-        {data && (
+        {renderFlatlistData && (
         <View style={{width:"100%",height:"100%",backgroundColor:"white"}}>
           <FlatList
             style={{width:"90%",alignSelf: "center",}}
@@ -103,7 +118,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             renderItem={renderResources}
           />
         </View>
-      )}
+        )}
       </>
     );
 }

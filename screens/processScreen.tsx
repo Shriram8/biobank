@@ -14,12 +14,11 @@ var questionsCount: any[] = [];
 var colorValue: any [] = [];
 var IconValue: any [] = [];
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
-    const { userId,operationTheaterID,resourceID, resourceName } = route.params;
+    const { userId,operationTheaterID,resourceID, resourceName,instance } = route.params;
     const[_progress,setProgress] = useState([]);
     const[_questionsCount,setQuestionsCount]=useState([]);
     let [refresh,setRefresh] = useState(true);
     let [val,setval]=useState([]);
-
     let { loading, error, data } = useQuery(GetProcessesDetails,{variables:{
         resourceID:parseInt(resourceID)
     }}); 
@@ -44,10 +43,12 @@ export default function processScreen({route, navigation}: {navigation: any, rou
         })
         .then((Result) => {
            data = Result.data; 
+           console.log("Instance is----",instance);
            //console.log("--",data)
             questionsCount =[];
             progress = []
             colorValue =[]
+            IconValue = []
                 for(var i= 0; i<data.appResource.process_details.length; i++){
                 questionsCount[data.appResource.process_details[i].id] = data.appResource.process_details[i].questions.length;
                 colorValue[data.appResource.process_details[i].id] = "#959595";
@@ -59,7 +60,8 @@ export default function processScreen({route, navigation}: {navigation: any, rou
                       processID:data.appResource.process_details[i].id,
                       Date:new Date().toISOString().slice(0, 10),
                       app_user:userId,
-                      operation_theater:operationTheaterID
+                      operation_theater:operationTheaterID,
+                      instance:instance
                     },
                     fetchPolicy: "network-only"
                   })
@@ -161,7 +163,8 @@ export default function processScreen({route, navigation}: {navigation: any, rou
             userId:userId,
             processID: item.id,
             processName: item.process_name,
-            operationTheaterID: operationTheaterID
+            operationTheaterID: operationTheaterID,
+            instance:instance,
           })}}>
       
       <View style={{width:30,height:30,marginLeft:14}}>
@@ -179,7 +182,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       </TouchableOpacity>
       <View style={{height:10,marginTop:-11}}>
         <ProgressBar progress={getProgressValue(item.id)} color={colorValue[item.id]} style={{width:'92%',alignSelf:"center",
-        height:14,backgroundColor:"white",alignContent:"center"}} />
+        height:4,backgroundColor:"white",alignContent:"center"}} />
       </View>
       
     </View>
