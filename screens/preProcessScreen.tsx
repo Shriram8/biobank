@@ -12,6 +12,7 @@ const apolloClient = client;
 let _data: any[] = [];
 const preSurgeryProcessCount = 2;
 const preSurgeryProcessID = 3; //id from order.
+let lock: boolean[] = [];
 export default function preProcessScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId, operationTheaterID, operationTheaterName } = route.params;
     const [renderFlatlistData,setRenderFlatlistData] = useState();
@@ -38,16 +39,25 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           _data = [];
             for(var i = 0;i<2;i++){
                 _data.push(Result.data.appResources[i]);
+                if(i==0){
+                  lock.push(false);
+                }
+                else{
+                  lock.push(true);
+                }
             }
             try{
               for(var i =0; i< Result.data.questions[0].processes_data[0].Answer;i++){
                   _data.push(Result.data.appResources[preSurgeryProcessID-1]);
+                  lock.push(true);
               }
             }catch{
 
             }
             _data.push(Result.data.appResources[Result.data.appResources.length-1]);
-             setRenderFlatlistData(Result.data);
+            lock.push(true);
+            console.log(lock);
+            setRenderFlatlistData(Result.data);
             })
            
       });
@@ -69,7 +79,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         </View>
       </View>
       <TouchableOpacity
-      style={[styles.appButtonContainer,{flex:1}]} onPress={()=>{
+      style={[styles.appButtonContainer]} disabled={lock[index]} onPress={()=>{
         navigation.navigate('processScreen',{
             userId: userId,
             resourceID: item.id,
@@ -77,13 +87,13 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             resourceName: item.name,
             instance: (item.id == 4 ?(index-1):1)
           })}}>
-      <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
+      <Text style={[styles.appButtonText,{flex:1, marginRight:14,},lock[index]?{color: "#959595",}:{}]}>
         {item.id == 4 ?item.name+"-0"+(index-1):item.name}
       </Text>
 
       <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
       <MaterialCommunityIcons
-      name='arrow-right' size={30}/>
+      name='arrow-right' size={30} style={lock[index]?{color: "#959595",}:{}}/>
       </View>
       </TouchableOpacity>
       </View>
@@ -94,7 +104,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       name='flag' size={30} color='#959595'/>
       </View>
 
-      <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
+      <Text style={[styles.appButtonText,{flex:1, marginRight:14,},{color: "#959595"}]}>
         {(item.processOrder == preSurgeryProcessCount)?"Cleared for start of day":
         ((item.processOrder == 3)?("Cleared for Surgery"):("Cleared for end of the day"))}
       </Text></View>):(<></>)}
@@ -157,6 +167,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
   },
   appButtonContainer: {
+    flex:1,
     flexDirection:"row",
     backgroundColor:"#ffffff",
     borderRadius:6,
