@@ -37,6 +37,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           console.log(Result.data)
           
           _data = [];
+          lock =[];
             for(var i = 0;i<2;i++){
                 _data.push(Result.data.appResources[i]);
                 if(i==0){
