@@ -3,8 +3,8 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetSurgeryDetails} from '../src/graphql/queries';
-import { Divider } from 'react-native-paper';
+import {GetSurgeryDetails,preProcessProgress} from '../src/graphql/queries';
+import { Divider,ProgressBar } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -13,10 +13,12 @@ let _data: any[] = [];
 const preSurgeryProcessCount = 2;
 const preSurgeryProcessID = 3; //id from order.
 let lock: boolean[] = [];
+var progress: any[] = [];
+var processCount: any[] = [];
 export default function preProcessScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId, operationTheaterID, operationTheaterName } = route.params;
     const [renderFlatlistData,setRenderFlatlistData] = useState();
-    
+    const [message,setMessage]=useState();
     const jewelStyle = (item: number | undefined)=>{
       return (item == 1)?{backgroundColor:"white"}:{backgroundColor:"#b6b6b6"}
     }
@@ -34,8 +36,6 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           fetchPolicy:"network-only"
         })
         .then((Result) => {
-          console.log(Result.data)
-          
           _data = [];
           lock =[];
             for(var i = 0;i<2;i++){
@@ -59,6 +59,43 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             lock.push(true);
             console.log(lock);
             setRenderFlatlistData(Result.data);
+            console.log("Data....",_data);
+            processCount =[];
+            progress = [];
+              for(var i= 0;i<_data.length;i++){
+                processCount[i]=_data[i].process_details.length;
+                progress[i] = 0;
+                console.log("Progress-----ssssss",progress[i]);
+                if(!lock[i]){
+                    for(var k=0;k<processCount[i];k++){
+                      var m = i;
+                      apolloClient
+                      .query({
+                        query: preProcessProgress,
+                        variables:{
+                          operation_theater:parseInt(operationTheaterID),
+                          Date:new Date().toISOString().slice(0, 10),
+                          app_user:parseInt(userId),
+                          instance: 1,
+                          process_detail: _data[i].process_details[k].id
+                        },
+                        fetchPolicy:"network-only"
+                      })
+                      .then((Result) => {
+                        console.log(Result.data);
+                        if(Result.data.processesData[0].check_editable){
+                          console.log("Progress-----",progress);
+
+                          progress[m] = progress[m]+1
+                          console.log("KKKKKKKK--",m);
+                        }
+                        console.log("Process---",processCount,"Progress---",progress)
+                      })
+                    }
+                    
+                }
+                console.log("IIIIIII",i);
+              }
             })
            
       });
@@ -97,6 +134,10 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       name='arrow-right' size={30} style={lock[index]?{color: "#959595",}:{}}/>
       </View>
       </TouchableOpacity>
+      <View style={{height:10,marginTop:-11}}>
+        <ProgressBar progress={1} color="green" style={{width:'92%',alignSelf:"center",
+        height:14,backgroundColor:"white",alignContent:"center"}} />
+      </View>
       </View>
       {(item.processOrder >= preSurgeryProcessCount)?(
       <View style={[styles.appFlagContainer,{flex:1}]} >
@@ -120,6 +161,18 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         animated={true}
         backgroundColor="#006bcc"
         hidden={false} />
+        <View style={{width:"100%",height:80,
+        backgroundColor:"#ff8d48",justifyContent:"center",alignItems:"center",marginBottom:25}}>  
+          <View style={{
+            flexDirection:"row",}}>
+          <MaterialCommunityIcons
+          name='minus-box' size={30} color='#ffffff'/>
+          <Text style={[styles.appButtonText,{flex:1, marginRight:14,color:"#ffffff",width:400,textAlignVertical:"center"}]}>
+            Ongoing start of the day
+          </Text>
+          </View>
+          
+        </View>
         {renderFlatlistData && (
         <View style={{width:"100%",height:"100%",backgroundColor:"white"}}>
           <FlatList

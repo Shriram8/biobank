@@ -9,6 +9,7 @@ export const GetUserDetails = gql`
       }
     }
 `;
+
 export const GetResourcesDetails = gql`
 query{
       appResources{
@@ -17,6 +18,7 @@ query{
       }
     }
 `;
+
 export const GetProcessesDetails = gql`
 query($resourceID:ID!){
       appResource(id: $resourceID){
@@ -106,12 +108,38 @@ query{
     }
 `;
 
+export const preProcessProgress = gql`
+query($operation_theater:ID!,$app_user:ID!,$Date:Date,$instance:Int,$process_detail:ID!){
+    processesData(where:{operation_theater:$operation_theater,
+      app_user:$app_user,Date:$Date,instance:$instance,
+      process_detail:$process_detail,check_editable_null:false}){
+      id,
+      Answer,
+    	Date,
+    	process_detail{
+        id
+      }
+    	check_editable{
+        id
+      }
+    	instance,
+    	operation_theater{
+        id,
+        name
+      }
+    }
+}
+`;
+
 export const GetSurgeryDetails = gql`
 query($operation_theater:ID!,$app_user:ID!,$Date:Date){
   appResources(sort: "processOrder:asc",where:{resourceType:"OperationTheater" }){
         id,
         name,
   			processOrder,
+        process_details{
+          id
+        }
   },
 	questions(where:{id:6}){
     processes_data(where:{operation_theater:$operation_theater,app_user:$app_user,Date:$Date}){

@@ -33,8 +33,6 @@ var processDataId: any[];
 export default function questionsScreen({route,navigation}: {route: any,navigation: any}) {
 
   const { userId,operationTheaterID,processID, processName,instance } = route.params;
-  //const [surgeryCount,setSurgeryCount] = React.useState('');
-  //const [surgeon,setSergeon] = React.useState('');
   const [_data,setfetchData] = React.useState(false);
   const [disbaleCompleted,setDisableCompleted] = React.useState(true);
   const [disableButtons,setDisableButtons] = React.useState(false);
@@ -55,7 +53,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   React.useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {
         setDisableCompleted(true);
-        console.log("Instance-----",instance)
+
         apolloClient
         .query({
           query: GetQuestionDetails,
@@ -151,10 +149,10 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   const [mutateEditableFunction, {data:SubmitEditableData }] = useMutation(SubmitCompleted);
 
   const submitEditable = ()=>{
-    setDisableButtons(true);
-    setDisableCompleted(true);
-    mutateEditableFunction({
-      variables: {
+      setDisableButtons(true);
+      setDisableCompleted(true);
+      mutateEditableFunction({
+      variables: { 
         processes_data: processDataId.map(Number),
       }
     });
@@ -168,7 +166,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       </Text>
       {item.type == "value_based"?(<>
         <Picker
-          //selectedValue={surgeryCount}
+          selectedValue={dict[item.id]}
           enabled = {!disableButtons}
           style={{ height: 40,borderRadius:7,backgroundColor:"white",
           borderColor:"#959595",borderWidth:1,fontSize: 16,color: '#959595',fontWeight:"bold"}}
@@ -188,7 +186,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       </>):(
         item.type == "surgeon"?(<>
         <Picker
-          //selectedValue={surgeon}
+          selectedValue={dict[item.id]}
           enabled = {!disableButtons}
           style={{ height: 40,borderRadius:7,backgroundColor:"white",
           borderColor:"#959595",borderWidth:1,fontSize: 16,color: '#959595',fontWeight:"bold"}}

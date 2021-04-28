@@ -15,8 +15,6 @@ var colorValue: any [] = [];
 var IconValue: any [] = [];
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId,operationTheaterID,resourceID, resourceName,instance } = route.params;
-    const[_progress,setProgress] = useState([]);
-    const[_questionsCount,setQuestionsCount]=useState([]);
     let [refresh,setRefresh] = useState(true);
     let [val,setval]=useState([]);
     let { loading, error, data } = useQuery(GetProcessesDetails,{variables:{
