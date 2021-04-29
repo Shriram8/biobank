@@ -53,7 +53,7 @@ const Navigation = (props) => {
           // labelStyle:{ alignSelf:'center'},
           itemStyle: {  },
         }}
-        initialRouteName="Home">
+        initialRouteName="History">
           <Drawer.Screen 
           headerShown={true}
           options={{

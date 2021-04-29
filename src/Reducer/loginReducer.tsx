@@ -1,16 +1,19 @@
-import { LOGIN_CHANGE } from '../Constants/login';
+import { LOGIN_CHANGE } from "../Constants/login";
 const initialState = {
-isLoggedIn: false
+  isLoggedIn: false,
 };
-const loginReducer = (state = initialState, action: { type: any; payload: any; }) => {
-switch(action.type) {
-case LOGIN_CHANGE:
-return {
-...state,
-isLoggedIn:action.payload
+const loginReducer = (
+  state = initialState,
+  action: { type: any; payload: any }
+) => {
+  switch (action.type) {
+    case LOGIN_CHANGE:
+      return {
+        ...state,
+        isLoggedIn: action.payload,
+      };
+    default:
+      return state;
+  }
 };
-default:
-return state;
-}
-}
 export default loginReducer;
