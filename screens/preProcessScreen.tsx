@@ -15,6 +15,7 @@ const preSurgeryProcessID = 3; //id from order.
 let lock: boolean[] = [];
 let moduleLock: boolean;
 var progress: any[] = [];
+var colorValue: any[] = [];
 var processCount: any[] = [];
 var netProgress: any[] = [];
 var _text: string;
@@ -36,6 +37,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         _text = "Ongoing start of the day";
         _data = [];
         lock =[];
+        colorValue = [];
         moduleLock = false;
         apolloClient
         .query({
@@ -73,6 +75,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             //console.log("Data---",_data);
             setRenderFlatlistData(Result.data);
               for(var i= 0;i<_data.length;i++){
+                colorValue[i] = "#ff8d48";
                 processCount[i]=_data[i].process_details.length;
                 progress[i] = 0;
                     for(var k=0;k<processCount[i];k++){
@@ -96,24 +99,32 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
                             var p = Result.data.processesData[0].instance;
                             progress[p] = progress[p]+1;
                             netProgress[p] = progress[p]/processCount[p];
-                            if(netProgress[p] == 1){
-                              if(p<preSurgeryProcessCount && !Result.data.processesData[0].check_editable.processCleared){
-                                moduleLock = true;
-                              }
+                            if(netProgress[p] == 1 && Result.data.processesData[0].check_editable.processCleared){
+                              // if(p<preSurgeryProcessCount ){
+                              //   moduleLock = true;
+                              // }
                               try{
                                 lock[p+1] = false;
-                                setUpdateMessage(prevCount => prevCount + 1);
                               }catch{
 
                               }
                             }else{
                               //console.log(netProgress[p]);
                             }
+                            if(netProgress[p]>0 && netProgress[p]<1){
+                              colorValue[p] = "#ff8d48" 
+                            }
+
+                            if(Result.data.processesData[0].check_editable.processCleared){
+                                colorValue[p] = "#0fbb5b" 
+                                setUpdateMessage(prevCount => prevCount + 1);
+                            }else {colorValue[p] = "#f40000"}
                             
                           }
                           //console.log("Process---",processCount,"Progress---",progress)
                           //console.log("net progress--",netProgress);
                           setRefresh(prevCount => prevCount + 1);
+                          console.log("----------Color--",colorValue);
                           //console.log("Refresh",refresh);
                         }
                         catch{
@@ -154,13 +165,14 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
     const changeColorSet=(id: number)=>{
       try{
         if(progress[id]){
-            if(netProgress[id] == 1){
-              return "#0fbb5b";
-            }
-            // else if(colorValue[id] == "#f40000")
-            //   return "alert-box"
-            else
-              return "#959595"
+            // if(netProgress[id] == 1){
+            //   return "#0fbb5b";
+            // }
+            // // else if(colorValue[id] == "#f40000")
+            // //   return "alert-box"
+            // else
+            //   return "#959595"
+            return colorValue[id];
         }
       }
       catch{
@@ -186,7 +198,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
               catch{
 
               }
-              return {color:"#0fbb5b"};
+              return {color:colorValue[index]};
             }
             // else if(colorValue[id] == "#f40000")
             //   return "alert-box"
@@ -237,7 +249,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       
       </View>
       <View style={{height:10,marginTop:-11,marginLeft:30}}>
-        <ProgressBar progress={netProgress[index]} color="green" style={{width:'92%',alignSelf:"center",
+        <ProgressBar progress={netProgress[index]} color={colorValue[index]} style={{width:'92%',alignSelf:"center",
         height:4,backgroundColor:"white",alignContent:"center"}} />
       </View>
 
