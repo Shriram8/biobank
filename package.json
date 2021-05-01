@@ -36,6 +36,7 @@
     "radio-buttons-react-native": "^1.0.4",
     "radio-buttons-react-native-expo": "^1.0.0",
     "react": "16.13.1",
+    "react-addons-update": "^15.6.3",
     "react-dom": "16.13.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
     "react-native-dropdown-picker": "^4.0.9",

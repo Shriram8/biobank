@@ -29,13 +29,14 @@ var dictId:string[] = [];
 var temp = new Array();
 var questionCount: number;
 var processDataId: any[];
-
+var _processCleared: boolean;
 export default function questionsScreen({route,navigation}: {route: any,navigation: any}) {
 
   const { userId,operationTheaterID,processID, processName,instance } = route.params;
   const [_data,setfetchData] = React.useState(false);
   const [disbaleCompleted,setDisableCompleted] = React.useState(true);
   const [disableButtons,setDisableButtons] = React.useState(false);
+  
   let { loading, error, data:questions_data ,refetch} = useQuery(GetQuestionDetails,{variables:{
             processID:processID,
             Date:new Date().toISOString().slice(0, 10),
@@ -53,7 +54,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   React.useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {
         setDisableCompleted(true);
-
+        _processCleared = true;
         apolloClient
         .query({
           query: GetQuestionDetails,
@@ -139,6 +140,9 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   const sendQuery=(index: any,value: any,type:number)=>{
     if(type){
       value = (value == 0 ? "True": "False")
+      if(value == "False"){
+        _processCleared = false;
+      }
     }
     if(temp.indexOf(index)!=-1){ 
       updateQuery(dictId[index],value);
@@ -154,6 +158,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       mutateEditableFunction({
       variables: { 
         processes_data: processDataId.map(Number),
+        processCleared:_processCleared,
       }
     });
   }

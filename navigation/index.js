@@ -52,12 +52,13 @@ const Navigation = (props) => {
           activeTintColor: '#010101',
           // labelStyle:{ alignSelf:'center'},
           itemStyle: {  },
+          headerShown:false
         }}
         initialRouteName="Home">
           <Drawer.Screen 
-          headerShown={true}
+          headerShown={false}
           options={{
-            headerShown:true,
+            headerShown:false,
             drawerIcon:(()=><MaterialCommunityIcons  name={"home"}  size={30} color="#010101"/>),
             headerRight: () => (
                 <Button
@@ -124,6 +125,7 @@ const MainStackNavigator = (props) => {
             name="homeScreen"
             component={HomeScreen}
             options={{
+              headerShown:true,
               title: "",
               headerStyle: {
                 elevation: 0,

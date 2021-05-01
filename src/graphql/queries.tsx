@@ -120,7 +120,8 @@ query($operation_theater:ID!,$app_user:ID!,$Date:Date,$instance:Int,$process_det
         id
       }
     	check_editable{
-        id
+        id,
+        processCleared,
       }
     	instance,
     	operation_theater{
@@ -202,11 +203,13 @@ mutation(
 export const SubmitCompleted =gql`
 mutation(
   $processes_data:[ID]
+  $processCleared:Boolean
 ){
-  createCheckEditable(input:{data:{editable:true,processes_data:$processes_data}}){
+  createCheckEditable(input:{data:{editable:true,processes_data:$processes_data,processCleared:$processCleared}}){
     checkEditable{
       id,
-      editable
+      editable,
+      processCleared,
     }
   }
 }
