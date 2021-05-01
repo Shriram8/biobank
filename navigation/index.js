@@ -23,7 +23,7 @@ import {
 } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import * as React from "react";
-import {    ColorSchemeName, Image, Text, View } from "react-native";
+import { ColorSchemeName, Image, Text, View } from "react-native";
 import LoginScreen from "../screens/login";
 import HomeScreen from "../screens/homeScreen";
 import ProcessScreen from "../screens/processScreen";
@@ -38,10 +38,10 @@ import { Button } from "react-native-paper";
 import Alerts from "../screens/Alerts";
 import HistoryScreen from "../screens/HistoryScreen";
 import Logout from "../screens/Logout";
- 
- 
+import Users from "../screens/Users";
+
 const Drawer = createDrawerNavigator();
-const Navigation = (props) => { 
+const Navigation = (props) => {
   return (
     <NavigationContainer>
       {/* <MainStackNavigator isLoggedIn={props.isLoggedIn}  /> */}
@@ -62,7 +62,6 @@ const Navigation = (props) => {
             drawerIcon:(()=><MaterialCommunityIcons  name={"home"}  size={30} color="#010101"/>),
             headerRight: () => (
                 <Button
-                  
                   icon={() => (
                     <MaterialCommunityIcons
                       name="bell"
@@ -71,31 +70,69 @@ const Navigation = (props) => {
                     />
                   )}
                 ></Button>
-              )
-          }}
-          name="Home" component={MainStackNavigator} />
-          <Drawer.Screen 
-          headerShown={true}
-          options={{
-            headerShown:true,
-            drawerIcon:(()=><MaterialCommunityIcons  name={"alert-box"}  size={30} color="#010101"/>)
-          }}
-          name="Alerts" component={Alerts} />
-          <Drawer.Screen 
-          headerShown={true}
-          options={{
-            headerShown:true,
-            drawerIcon:(()=><Image style={{height:30,width:30 }} source={require("./../assets/screenIcons/history.svg")} />) 
-          }}
-          name="History" component={HistoryScreen} />
-          <Drawer.Screen 
-          headerShown={true}
-          options={{
-            headerShown:true,
-            drawerIcon:(()=><Image style={{height:30,width:30 }} source={require("./../assets/screenIcons/logout.svg")} />) 
-          }}
-          name="Logout" component={Logout} />
-          
+              ),
+            }}
+            name="Home"
+            component={MainStackNavigator}
+          />
+          <Drawer.Screen
+            headerShown={true}
+            options={{
+              headerShown: true,
+              drawerIcon: () => (
+                <MaterialCommunityIcons
+                  name={"alert-box"}
+                  size={30}
+                  color="#010101"
+                />
+              ),
+            }}
+            name="Alerts"
+            component={Alerts}
+          />
+          <Drawer.Screen
+            headerShown={true}
+            options={{
+              headerShown: true,
+              drawerIcon: () => (
+                <Image
+                  style={{ height: 30, width: 30 }}
+                  source={require("./../assets/screenIcons/history.svg")}
+                />
+              ),
+            }}
+            name="History"
+            component={HistoryScreen}
+          />
+          <Drawer.Screen
+            headerShown={true}
+            options={{
+              headerShown: true,
+              drawerIcon: () => (
+                <MaterialCommunityIcons
+                  name={"account-box"}
+                  size={30}
+                  color="#010101"
+                />
+              ),
+            }}
+            name="Users"
+            component={Users}
+          />
+          <Drawer.Screen
+            headerShown={true}
+            options={{
+              headerShown: true,
+              drawerIcon: () => (
+                <Image
+                  style={{ height: 30, width: 30 }}
+                  source={require("./../assets/screenIcons/logout.svg")}
+                />
+              ),
+            }}
+            name="Logout"
+            component={Logout}
+          />
         </Drawer.Navigator>
       ) : (
         <MainStack.Navigator initialRouteName="login">
