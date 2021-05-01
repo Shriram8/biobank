@@ -7,19 +7,47 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  Linking,
 } from "react-native";
-import { Button, Modal, Portal } from "react-native-paper";
+import { Button, Modal, Portal, Snackbar } from "react-native-paper";
 import { GET_ALL_OTS } from "../src/graphql/AlertQueries";
 import { getDate, getPrevSevenDays } from "../utility/utility";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import GenerateHistoryCSV from "./HistoryComponents/GenerateHistoryCSV";
+
+import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system';
+import * as Permissions from 'expo-permissions';
+import EmptyComponent from "../src/Components/EmptyComponent";
+
+
+//To create a directory in expo
+// const createDirectory =async  ()=>{
+//     try {
+//         let folder = FileSystem.documentDirectory +"testfolder2"
+//         await FileSystem.makeDirectoryAsync(folder)
+        // var fi = await FileSystem.getInfoAsync(folder);
+
+        // console.log("==================================",JSON.stringify(fi))
+        // var fi = await FileSystem.getInfoAsync(folder);
+  
+//         alert(JSON.stringify(fi))
+//       } catch(error) {
+//         alert(error)
+//       }
+// }
 const HistoryScreen = () => {
   //ID for current selected operation Theatre
   const [selectedOT, setSelectedOT] = useState("");
   //Date -when selected prev 7 dates are displayed along with this date
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date()); 
+  const [datePrevIndex,setDatePrevIndex] = useState(0)
+  const [fileDownloadControl,setFileDownloadControl] = useState(false)
   //Modal to render loader while fetching OT data and converting to csv
   const [modalVisible,setModalVisible] = useState(false)
+  //Snack bar related states
+  const [snackText,setsnackText ] = useState("")
+  const  [snackVisible,setsnackVisible] = useState(false)
   const { data, error, loading } = useQuery(GET_ALL_OTS, {
     fetchPolicy: "network-only",
   });
@@ -57,11 +85,36 @@ const HistoryScreen = () => {
   const hidePortal=()=>{
       setModalVisible(false)
   }
+
+  const hideSnackBar = ()=>{
+      setsnackVisible(false)
+  }
+  //Function to dowload file to local storage
+  const saveFile = async (fileName, data) => {
+    
+    const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+    if (status === "granted") {
+        //await createDirectory()
+        let fileUri = FileSystem.documentDirectory + fileName; 
+        await FileSystem.writeAsStringAsync(fileUri, data, { encoding: FileSystem.EncodingType.UTF8 }) 
+        const asset = await MediaLibrary.createAssetAsync(fileUri)
+        var fi = await FileSystem.getInfoAsync(fileUri);
+        // await MediaLibrary.saveToLibraryAsync(fileUri, asset, false).then((res)=>{
+        //      console.log("[[[[[[[[Response]]]]]]]]]", res)
+        // }).catch((err)=>{
+        //     console.log("[[[[[[[[//////////]]]]]]]]]", err)
+        // })
+        hidePortal();
+        setsnackVisible(true)
+        setsnackText("Your OT details download is ready.")
+        //Linking.openURL(fileUri)
+    }
+}
   //Component to render Operation theatres in Flatlist
   const renderOts = ({ item, index }) => {
     return (
       <View
-        key={"OTS_" + index}
+        key={"OTS_"+index}
         style={[
           styles.headerItem,
           { backgroundColor: selectedOT === item.id ? "#006bcc" : "#959595" },
@@ -74,22 +127,25 @@ const HistoryScreen = () => {
           }}
         >
            
-          <Text>{item.name}</Text> 
+          <Text style={{color:"#fff"}}>{item.name}</Text> 
         </TouchableOpacity>
       </View>
     );
   };
   const renderDates = ({ item, index }) => {
     return (
-      <View style={styles.dateContainer}>
+      <View key={"dates_"+index} style={styles.dateContainer}>
         <Text>{getDate(getPrevSevenDays(selectedDate, item))}</Text>
         <TouchableOpacity
           onPress={() => {
-              setModalVisible(true)
-            console.log(
-              "download csv file",
-              getPrevSevenDays(selectedDate, item)
-            );
+            setModalVisible(true)
+            setFileDownloadControl(true)
+            setDatePrevIndex(index)
+            //   saveFile("Text1.txt","Hello, hi , 123")
+            // console.log(
+            //   "download csv file",
+            //   getPrevSevenDays(selectedDate, item)
+            //);
           }}
         >
           <AntDesign name="download" size={24} color={"#959595"} />
@@ -132,7 +188,7 @@ const HistoryScreen = () => {
               </View>
             </>
           ) : (
-            <Text>Empty Components </Text>
+            <EmptyComponent title="No Operation Theatres!"/>
           )}
         </>
       )}
@@ -147,19 +203,28 @@ const HistoryScreen = () => {
         />
       )}
      {modalVisible&&(
-          <Portal
-          visible={modalVisible}
-    
-          >
+          <Portal >
          <View style={{flex:1,backgroundColor:"rgba(0,0,0,0.6)",marginTop:26,alignItems:'center',justifyContent:'center'}}>
          <GenerateHistoryCSV
+         setFileDownloadControl={setFileDownloadControl}
+         fileDownloadControl={fileDownloadControl}
+         setsnackText={setsnackText}
+         setsnackVisible={setsnackVisible}
+         saveFile={saveFile}
          selectedOT={selectedOT}
-         selectedDate={selectedDate}
+         selectedDate={getPrevSevenDays(selectedDate,datePrevIndex)}
          hidePortal={hidePortal}
          />
          </View>
           </Portal>
      )}
+     <Snackbar
+     duration={1000}
+     onDismiss={hideSnackBar}
+     visible={snackVisible}
+     >
+         {snackText}
+     </Snackbar>
     </View>
   );
 };
@@ -187,6 +252,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    elevation:2
   },
   dateInput: {
     flexDirection: "row",

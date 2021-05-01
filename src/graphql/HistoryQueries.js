@@ -1,35 +1,32 @@
 import { gql } from "@apollo/client";
-export const GET_OT_PROCESS_DETAILS = gql`
+export const GET_OT_PROCESS_DATA = gql`
 query($otID:ID!,$date:String){
     operationTheaters(where:{id:$otID}){
-      id
+      
       name
-      processes_data( where: {Date:$date} ){
-        id
+      processes_data( where: {Date:$date} sort:"created_at:ASC" ){
+         
+       
+        process_detail{
+          process_name 
+        }
         Date
         question{
-          id
-          Question
-          type
-          process_detail{
-            id
-            
-            questions{
-              id
-              Question
-            }
-          }
-         }
+           
+            Question
+            type 
+           }
+        
+       
        app_user{
-          id
           name
           userType
         }
+        Answer
         check_editable{
-          id
-          editable
+           editable
         }
       }
     }
   }
-`
+`;
