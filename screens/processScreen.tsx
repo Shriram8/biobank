@@ -16,22 +16,16 @@ var IconValue: any [] = [];
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId,operationTheaterID,resourceID, resourceName,instance } = route.params;
     let [refresh,setRefresh] = useState(true);
+    const [renderFlatlistData,setRenderFlatlistData] = useState();
     let [val,setval]=useState([]);
-    let { loading, error, data } = useQuery(GetProcessesDetails,{variables:{
-        resourceID:parseInt(resourceID)
-    }}); 
-    if(data){
-      
-    }
-    if(error){
-        //console.log("Error",error);
-    }
-    if(loading){
-        //console.log("loading",loading);
-    }
+     
 
     React.useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {
+        questionsCount =[];
+        progress = []
+        colorValue =[]
+        IconValue = []
         apolloClient
         .query({
           query: GetProcessesDetails,
@@ -40,13 +34,10 @@ export default function processScreen({route, navigation}: {navigation: any, rou
           }
         })
         .then((Result) => {
-           data = Result.data; 
+           var data = Result.data; 
            console.log("Instance is----",instance);
            //console.log("--",data)
-            questionsCount =[];
-            progress = []
-            colorValue =[]
-            IconValue = []
+          setRenderFlatlistData(Result.data);
                 for(var i= 0; i<data.appResource.process_details.length; i++){
                 questionsCount[data.appResource.process_details[i].id] = data.appResource.process_details[i].questions.length;
                 colorValue[data.appResource.process_details[i].id] = "#959595";
@@ -128,9 +119,6 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       return 0; 
     }
 
-    useEffect(() => {
-
-    },[data]);
 
     const changeIconSet=(id: number)=>{
       try{
@@ -194,12 +182,12 @@ export default function processScreen({route, navigation}: {navigation: any, rou
         animated={true}
         backgroundColor="#006bcc"
         hidden={false} />
-        {data && (
+        {renderFlatlistData && (
         <View style={{width:"100%",height:"100%",backgroundColor:"white"}}>
           <FlatList
             extraData = {refresh}
             style={{width:"90%",alignSelf: "center",}}
-            data={data.appResource.process_details}
+            data={renderFlatlistData.appResource.process_details}
             keyExtractor={(item, index) => item.id}
             renderItem={renderResources}
           />
