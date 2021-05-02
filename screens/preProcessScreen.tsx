@@ -4,7 +4,7 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
 import {GetSurgeryDetails,preProcessProgress} from '../src/graphql/queries';
-import { Divider,ProgressBar } from 'react-native-paper';
+import { ProgressBar } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -13,18 +13,37 @@ let _data: any[] = [];
 const preSurgeryProcessCount = 2;
 const preSurgeryProcessID = 3; //id from order.
 let lock: boolean[] = [];
+let moduleLock: boolean;
 var progress: any[] = [];
+var colorValue: any[] = [];
 var processCount: any[] = [];
+var netProgress: any[] = [];
+var _text: string;
+var red = "#f40000";
+var green = "#0fbb5b";
+var orange = "#ff8d48";
+
 export default function preProcessScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId, operationTheaterID, operationTheaterName } = route.params;
     const [renderFlatlistData,setRenderFlatlistData] = useState();
-    const [message,setMessage]=useState();
+    const [message,setMessage]=useState(null);
+    const [refresh,setRefresh] = useState(0);
+    const [updateMessage,setUpdateMessage] = useState(0);
+    const [headerColor,setHeaderColor] = useState("")
     const jewelStyle = (item: number | undefined)=>{
       return (item == 1)?{backgroundColor:"white"}:{backgroundColor:"#b6b6b6"}
     }
-    
+
     React.useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {
+        processCount =[];
+        progress = [];
+        netProgress = [];
+        _text = "Ongoing start of the day";
+        _data = [];
+        lock =[];
+        colorValue = [];
+        moduleLock = false;
         apolloClient
         .query({
           query: GetSurgeryDetails,
@@ -36,10 +55,10 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           fetchPolicy:"network-only"
         })
         .then((Result) => {
-          _data = [];
-          lock =[];
+          
             for(var i = 0;i<2;i++){
                 _data.push(Result.data.appResources[i]);
+                
                 if(i==0){
                   lock.push(false);
                 }
@@ -49,26 +68,22 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             }
             try{
               for(var i =0; i< Result.data.questions[0].processes_data[0].Answer;i++){
-                  _data.push(Result.data.appResources[preSurgeryProcessID-1]);
-                  lock.push(true);
+                
+                _data.push(Result.data.appResources[preSurgeryProcessID-1]);
+                lock.push(true);
               }
             }catch{
 
             }
             _data.push(Result.data.appResources[Result.data.appResources.length-1]);
             lock.push(true);
-            console.log(lock);
+            //console.log("Data---",_data);
             setRenderFlatlistData(Result.data);
-            console.log("Data....",_data);
-            processCount =[];
-            progress = [];
               for(var i= 0;i<_data.length;i++){
+                colorValue[i] = "#ff8d48";
                 processCount[i]=_data[i].process_details.length;
                 progress[i] = 0;
-                console.log("Progress-----ssssss",progress[i]);
-                if(!lock[i]){
                     for(var k=0;k<processCount[i];k++){
-                      var m = i;
                       apolloClient
                       .query({
                         query: preProcessProgress,
@@ -76,25 +91,59 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
                           operation_theater:parseInt(operationTheaterID),
                           Date:new Date().toISOString().slice(0, 10),
                           app_user:parseInt(userId),
-                          instance: 1,
+                          instance: i,
                           process_detail: _data[i].process_details[k].id
                         },
                         fetchPolicy:"network-only"
                       })
                       .then((Result) => {
-                        console.log(Result.data);
-                        if(Result.data.processesData[0].check_editable){
-                          console.log("Progress-----",progress);
+                        //console.log("Result----data",Result);
+                        try{
+                          if(Result.data.processesData[0].check_editable){
+                            console.log("instance-----",Result.data.processesData[0]);
+                            var p = Result.data.processesData[0].instance;
+                            progress[p] = progress[p]+1;
+                            netProgress[p] = progress[p]/processCount[p];
+                            if(netProgress[p] == 1 ){
+                              if(p<preSurgeryProcessCount && !Result.data.processesData[0].check_editable.processCleared){
+                                moduleLock = true;
+                                console.log("Module Lock",moduleLock,"Process instance",p)
+                              }
+                              try{
+                                if(moduleLock == true && p == preSurgeryProcessCount-1){
+                                  console.log("MMMMMMM",)
+                                  lock[preSurgeryProcessCount] = true;
+                                  setRefresh(prevCount => prevCount + 1);
+                                }
+                                else lock[p+1] = false;
+                              }catch{
 
-                          progress[m] = progress[m]+1
-                          console.log("KKKKKKKK--",m);
+                              }
+                            }else{
+                              //console.log(netProgress[p]);
+                            }
+                            if(netProgress[p]>0 && netProgress[p]<1){
+                              colorValue[p] = "#ff8d48" 
+                            }
+
+                            if(Result.data.processesData[0].check_editable.processCleared){
+                                colorValue[p] = "#0fbb5b" 
+                                setUpdateMessage(prevCount => prevCount + 1);
+                            }else {colorValue[p] = "#f40000"}
+                            
+                          }
+                          //console.log("Process---",processCount,"Progress---",progress)
+                          //console.log("net progress--",netProgress);
+                          setRefresh(prevCount => prevCount + 1);
+                          //console.log("----------Color--",colorValue);
+                          //console.log("Refresh",refresh);
                         }
-                        console.log("Process---",processCount,"Progress---",progress)
+                        catch{
+
+                        }
+                        
                       })
-                    }
-                    
-                }
-                console.log("IIIIIII",i);
+                    }  
               }
             })
            
@@ -102,28 +151,114 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       return unsubscribe;
     }, [navigation]);
 
+    React.useEffect(()=>{
+      setMessage(_text)
+    },[updateMessage]);
+
+    const changeIconSet=(id: number)=>{
+      try{
+        if(progress[id]){
+            if(netProgress[id] == 1){
+              return "checkbox-marked";
+            }
+            // else if(colorValue[id] == "#f40000")
+            //   return "alert-box"
+            else
+              return "minus-box"
+        }
+      }
+      catch{
+        return "minus-box"
+      }
+      return "minus-box"
+    }
+
+    const changeColorSet=(id: number)=>{
+      try{
+        if(progress[id]){
+            return colorValue[id];
+        }
+      }
+      catch{
+        return "#959595"
+      }
+      return "#959595"
+    }
+
+    const getText = (processOrder: number,id: number,index: number)=>{
+    return (processOrder == preSurgeryProcessCount)?"Cleared for start of day":
+    ((processOrder == 3)?("Cleared for Surgery"+(id == 4 ?"-0"+(index-1):"")):("Cleared for end of the day"))
+    }
+
+    const changeColorSetText=(id: number)=>{
+      try{
+        if(progress[id]){
+            if(moduleLock && id<preSurgeryProcessCount){
+              return "#f40000"
+            }
+            return colorValue[id];
+        }
+      }
+      catch{
+        return "#959595"
+      }
+      return "#959595"
+    }
+
+    const changeColorStyle=(processOrder: number,id: number,index: number)=>{
+      try{
+        if(progress[index]){
+            if(netProgress[index] == 1){
+              try{
+                if(netProgress[index+1]!= 1){
+                 _text = getText(processOrder,id,index);
+                }
+              }
+              catch{
+
+              }
+              if(moduleLock && index<preSurgeryProcessCount){
+                _text = "Not - "+_text;
+                return {color:"#f40000"};
+              }
+              return {color:colorValue[index]};
+            }
+            // else if(colorValue[id] == "#f40000")
+            //   return "alert-box"
+            else
+              return {color:"#959595"}
+        }
+      }
+      catch{
+        return {color:"#959595"}
+      }
+      return {color:"#959595"}
+    }
+
+    
+
     const renderResources = ({item,index}: {item: any,index:any}) => {
     return (
     <View style={styles.item}>
       <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",height:80}}>
-      <View style={{height:"100%", justifyContent:"center",alignItems:"center"}}>
-        <View style={[{width:2,height:40},jewelStyle(item.processOrder)]}>
+        <View style={{height:"100%", justifyContent:"center",alignItems:"center"}}>
+          <View style={[{width:2,height:40},jewelStyle(item.processOrder)]}>
+          </View>
+          <View style={{width:30,height:30}}>
+          <MaterialCommunityIcons
+          name={changeIconSet(index)} size={30} color={changeColorSet(index)}/>
+          </View>
+          <View style={{width:2,height:40,backgroundColor:"#b6b6b6"}}>
+          </View>
         </View>
-        <View style={{width:30,height:30}}>
-        <MaterialCommunityIcons
-        name='minus-box' size={30} color='#959595'/>
-        </View>
-        <View style={{width:2,height:40,backgroundColor:"#b6b6b6"}}>
-        </View>
-      </View>
       <TouchableOpacity
-      style={[styles.appButtonContainer]} disabled={lock[index]} onPress={()=>{
+      style={[styles.appButtonContainer,{flex:1,zIndex:1}]} disabled={lock[index]} onPress={()=>{
         navigation.navigate('processScreen',{
             userId: userId,
             resourceID: item.id,
             operationTheaterID: operationTheaterID,
             resourceName: item.name,
-            instance: (item.id == 4 ?(index-1):1)
+            instance: parseInt(index),
           })}}>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,},lock[index]?{color: "#959595",}:{}]}>
         {item.id == 4 ?item.name+"-0"+(index-1):item.name}
@@ -134,21 +269,21 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       name='arrow-right' size={30} style={lock[index]?{color: "#959595",}:{}}/>
       </View>
       </TouchableOpacity>
-      <View style={{height:10,marginTop:-11}}>
-        <ProgressBar progress={1} color="green" style={{width:'92%',alignSelf:"center",
-        height:14,backgroundColor:"white",alignContent:"center"}} />
+      
       </View>
+      <View style={{height:10,marginTop:-11,marginLeft:30}}>
+        <ProgressBar progress={netProgress[index]} color={colorValue[index]} style={{width:'92%',alignSelf:"center",
+        height:4,backgroundColor:"white",alignContent:"center"}} />
       </View>
+
       {(item.processOrder >= preSurgeryProcessCount)?(
       <View style={[styles.appFlagContainer,{flex:1}]} >
       <View style={{width:30,height:30}}>
       <MaterialCommunityIcons
-      name='flag' size={30} color='#959595'/>
+      name='flag' size={30} color={changeColorSetText(index)}/>
       </View>
-
-      <Text style={[styles.appButtonText,{flex:1, marginRight:14,},{color: "#959595"}]}>
-        {(item.processOrder == preSurgeryProcessCount)?"Cleared for start of day":
-        ((item.processOrder == 3)?("Cleared for Surgery"):("Cleared for end of the day"))}
+      <Text style={[styles.appButtonText,{flex:1, marginRight:14,},changeColorStyle(item.processOrder,item.id,index)]}>
+        {getText(item.processOrder,item.id,index)}
       </Text></View>):(<></>)}
     </View>
     );
@@ -162,13 +297,13 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         backgroundColor="#006bcc"
         hidden={false} />
         <View style={{width:"100%",height:80,
-        backgroundColor:"#ff8d48",justifyContent:"center",alignItems:"center",marginBottom:25}}>  
+        backgroundColor:"#ff8d48",justifyContent:"center",alignItems:"center",}}>  
           <View style={{
             flexDirection:"row",}}>
           <MaterialCommunityIcons
           name='minus-box' size={30} color='#ffffff'/>
           <Text style={[styles.appButtonText,{flex:1, marginRight:14,color:"#ffffff",width:400,textAlignVertical:"center"}]}>
-            Ongoing start of the day
+            {message}
           </Text>
           </View>
           
@@ -176,6 +311,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         {renderFlatlistData && (
         <View style={{width:"100%",height:"100%",backgroundColor:"white"}}>
           <FlatList
+            extraData = {refresh}
             style={{width:"90%",alignSelf: "center",}}
             data={_data}
             keyExtractor={(item, index) => index.toString()}

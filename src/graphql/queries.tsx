@@ -169,8 +169,9 @@ export const preProcessProgress = gql`
       process_detail {
         id
       }
-      check_editable {
-        id
+    	check_editable{
+        id,
+        processCleared,
       }
       instance
       operation_theater {
@@ -268,17 +269,18 @@ export const SubmitAnswerForQuestion = gql`
   }
 `;
 
-export const SubmitCompleted = gql`
-  mutation($processes_data: [ID]) {
-    createCheckEditable(
-      input: { data: { editable: true, processes_data: $processes_data } }
-    ) {
-      checkEditable {
-        id
-        editable
-      }
+export const SubmitCompleted =gql`
+mutation(
+  $processes_data:[ID], $processCleared:Boolean
+){
+  createCheckEditable(input:{data:{editable:true,processes_data:$processes_data,processCleared:$processCleared}}){
+    checkEditable{
+      id,
+      editable,
+      processCleared,
     }
   }
+}
 `;
 
 export const UpdateSubmittedAnswerForQuestion = gql`

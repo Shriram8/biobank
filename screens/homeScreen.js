@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusBar,View, 
   TextInput, TouchableOpacity ,Image, } from 'react-native';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, gql,useLazyQuery } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
 import {GetResourcesDetails} from '../src/graphql/queries';
-import {GetSharedResource_OperationTheaters,ENUM_RESOURCE_TYPE} from '../src/graphql/queries';
+import {GetSharedResource_OperationTheaters,ENUM_RESOURCE_TYPE,GetSurgeryDetails} from '../src/graphql/queries';
 import { Divider, Button } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -15,22 +15,81 @@ const apolloClient = client;
 const date = new Date();
 var location = "Coles Road";
 var _data;
+var _operationTheaterData = [];
+var message = [];
 function homeScreen(props,route){
-    const { loading, error, refetch, data } = useQuery(GetSharedResource_OperationTheaters); 
-    if(data){  
-      _data = data.appResources.concat(data.operationTheaters);
-      //console.log(date);
-    }
-    if(error){GetSharedResource_OperationTheaters
-        //console.log("Error",error);
-    }
-    if(loading){
-        //console.log("loading",loading);
-    }
+
+    const [renderFlatlistData,setRenderFlatlistData] = useState();
+    // const { loading, error, refetch, data } = useQuery(GetSharedResource_OperationTheaters); 
+    // if(data){  
+    //   _data = data.appResources.concat(data.operationTheaters);
+    //   // for(var i=0;i<_data.length;i++){
+
+    //   // }
+    //   console.log(_data);
+    // }
+    // if(error){GetSharedResource_OperationTheaters
+    //     //console.log("Error",error);
+    // }
+    // if(loading){
+    //     //console.log("loading",loading);
+    // }
+
+    React.useEffect(()=>{
+      if(renderFlatlistData){
+        for(var i=1;i<_data.length;i++){
+          _operationTheaterData=[]
+             apolloClient
+        .query({
+          query: GetSurgeryDetails,
+          variables:{
+            operation_theater:parseInt(_data[i].id),
+            Date:new Date().toISOString().slice(0, 10),
+            app_user:parseInt(props.userId),
+          },
+          fetchPolicy:"network-only"
+        })
+        .then((Result) => {
+            for(var i = 0;i<2;i++){
+                _operationTheaterData.push(Result.data.appResources[i]);
+            }
+            try{
+              for(var i =0; i< Result.data.questions[0].processes_data[0].Answer;i++){
+                  _operationTheaterData.push(Result.data.appResources[preSurgeryProcessID-1]);
+              }
+            }catch{
+
+            }
+            _operationTheaterData.push(Result.data.appResources[Result.data.appResources.length-1]);
+            //console.log("Operational Data---",_operationTheaterData)
+            })
+        }
+      }
+
+    },[renderFlatlistData])
+
+    React.useEffect(() => {
+      const unsubscribe = props.navigation.addListener('focus', () => {
+        //console.log("HOME SCREEN")
+        apolloClient
+        .query({
+          query: GetSharedResource_OperationTheaters,
+          fetchPolicy:"network-only"
+        })
+        .then((Result) => {
+          _data = Result.data.appResources.concat(Result.data.operationTheaters);
+          setRenderFlatlistData(Result.data);
+          //console.log(_data);
+          
+        });
+      });
+      return unsubscribe;
+    }, [props.navigation]);
 
     const renderResources = (item) => {
     return (
     <View style={styles.item}>
+      
       <TouchableOpacity
       style={[styles.appButtonContainer,{flex:1}]}onPress={()=>{
         (item.item.__typename == "AppResource")?
@@ -44,18 +103,43 @@ function homeScreen(props,route){
             operationTheaterID: item.item.id,
             operationTheaterName: item.item.name,
           })}}>
-      <View style={{width:30,height:30,marginLeft:14}}>
-      <MaterialCommunityIcons
-      name='minus-box' size={30} color='#959595'/>
+      <View style={[{
+                    flexDirection:"row",
+                    //borderRadius:6,
+                    height:60,
+                    width:"100%",
+                    alignItems:"center",
+                    paddingLeft:20,
+                    margin:0},{flex:1}]}>
+          <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
+            {item.item.name}
+          </Text>
+          <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
+            <MaterialCommunityIcons
+            name='arrow-right' size={30}/>
+          </View>
       </View>
-      <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
-        {item.item.name}
-      </Text>
-      <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
-      <MaterialCommunityIcons
-      name='arrow-right' size={30}/>
+      <View style={[{
+                    flexDirection:"row",
+                    //borderRadius:6,
+                    height:30,
+                    width:"100%",
+                    alignItems:"center",
+                    paddingLeft:20,
+                    margin:0},{flex:1}]}>
+        <View style={{width:30,height:30,marginLeft:14}}>
+          <MaterialCommunityIcons
+          name='play-box' size={30}/>
+        </View>
+        <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
+          {"Process Message"}
+        </Text>
+        <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
+        
+        </View>
       </View>
       </TouchableOpacity>
+      
     </View>
     );
   };
@@ -94,7 +178,7 @@ function homeScreen(props,route){
             <Text style={styles.headerTextStyle}>Todays Progress.</Text>
             </View>
             <View style={{flex:1,alignItems:'center',justifyContent:'center',alignSelf:'stretch',marginVertical:10,marginTop:10}}>
-              {_data && (
+              {renderFlatlistData && (
                   <FlatList
                     style={{width:"90%",alignSelf: "center"}}
                     data={_data}
@@ -188,7 +272,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
   },
   appButtonContainer: {
-    flexDirection:"row",
+    //flexDirection:"row",
     backgroundColor:"#ffffff",
     borderRadius:6,
     height:90,

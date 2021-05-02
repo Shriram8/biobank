@@ -15,7 +15,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createStore } from "redux";
 import { PersistGate } from "redux-persist/integration/react";
-
+import { Provider as PaperProvider } from "react-native-paper";
 const apolloClient = client;
 const initialState = {
   isLoggedIn: false,
@@ -31,7 +31,6 @@ const reducer = (state = initialState, action) => {
         userId: action.payload.userId,
       };
     case "CHANGE_LOGOUT":
-      console.log("----CALLED");
       return {
         isLoggedIn: false,
         userId: "",
@@ -61,8 +60,10 @@ export default function App() {
       <Provider store={store}>
         <ApolloProvider client={apolloClient}>
           <SafeAreaProvider>
-            <Navigation colorScheme={colorScheme} />
-            <StatusBar />
+            <PaperProvider>
+              <Navigation colorScheme={colorScheme} />
+              <StatusBar />
+            </PaperProvider>
           </SafeAreaProvider>
         </ApolloProvider>
       </Provider>
