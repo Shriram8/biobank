@@ -5,7 +5,6 @@ import {
   StyleSheet,
   FlatList,
   ScrollView,
-  Modal,
   TextInput,
 } from "react-native";
 import {
@@ -15,6 +14,7 @@ import {
   RadioButton,
   List,
   Title,
+  Modal,
 } from "react-native-paper";
 import {
   GetStaffUsers,
@@ -41,6 +41,7 @@ const Users = () => {
   const [showPop, setShowPop] = useState(false);
   const [deleteId, setDeleteId] = useState("");
   const [showError, setShowError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   let [usermutate, { data }] = useMutation(addNewUser, {
     onCompleted: () => {
@@ -52,11 +53,12 @@ const Users = () => {
     onError: (err) => {
       if (err.message === "Duplicate entry") {
         setShowError(true);
+        setErrorMsg("User with this user id already registered");
       }
     },
   });
 
-  let [deleteUserId, { data: dDeletedUser }] = useMutation(deleteUser, {
+  let [deleteUserId, { data: deletedUser }] = useMutation(deleteUser, {
     onCompleted: () => {
       refresh(list);
       setShowPop(false);
@@ -125,14 +127,19 @@ const Users = () => {
 
   const onSubmit = () => {
     setShowError(false);
-    usermutate({
-      variables: {
-        name: name,
-        password: Math.random().toString(36).substr(2, 8),
-        userType: getuserType(list),
-        uid: mobile,
-      },
-    });
+    if (mobile.trim() !== "" && name.trim() !== "") {
+      usermutate({
+        variables: {
+          name: name,
+          password: Math.random().toString(36).substr(2, 8),
+          userType: getuserType(list),
+          uid: mobile,
+        },
+      });
+    } else {
+      setShowError(true);
+      setErrorMsg("Please fill all the fields");
+    }
   };
 
   return (
@@ -210,7 +217,7 @@ const Users = () => {
       <Modal
         animationType="slide"
         visible={addUser}
-        onRequestClose={() => {
+        onDismiss={() => {
           setAddUser(false);
         }}
       >
@@ -302,7 +309,7 @@ const Users = () => {
             <Text
               style={{ color: "red", textAlign: "center", paddingVertical: 15 }}
             >
-              User already registered
+              {errorMsg}
             </Text>
           )}
         </ScrollView>
@@ -337,11 +344,13 @@ const styles = StyleSheet.create({
     color: "#333333",
   },
   textLabel: {
+    width: "90%",
     height: 20,
     marginTop: 25,
     justifyContent: "center",
   },
   inputView: {
+    width: "90%",
     borderColor: "#979797",
     height: 50,
     justifyContent: "center",
@@ -408,6 +417,7 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     borderColor: "black",
+    width: "90%",
   },
   radioView: {
     flexDirection: "row",
@@ -424,6 +434,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 7,
     borderColor: "#959595",
+    width: "90%",
   },
   listTitle: {
     color: "#959595",
