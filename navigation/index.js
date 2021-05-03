@@ -54,7 +54,7 @@ const Navigation = (props) => {
           itemStyle: {  },
           headerShown:false
         }}
-        initialRouteName="History">
+        initialRouteName="Home">
           <Drawer.Screen 
           headerShown={false}
           options={{
