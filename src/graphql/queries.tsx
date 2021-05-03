@@ -224,6 +224,9 @@ query($otID:ID!,$date:String,$userId:ID!){
     process_details{
       id
       Number
+      questions{
+        Question
+      }
       process_name
       processes_data(
         sort: "id:asc"
