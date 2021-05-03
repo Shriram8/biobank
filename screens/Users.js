@@ -1,200 +1,136 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  ScrollView,
-  TextInput,
-} from "react-native";
-import {
-  Button,
-  IconButton,
-  Divider,
-  RadioButton,
-  List,
-  Title,
-  Modal,
-} from "react-native-paper";
-import {
-  GetStaffUsers,
-  GetInchargeUsers,
-  GetAdminUsers,
-  addNewUser,
-  ENUM_APPUSERS_USERTYPE,
-  deleteUser,
-} from "../src/graphql/queries";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, SectionList } from "react-native";
+import { Button, IconButton, Title } from "react-native-paper";
+import { GetUsers, DeactivateUser } from "../src/graphql/queries";
 import { useQuery, useMutation } from "@apollo/client";
 import Popover from "react-native-popover-view";
+import { TouchableOpacity } from "react-native";
 
-const Users = () => {
-  const { data: staffData, refetch: staffRefetch } = useQuery(GetStaffUsers);
-  const { data: InchargeData, refetch: inchargeRefetch } = useQuery(
-    GetInchargeUsers
-  );
-  const { data: AdminData, refetch: adminRefetch } = useQuery(GetAdminUsers);
-  const [name, setName] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [addUser, setAddUser] = useState(false);
-  const [checked, setChecked] = useState("male");
-  const [list, setList] = useState("OTStaff");
+const Users = (props) => {
+  const { data, refetch } = useQuery(GetUsers);
   const [showPop, setShowPop] = useState(false);
-  const [deleteId, setDeleteId] = useState("");
-  const [showError, setShowError] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [sectionData, setSectionData] = useState([]);
+  const [deactivateId, setDeactivateId] = useState("");
 
-  let [usermutate, { data }] = useMutation(addNewUser, {
-    onCompleted: () => {
-      setAddUser(false);
-      refresh(list);
-      setName("");
-      setMobile("");
-    },
-    onError: (err) => {
-      if (err.message === "Duplicate entry") {
-        setShowError(true);
-        setErrorMsg("User with this user id already registered");
-      }
-    },
-  });
+  let [deactivateUser, { data: deactivatedData }] = useMutation(
+    DeactivateUser,
+    {
+      onCompleted: () => {
+        refetch();
+        setShowPop(false);
+      },
+    }
+  );
 
-  let [deleteUserId, { data: deletedUser }] = useMutation(deleteUser, {
-    onCompleted: () => {
-      refresh(list);
-      setShowPop(false);
-    },
-  });
+  const emptyComponent = () => {
+    return <Text style={styles.empty}>No members</Text>;
+  };
 
-  const deleteUserFunction = (val) => {
-    deleteUserId({
+  const deactivate = () => {
+    deactivateUser({
       variables: {
-        id: val,
+        userId: deactivateId,
+        active: false,
       },
     });
   };
 
-  const refresh = (val) => {
-    switch (val) {
-      case "OTStaff":
-        staffRefetch();
-        console.log("REFETCHING STAFF");
-        break;
-      case "OTIncharge":
-        inchargeRefetch();
-        console.log("REFETCHING INCHARGE");
-        break;
-      case "OTAdmin":
-        adminRefetch();
-        console.log("REFETCHING ADMIN");
-        break;
-    }
-  };
+  const DATA = [
+    {
+      title: "Staff",
+      data: [],
+    },
+    {
+      title: "Incharge",
+      data: [],
+    },
+    {
+      title: "Admin",
+      data: [],
+    },
+  ];
 
-  const renderItem = (data) => {
-    return (
-      <View style={styles.ItemContainer}>
-        <Text style={{ fontSize: 18 }}>{data.item.name}</Text>
+  useEffect(() => {
+    if (data) {
+      for (let index = 0; index < data.appUsers.length; index++) {
+        switch (data.appUsers[index].userType) {
+          case "OTStaff":
+            DATA[0].data.push(data.appUsers[index]);
+            break;
+          case "OTIncharge":
+            DATA[1].data.push(data.appUsers[index]);
+            break;
+          case "OTAdmin":
+            DATA[2].data.push(data.appUsers[index]);
+            break;
+        }
+      }
+      setSectionData(DATA);
+    }
+  }, [data]);
+
+  const Item = ({ title }) => (
+    <TouchableOpacity
+      style={styles.ItemContainer}
+      onPress={() => {
+        props.navigation.navigate("adduser", {
+          from: "admin",
+          userId: title.id,
+        });
+      }}
+    >
+      <Text style={{ fontSize: 18, paddingVertical: 10 }}>{title.name}</Text>
+      {title.active && (
         <IconButton
           icon="delete-outline"
           color={"#010101"}
           size={20}
           onPress={() => {
             setShowPop(true);
-            setList(data.item.userType);
-            setDeleteId(data.item.id);
+            setDeactivateId(title.id);
           }}
         />
+      )}
+    </TouchableOpacity>
+  );
+
+  const ListHeaderComponent = () => {
+    return (
+      <View style={styles.topView}>
+        <Text style={styles.userText}>User</Text>
+        <Button
+          icon="plus"
+          mode="contained"
+          color={"#006bcc"}
+          uppercase={false}
+          style={{ borderRadius: 7 }}
+          onPress={() => props.navigation.navigate("adduser")}
+        >
+          Add
+        </Button>
       </View>
     );
   };
 
-  const emptyComponent = (val) => {
-    return <Text style={styles.empty}>No {val} members</Text>;
-  };
-
-  const getuserType = (type) => {
-    switch (type) {
-      case "OTIncharge":
-        return ENUM_APPUSERS_USERTYPE[ENUM_APPUSERS_USERTYPE.OTIncharge];
-      case "OTStaff":
-        return ENUM_APPUSERS_USERTYPE[ENUM_APPUSERS_USERTYPE.OTStaff];
-      case "OTAdmin":
-        return ENUM_APPUSERS_USERTYPE[ENUM_APPUSERS_USERTYPE.OTAdmin];
-      default:
-        break;
-    }
-  };
-
-  const onSubmit = () => {
-    setShowError(false);
-    if (mobile.trim() !== "" && name.trim() !== "") {
-      usermutate({
-        variables: {
-          name: name,
-          password: Math.random().toString(36).substr(2, 8),
-          userType: getuserType(list),
-          uid: mobile,
-        },
-      });
-    } else {
-      setShowError(true);
-      setErrorMsg("Please fill all the fields");
-    }
-  };
-
   return (
     <>
-      <ScrollView>
-        <View style={styles.container}>
-          <View style={styles.topView}>
-            <Text style={styles.userText}>User</Text>
-            <Button
-              icon="plus"
-              mode="contained"
-              color={"#006bcc"}
-              uppercase={false}
-              style={{ borderRadius: 7 }}
-              onPress={() => setAddUser(true)}
-            >
-              Add
-            </Button>
-          </View>
-          <View style={styles.marginTop}>
-            <Text style={styles.title}>Staff</Text>
-            <FlatList
-              data={staffData?.appUsers}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-              ListEmptyComponent={() => emptyComponent("staff")}
-            />
-          </View>
-          <View style={styles.marginTop}>
-            <Text style={styles.title}>Incharge</Text>
-            <FlatList
-              data={InchargeData?.appUsers}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-              ListEmptyComponent={() => emptyComponent("incharge")}
-            />
-          </View>
-          <View style={styles.marginTop}>
-            <Text style={styles.title}>Admin</Text>
-            <FlatList
-              data={AdminData?.appUsers}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.id}
-              ListEmptyComponent={() => emptyComponent("admin")}
-            />
-          </View>
-        </View>
-      </ScrollView>
+      <SectionList
+        sections={sectionData}
+        keyExtractor={(item, index) => item + index}
+        ListHeaderComponent={ListHeaderComponent}
+        renderItem={({ item }) => <Item title={item} />}
+        ListEmptyComponent={emptyComponent}
+        renderSectionHeader={({ section: { title } }) => (
+          <Text style={styles.title}>{title}</Text>
+        )}
+      />
       <Popover
         popoverStyle={styles.popsStyle}
         isVisible={showPop}
         onRequestClose={() => setShowPop(false)}
       >
-        <Title style={styles.heading}>Remove user</Title>
-        <Text style={styles.text}>Are you sure to remove the user?</Text>
+        <Title style={styles.heading}>Deactivate user</Title>
+        <Text style={styles.text}>Are you sure to deactivate the user?</Text>
         <View style={styles.buttonView}>
           <Button
             mode="contained"
@@ -208,121 +144,12 @@ const Users = () => {
             mode="contained"
             labelStyle={{ color: "#fff" }}
             color={"#A9A9A9"}
-            onPress={() => deleteUserFunction(deleteId, list)}
+            onPress={() => deactivate()}
           >
-            Delete
+            Deactivate
           </Button>
         </View>
       </Popover>
-      <Modal
-        animationType="slide"
-        visible={addUser}
-        onDismiss={() => {
-          setAddUser(false);
-        }}
-      >
-        <View style={styles.modalHeader}>
-          <IconButton
-            icon="chevron-left"
-            color={"#010101"}
-            size={22}
-            style={{ position: "absolute", left: 18 }}
-            onPress={() => {
-              setAddUser(false);
-            }}
-          />
-          <Text style={styles.headerTitle}>Add a New User</Text>
-        </View>
-        <ScrollView contentContainerStyle={styles.formView}>
-          <View style={styles.textLabel}>
-            <Text style={styles.textStyle}>First Name Last Name</Text>
-          </View>
-          <View style={styles.inputView}>
-            <TextInput
-              style={styles.inputText}
-              onChangeText={setName}
-              value={name}
-            />
-          </View>
-          <Divider style={styles.divider} />
-          <View style={styles.textLabel}>
-            <Text style={styles.textStyle}>Gender</Text>
-          </View>
-          <View style={{ flexDirection: "row" }}>
-            <View style={styles.radioView}>
-              <RadioButton
-                value="Male"
-                color={"#006bcc"}
-                status={checked === "male" ? "checked" : "unchecked"}
-                onPress={() => setChecked("male")}
-              />
-              <Text style={styles.radioTextStyle}>Male</Text>
-            </View>
-            <View style={styles.radioView}>
-              <RadioButton
-                value="Female"
-                color={"#006bcc"}
-                status={checked === "female" ? "checked" : "unchecked"}
-                onPress={() => setChecked("female")}
-              />
-              <Text style={styles.radioTextStyle}>Female</Text>
-            </View>
-            <View style={styles.radioView}>
-              <RadioButton
-                value="Others"
-                color={"#006bcc"}
-                status={checked === "others" ? "checked" : "unchecked"}
-                onPress={() => setChecked("others")}
-              />
-              <Text style={styles.radioTextStyle}>Others</Text>
-            </View>
-          </View>
-          <View style={styles.textLabel}>
-            <Text style={styles.textStyle}>UserID/email/MobileNumber</Text>
-          </View>
-          <View style={styles.inputView}>
-            <TextInput
-              style={styles.inputText}
-              onChangeText={setMobile}
-              value={mobile}
-            />
-          </View>
-          <Divider style={styles.divider} />
-          <View style={{ marginVertical: 32 }}>
-            <View style={[styles.textLabel, { marginBottom: 10 }]}>
-              <Text style={styles.textStyle}>Role</Text>
-            </View>
-            <List.Accordion
-              title={list.slice(2)}
-              style={styles.listHead}
-              titleStyle={styles.listTitle}
-            >
-              <List.Item title="Staff" onPress={() => setList("OTStaff")} />
-              <List.Item
-                title="Incharge"
-                onPress={() => setList("OTIncharge")}
-              />
-              <List.Item title="Admin" onPress={() => setList("OTAdmin")} />
-            </List.Accordion>
-          </View>
-          {showError && (
-            <Text
-              style={{ color: "red", textAlign: "center", paddingVertical: 15 }}
-            >
-              {errorMsg}
-            </Text>
-          )}
-        </ScrollView>
-        <Button
-          mode="contained"
-          color={"#006bcc"}
-          uppercase={false}
-          style={styles.submitButton}
-          onPress={onSubmit}
-        >
-          Add New User
-        </Button>
-      </Modal>
     </>
   );
 };
@@ -332,34 +159,6 @@ export default Users;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  textStyle: {
-    fontWeight: "bold",
-    fontSize: 12,
-    color: "#9e9e9e",
-  },
-  radioTextStyle: {
-    fontWeight: "bold",
-    fontSize: 12,
-    color: "#333333",
-  },
-  textLabel: {
-    width: "90%",
-    height: 20,
-    marginTop: 25,
-    justifyContent: "center",
-  },
-  inputView: {
-    width: "90%",
-    borderColor: "#979797",
-    height: 50,
-    justifyContent: "center",
-  },
-  inputText: {
-    fontWeight: "bold",
-    height: 50,
-    color: "#333333",
-    fontSize: 12,
   },
   ItemContainer: {
     marginHorizontal: 16,
@@ -382,6 +181,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 15,
     alignItems: "center",
+    marginBottom: 20,
   },
   userText: {
     fontSize: 18,
@@ -397,51 +197,8 @@ const styles = StyleSheet.create({
   marginTop: {
     marginTop: 20,
   },
-  modalHeader: {
-    backgroundColor: "#fff",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 25,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  formView: {
-    backgroundColor: "#f1f1f1",
-    flexGrow: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 27,
-  },
-  divider: {
-    height: 1,
-    borderColor: "black",
-    width: "90%",
-  },
-  radioView: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: 32,
-  },
-  submitButton: {
-    position: "absolute",
-    bottom: 0,
-    width: "100%",
-    height: 40,
-  },
-  listHead: {
-    borderWidth: 1,
-    borderRadius: 7,
-    borderColor: "#959595",
-    width: "90%",
-  },
-  listTitle: {
-    color: "#959595",
-    fontSize: 14,
-  },
   popsStyle: {
-    width: "80%",
+    width: 300,
     paddingVertical: 20,
   },
   buttonView: {

@@ -19,32 +19,61 @@ export const GetResourcesDetails = gql`
   }
 `;
 
-export const GetStaffUsers = gql`
+export const GetUsers = gql`
   query {
-    appUsers(where: { userType: "OTStaff" }) {
+    appUsers {
       id
       name
       userType
+      active
     }
   }
 `;
 
-export const GetAdminUsers = gql`
-  query {
-    appUsers(where: { userType: "OTAdmin" }) {
+export const GetUserDataById = gql`
+  query($userId: ID!) {
+    appUsers(where: { id: $userId }) {
       id
       name
       userType
+      employeeid
+      gender
+      uid
     }
   }
 `;
 
-export const GetInchargeUsers = gql`
-  query {
-    appUsers(where: { userType: "OTIncharge" }) {
+export const GetPassword = gql`
+  query($userId: ID!) {
+    appUsers(where: { id: $userId }) {
       id
-      name
-      userType
+      password
+    }
+  }
+`;
+
+export const UpdatePassword = gql`
+  mutation($userId: ID!, $password: String!) {
+    updateAppUser(
+      input: { where: { id: $userId }, data: { password: $password } }
+    ) {
+      appUser {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const DeactivateUser = gql`
+  mutation($userId: ID!, $active: Boolean!) {
+    updateAppUser(
+      input: { where: { id: $userId }, data: { active: $active } }
+    ) {
+      appUser {
+        id
+        name
+      }
     }
   }
 `;
@@ -169,9 +198,9 @@ export const preProcessProgress = gql`
       process_detail {
         id
       }
-    	check_editable{
-        id,
-        processCleared,
+      check_editable {
+        id
+        processCleared
       }
       instance
       operation_theater {
@@ -269,18 +298,24 @@ export const SubmitAnswerForQuestion = gql`
   }
 `;
 
-export const SubmitCompleted =gql`
-mutation(
-  $processes_data:[ID], $processCleared:Boolean
-){
-  createCheckEditable(input:{data:{editable:true,processes_data:$processes_data,processCleared:$processCleared}}){
-    checkEditable{
-      id,
-      editable,
-      processCleared,
+export const SubmitCompleted = gql`
+  mutation($processes_data: [ID], $processCleared: Boolean) {
+    createCheckEditable(
+      input: {
+        data: {
+          editable: true
+          processes_data: $processes_data
+          processCleared: $processCleared
+        }
+      }
+    ) {
+      checkEditable {
+        id
+        editable
+        processCleared
+      }
     }
   }
-}
 `;
 
 export const UpdateSubmittedAnswerForQuestion = gql`
@@ -296,18 +331,15 @@ export const UpdateSubmittedAnswerForQuestion = gql`
   }
 `;
 
-export enum ENUM_APPUSERS_USERTYPE {
-  OTIncharge,
-  OTStaff,
-  OTAdmin,
-}
-
 export const addNewUser = gql`
   mutation(
-    $name: String
+    $name: String!
     $password: String!
-    $uid: String
+    $uid: String!
     $userType: ENUM_APPUSERS_USERTYPE
+    $gender: ENUM_APPUSERS_GENDER
+    $employeeid: String
+    $active: Boolean!
   ) {
     createAppUser(
       input: {
@@ -316,22 +348,15 @@ export const addNewUser = gql`
           password: $password
           uid: $uid
           userType: $userType
+          gender: $gender
+          employeeid: $employeeid
+          active: $active
         }
       }
     ) {
       appUser {
         id
         name
-      }
-    }
-  }
-`;
-
-export const deleteUser = gql`
-  mutation($id: ID!) {
-    deleteAppUser(input: { where: { id: $id } }) {
-      appUser {
-        id
       }
     }
   }
