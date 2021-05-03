@@ -285,6 +285,7 @@ const UserStackNavigator = (props) => {
         name="adduser"
         component={AddUser}
         options={({ route }) => ({
+          headerShown: false,
           title: "Add a new user",
           headerTitleAlign: "center",
         })}

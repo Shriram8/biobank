@@ -78,6 +78,19 @@ export const DeactivateUser = gql`
   }
 `;
 
+export const ResetPassword = gql`
+  mutation($userId: ID!, $resetpassword: Boolean!) {
+    updateAppUser(
+      input: { where: { id: $userId }, data: { resetpassword: $resetpassword } }
+    ) {
+      appUser {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export const GetProcessesDetails = gql`
   query($resourceID: ID!) {
     appResource(id: $resourceID) {
@@ -131,12 +144,7 @@ export const GetQuestionDetails = gql`
 `;
 
 export const GetAnswersProgress = gql`
-  query(
-    $operation_theater: ID!
-    $processID: ID!
-    $instance: Int
-    $Date: Date
-  ) {
+  query($operation_theater: ID!, $processID: ID!, $instance: Int, $Date: Date) {
     processesData(
       where: {
         process_detail: $processID
@@ -192,9 +200,9 @@ export const preProcessProgress_OTStaff = gql`
       process_detail {
         id
       }
-    	check_editable{
-        id,
-        processCleared,
+      check_editable {
+        id
+        processCleared
       }
       instance
       operation_theater {
@@ -204,8 +212,6 @@ export const preProcessProgress_OTStaff = gql`
     }
   }
 `;
-
-
 
 export const preProcessProgress = gql`
   query(
@@ -245,7 +251,7 @@ export const preProcessProgress = gql`
 `;
 
 export const GetSurgeryDetails_OTStaff = gql`
-  query($operation_theater: ID!,$Date: Date) {
+  query($operation_theater: ID!, $Date: Date) {
     appResources(
       sort: "processOrder:asc"
       where: { resourceType: "OperationTheater" }
@@ -259,10 +265,7 @@ export const GetSurgeryDetails_OTStaff = gql`
     }
     questions(where: { id: 6 }) {
       processes_data(
-        where: {
-          operation_theater: $operation_theater
-          Date: $Date
-        }
+        where: { operation_theater: $operation_theater, Date: $Date }
       ) {
         id
         Answer
@@ -307,42 +310,44 @@ export const GetSurgeryDetails = gql`
   }
 `;
 export const Check_Process_Progress = gql`
-query($otID:ID!,$date:String,$userId:ID!){
-  appResources( 
-    sort: "processOrder:asc"
-    where: { resourceType: "OperationTheater" }
-     ){
-    name
-    processOrder
-    process_details{
-      id
-      Number
-      process_name
-      processes_data(
-        sort: "id:asc"
-        where:{app_user:$userId operation_theater:{id:$otID} Date:$date}){
-        Date
+  query($otID: ID!, $date: String, $userId: ID!) {
+    appResources(
+      sort: "processOrder:asc"
+      where: { resourceType: "OperationTheater" }
+    ) {
+      name
+      processOrder
+      process_details {
         id
-        Answer
-        operation_theater{
+        Number
+        process_name
+        processes_data(
+          sort: "id:asc"
+          where: {
+            app_user: $userId
+            operation_theater: { id: $otID }
+            Date: $date
+          }
+        ) {
+          Date
           id
-          name
-  
-        }
-        instance
-        question{
-          Question
-        }
-        check_editable{
-          id
+          Answer
+          operation_theater {
+            id
+            name
+          }
+          instance
+          question {
+            Question
+          }
+          check_editable {
+            id
+          }
         }
       }
-      
     }
-  
   }
-}
-`
+`;
 // export const GetPreProcessDetails = gql`
 // query($operationTheaterID:ID!){
 
@@ -418,20 +423,21 @@ export const SubmitCompleted = gql`
   }
 `;
 
-export const UpdateSubmitCompleted =gql`
-mutation(
-  $checkEditable_Id: ID!
-){
-  updateCheckEditable( 
-    input: { where: { id: $checkEditable_Id }, data: { processCleared:true } }
-    ){
-    checkEditable{
-      id,
-      editable,
-      processCleared,
+export const UpdateSubmitCompleted = gql`
+  mutation($checkEditable_Id: ID!) {
+    updateCheckEditable(
+      input: {
+        where: { id: $checkEditable_Id }
+        data: { processCleared: true }
+      }
+    ) {
+      checkEditable {
+        id
+        editable
+        processCleared
+      }
     }
   }
-}
 `;
 
 export const UpdateSubmittedAnswerForQuestion = gql`
@@ -456,6 +462,7 @@ export const addNewUser = gql`
     $gender: ENUM_APPUSERS_GENDER
     $employeeid: String
     $active: Boolean!
+    $resetpassword: Boolean!
   ) {
     createAppUser(
       input: {
@@ -467,6 +474,7 @@ export const addNewUser = gql`
           gender: $gender
           employeeid: $employeeid
           active: $active
+          resetpassword: $resetpassword
         }
       }
     ) {

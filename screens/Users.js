@@ -76,6 +76,7 @@ const Users = (props) => {
         props.navigation.navigate("adduser", {
           from: "admin",
           userId: title.id,
+          userType: title.userType,
         });
       }}
     >

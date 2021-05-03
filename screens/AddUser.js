@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TextInput } from "react-native";
-import { Button, Divider, RadioButton, List } from "react-native-paper";
-import { addNewUser, GetUserDataById } from "../src/graphql/queries";
+import {
+  Button,
+  Divider,
+  RadioButton,
+  List,
+  IconButton,
+} from "react-native-paper";
+import {
+  addNewUser,
+  GetUserDataById,
+  ResetPassword,
+} from "../src/graphql/queries";
 import { useMutation } from "@apollo/client";
 import { client } from "../src/graphql/ApolloClientProvider";
 import { connect } from "react-redux";
@@ -26,6 +36,12 @@ const AddUser = (props) => {
         setShowError(true);
         setErrorMsg("User with this user id already registered");
       }
+    },
+  });
+
+  let [reset, { data: resetPasswordData }] = useMutation(ResetPassword, {
+    onCompleted: () => {
+      props.navigation.goBack();
     },
   });
 
@@ -61,6 +77,7 @@ const AddUser = (props) => {
           gender: checked,
           employeeid: empId,
           active: true,
+          resetpassword: true,
         },
       });
     } else {
@@ -69,8 +86,38 @@ const AddUser = (props) => {
     }
   };
 
+  const checkUser = () => {
+    if (props.route.params?.from) {
+      if (props.userType !== "OTStaff") {
+        if (props.route.params?.userType === "OTStaff") {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  };
+
   return (
     <View style={{ flex: 1 }}>
+      <View style={styles.modalHeader}>
+        <IconButton
+          icon="arrow-left"
+          color={"#010101"}
+          size={25}
+          style={{ position: "absolute", left: 2 }}
+          onPress={() => {
+            props.navigation.goBack();
+          }}
+        />
+        <Text style={styles.headerTitle}>
+          {props.route.params?.from ? "Update user" : "Add a New User"}
+        </Text>
+      </View>
       <ScrollView contentContainerStyle={styles.formView}>
         <View style={styles.textLabel}>
           <Text style={styles.textStyle}>First Name Last Name</Text>
@@ -137,20 +184,41 @@ const AddUser = (props) => {
           />
         </View>
         <Divider style={styles.divider} />
-        <View style={{ marginVertical: 32 }}>
-          <View style={[styles.textLabel, { marginBottom: 10 }]}>
-            <Text style={styles.textStyle}>Role</Text>
-          </View>
-          <List.Accordion
-            title={list.slice(2)}
-            style={styles.listHead}
-            titleStyle={styles.listTitle}
-          >
-            <List.Item title="Staff" onPress={() => setList("OTStaff")} />
-            <List.Item title="Incharge" onPress={() => setList("OTIncharge")} />
-            <List.Item title="Admin" onPress={() => setList("OTAdmin")} />
-          </List.Accordion>
+        <View style={[styles.textLabel, { marginBottom: 10 }]}>
+          <Text style={styles.textStyle}>Role</Text>
         </View>
+        <List.Accordion
+          title={list.slice(2)}
+          style={styles.listHead}
+          titleStyle={styles.listTitle}
+        >
+          <List.Item title="Staff" onPress={() => setList("OTStaff")} />
+          <List.Item title="Incharge" onPress={() => setList("OTIncharge")} />
+          <List.Item title="Admin" onPress={() => setList("OTAdmin")} />
+        </List.Accordion>
+        {checkUser() && (
+          <>
+            <View style={styles.textLabel}>
+              <Text style={styles.textStyle}>Set a new password</Text>
+            </View>
+            <Button
+              mode="contained"
+              color={"#006bcc"}
+              uppercase={false}
+              style={styles.reset}
+              onPress={() => {
+                reset({
+                  variables: {
+                    userId: props.route.params?.userId,
+                    resetpassword: true,
+                  },
+                });
+              }}
+            >
+              Reset Password
+            </Button>
+          </>
+        )}
         {showError && (
           <Text
             style={{
@@ -170,7 +238,7 @@ const AddUser = (props) => {
         style={styles.submitButton}
         onPress={onSubmit}
       >
-        Add New User
+        {props.route.params?.from ? "Update user" : "Add a New User"}
       </Button>
     </View>
   );
@@ -178,6 +246,7 @@ const AddUser = (props) => {
 
 const mapStateToProps = (state) => ({
   userId: state.userId,
+  userType: state.userType,
 });
 
 export default connect(mapStateToProps)(AddUser);
@@ -216,11 +285,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 25,
+    paddingVertical: 20,
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "500",
   },
   formView: {
     backgroundColor: "#f1f1f1",
@@ -254,5 +323,11 @@ const styles = StyleSheet.create({
   listTitle: {
     color: "#959595",
     fontSize: 14,
+  },
+  reset: {
+    width: "100%",
+    height: 40,
+    marginVertical: 10,
+    justifyContent: "center",
   },
 });
