@@ -20,20 +20,24 @@ const apolloClient = client;
 const initialState = {
   isLoggedIn: false,
   userId: "",
+  userType:"",
 };
 const reducer = (state = initialState, action) => {
   //console.log("Action type__",action.type);
   switch (action.type) {
     case "CHANGE_LOGIN":
-      //console.log("Trying to change login",action.payload.userId);
+      console.log("Trying to change login",action.payload.userType);
       return {
         isLoggedIn: true,
         userId: action.payload.userId,
+        userType: action.payload.userType
+
       };
     case "CHANGE_LOGOUT":
       return {
         isLoggedIn: false,
         userId: "",
+        userType:"",
       };
     default:
       break;

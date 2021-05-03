@@ -28,9 +28,10 @@ function login(props,navigation) {
         .then((Result) => {
           console.log("result",Result)
             if(Result.data.appUsers[0].password === password){
-              props.changeLogin(Result.data.appUsers[0].id);
+              props.changeLogin(Result.data.appUsers[0].id,Result.data.appUsers[0].userType);
               navigation.navigate('homeScreen',{
               userId: userId,
+              userType: Result.data.appUsers[0].userType
             }
             )
           }
@@ -184,8 +185,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    changeLogin:(userId)=>dispatch({type:'CHANGE_LOGIN',payload: {
-    userId
+    changeLogin:(userId,userType)=>dispatch({type:'CHANGE_LOGIN',payload: {
+    userId,
+    userType
   }})
   }
 };

@@ -68,7 +68,6 @@ export const GetQuestionDetails = gql`
   query(
     $processID: ID!
     $operation_theater: ID!
-    $app_user: ID!
     $instance: Int
     $Date: String
   ) {
@@ -82,7 +81,6 @@ export const GetQuestionDetails = gql`
     }
     processesData(
       where: {
-        app_user: $app_user
         process_detail: $processID
         operation_theater: $operation_theater
         instance: $instance
@@ -106,14 +104,12 @@ export const GetQuestionDetails = gql`
 export const GetAnswersProgress = gql`
   query(
     $operation_theater: ID!
-    $app_user: ID!
     $processID: ID!
     $instance: Int
     $Date: Date
   ) {
     processesData(
       where: {
-        app_user: $app_user
         process_detail: $processID
         operation_theater: $operation_theater
         instance: $instance
@@ -144,6 +140,43 @@ export const GetSharedResource_OperationTheaters = gql`
     }
   }
 `;
+
+export const preProcessProgress_OTStaff = gql`
+  query(
+    $operation_theater: ID!
+    $Date: Date
+    $instance: Int
+    $process_detail: ID!
+  ) {
+    processesData(
+      where: {
+        operation_theater: $operation_theater
+        Date: $Date
+        instance: $instance
+        process_detail: $process_detail
+        check_editable_null: false
+      }
+    ) {
+      id
+      Answer
+      Date
+      process_detail {
+        id
+      }
+    	check_editable{
+        id,
+        processCleared,
+      }
+      instance
+      operation_theater {
+        id
+        name
+      }
+    }
+  }
+`;
+
+
 
 export const preProcessProgress = gql`
   query(
@@ -177,6 +210,37 @@ export const preProcessProgress = gql`
       operation_theater {
         id
         name
+      }
+    }
+  }
+`;
+
+export const GetSurgeryDetails_OTStaff = gql`
+  query($operation_theater: ID!,$Date: Date) {
+    appResources(
+      sort: "processOrder:asc"
+      where: { resourceType: "OperationTheater" }
+    ) {
+      id
+      name
+      processOrder
+      process_details {
+        id
+      }
+    }
+    questions(where: { id: 6 }) {
+      processes_data(
+        where: {
+          operation_theater: $operation_theater
+          Date: $Date
+        }
+      ) {
+        id
+        Answer
+        Date
+        operation_theater {
+          id
+        }
       }
     }
   }
@@ -310,6 +374,22 @@ mutation(
   $processes_data:[ID], $processCleared:Boolean
 ){
   createCheckEditable(input:{data:{editable:true,processes_data:$processes_data,processCleared:$processCleared}}){
+    checkEditable{
+      id,
+      editable,
+      processCleared,
+    }
+  }
+}
+`;
+
+export const UpdateSubmitCompleted =gql`
+mutation(
+  $checkEditable_Id: ID!
+){
+  updateCheckEditable( 
+    input: { where: { id: $checkEditable_Id }, data: { processCleared:true } }
+    ){
     checkEditable{
       id,
       editable,

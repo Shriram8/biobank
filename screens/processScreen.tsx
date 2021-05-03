@@ -14,7 +14,7 @@ var questionsCount: any[] = [];
 var colorValue: any [] = [];
 var IconValue: any [] = [];
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
-    const { userId,operationTheaterID,resourceID, resourceName,instance } = route.params;
+    const { userId,operationTheaterID,resourceID, resourceName,instance,userType } = route.params;
     let [refresh,setRefresh] = useState(true);
     const [renderFlatlistData,setRenderFlatlistData] = useState();
     let [val,setval]=useState([]);
@@ -48,7 +48,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
                     variables:{
                       processID:data.appResource.process_details[i].id,
                       Date:new Date().toISOString().slice(0, 10),
-                      app_user:userId,
+                      //app_user:userId,
                       operation_theater:operationTheaterID,
                       instance:instance
                     },
@@ -148,6 +148,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
         navigation.navigate('questionsScreen',{
             userId:userId,
             processID: item.id,
+            userType:userType,
             processName: item.process_name,
             operationTheaterID: operationTheaterID,
             instance:instance,

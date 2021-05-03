@@ -3,7 +3,7 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetSurgeryDetails,preProcessProgress} from '../src/graphql/queries';
+import {GetSurgeryDetails,preProcessProgress,GetSurgeryDetails_OTStaff,preProcessProgress_OTStaff} from '../src/graphql/queries';
 import { ProgressBar } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -31,7 +31,7 @@ var _length: number;
 var _headerColor;
 
 export default function preProcessScreen({route, navigation}: {navigation: any, route:any}) {
-    const { userId, operationTheaterID, operationTheaterName } = route.params;
+    const { userId, operationTheaterID, operationTheaterName, userType} = route.params;
     const [renderFlatlistData,setRenderFlatlistData] = useState();
     const [message,setMessage]=useState(null);
     const [refresh,setRefresh] = useState(0);
@@ -59,15 +59,16 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         moduleLock = false;
         apolloClient
         .query({
-          query: GetSurgeryDetails,
+          query: GetSurgeryDetails_OTStaff,
           variables:{
             operation_theater:parseInt(operationTheaterID),
             Date:new Date().toISOString().slice(0, 10),
-            app_user:parseInt(userId),
+            // app_user:parseInt(userId),
           },
           fetchPolicy:"network-only"
         })
         .then((Result) => {
+          console.log("-----Result",Result);
             for(var i = 0;i<2;i++){
                 _data.push(Result.data.appResources[i]);
                 
@@ -96,15 +97,14 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
                 processCount[i]=_data[i].process_details.length;
                 progress[i] = 0;
                 _length = _length + processCount[i];
-                console.log("III",i,"ProcessCount",processCount[i]);
                     for(var k=0;k<processCount[i];k++){
                       apolloClient
                       .query({
-                        query: preProcessProgress,
+                        query: preProcessProgress_OTStaff,
                         variables:{
                           operation_theater:parseInt(operationTheaterID),
                           Date:new Date().toISOString().slice(0, 10),
-                          app_user:parseInt(userId),
+                          //app_user:parseInt(userId),
                           instance: i,
                           process_detail: _data[i].process_details[k].id
                         },
@@ -320,6 +320,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       style={[styles.appButtonContainer,{flex:1,zIndex:1}]} disabled={lock[index]} onPress={()=>{
         navigation.navigate('processScreen',{
             userId: userId,
+            userType:userType,
             resourceID: item.id,
             operationTheaterID: operationTheaterID,
             resourceName: item.name,
