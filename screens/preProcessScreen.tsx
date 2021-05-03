@@ -49,8 +49,8 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           },
           fetchPolicy:"network-only"
         })
-        .then((Result) => {
-          
+        .then((Result) => { 
+
             for(var i = 0;i<2;i++){
                 _data.push(Result.data.appResources[i]);
                 
@@ -140,7 +140,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       return unsubscribe;
     }, [navigation]);
 
-    React.useEffect(()=>{
+    React.useEffect(()=>{ 
       setMessage(_text)
     },[updateMessage]);
 
@@ -181,7 +181,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       return "#959595"
     }
 
-    const getText = (processOrder: number,id: number,index: number)=>{
+    const getText = (processOrder: number,id: number,index: number)=>{ 
     return (processOrder == preSurgeryProcessCount)?"Cleared for start of day":
     ((processOrder == 3)?("Cleared for Surgery"+(id == 4 ?"-0"+(index-1):"")):("Cleared for end of the day"))
     }
@@ -286,7 +286,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           
         </View>
         {renderFlatlistData && (
-        <View style={{width:"100%",height:"100%",backgroundColor:"white"}}>
+        <View style={{flex:1,backgroundColor:"white"}}>
           <FlatList
             extraData = {refresh}
             style={{width:"90%",alignSelf: "center",}}
