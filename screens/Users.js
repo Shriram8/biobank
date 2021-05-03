@@ -3,21 +3,21 @@ import { View, Text, StyleSheet, SectionList } from "react-native";
 import { Button, IconButton, Title } from "react-native-paper";
 import { GetUsers, DeactivateUser } from "../src/graphql/queries";
 import { useQuery, useMutation } from "@apollo/client";
-import Popover from "react-native-popover-view";
+// import Popover from "react-native-popover-view";
 import { TouchableOpacity } from "react-native";
 
 const Users = (props) => {
   const { data, refetch } = useQuery(GetUsers);
-  const [showPop, setShowPop] = useState(false);
+  // const [showPop, setShowPop] = useState(false);
   const [sectionData, setSectionData] = useState([]);
-  const [deactivateId, setDeactivateId] = useState("");
+  // const [deactivateId, setDeactivateId] = useState("");
 
   let [deactivateUser, { data: deactivatedData }] = useMutation(
     DeactivateUser,
     {
       onCompleted: () => {
         refetch();
-        setShowPop(false);
+        // setShowPop(false);
       },
     }
   );
@@ -26,10 +26,10 @@ const Users = (props) => {
     return <Text style={styles.empty}>No members</Text>;
   };
 
-  const deactivate = () => {
+  const deactivate = (id) => {
     deactivateUser({
       variables: {
-        userId: deactivateId,
+        userId: id,
         active: false,
       },
     });
@@ -86,8 +86,9 @@ const Users = (props) => {
           color={"#010101"}
           size={20}
           onPress={() => {
-            setShowPop(true);
-            setDeactivateId(title.id);
+            // setShowPop(true);
+            // setDeactivateId(title.id);
+            deactivate(title.id);
           }}
         />
       )}
@@ -124,7 +125,7 @@ const Users = (props) => {
           <Text style={styles.title}>{title}</Text>
         )}
       />
-      <Popover
+      {/* <Popover
         popoverStyle={styles.popsStyle}
         isVisible={showPop}
         onRequestClose={() => setShowPop(false)}
@@ -149,7 +150,7 @@ const Users = (props) => {
             Deactivate
           </Button>
         </View>
-      </Popover>
+      </Popover> */}
     </>
   );
 };

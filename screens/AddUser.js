@@ -116,7 +116,7 @@ const AddUser = (props) => {
           </View>
         </View>
         <View style={styles.textLabel}>
-          <Text style={styles.textStyle}>MobileNumber</Text>
+          <Text style={styles.textStyle}>Mobile Number</Text>
         </View>
         <View style={styles.inputView}>
           <TextInput
