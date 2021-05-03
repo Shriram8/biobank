@@ -88,7 +88,11 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
               key =  questions_data.processesData[i].question.id,
               value = questions_data.processesData[i].Answer,
               dict[key] = value;
+              try{
               editableId[key] = questions_data.processesData[0].check_editable.id;
+              }catch{
+                
+              }
               processDataId.push(questions_data.processesData[i].id);
               dictId[key] = questions_data.processesData[i].id;
               temp.push(key);  
