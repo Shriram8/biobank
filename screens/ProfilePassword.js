@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, TextInput } from "react-native";
 import { Divider, Button } from "react-native-paper";
 import { connect } from "react-redux";
@@ -25,6 +25,29 @@ const ProfilePassword = (props) => {
     },
   });
 
+  const setUserPassword = () => {
+    if (props.route.params?.from === "login") {
+      setShowError(false);
+      if (newpassword.trim().length > 6) {
+        if (newpassword === confirmPassword) {
+          updatePass({
+            variables: {
+              userId: props.route.params?.userId,
+              password: newpassword,
+              resetpassword: false,
+            },
+          });
+        } else {
+          setShowError(true);
+          setErrorMsg("Passwords did not match.");
+        }
+      } else {
+        setShowError(true);
+        setErrorMsg("Passwords too short.");
+      }
+    }
+  };
+
   const onSubmit = () => {
     setShowError(false);
     if (newpassword.trim().length > 6) {
@@ -43,6 +66,7 @@ const ProfilePassword = (props) => {
                 variables: {
                   userId: props.userId,
                   password: newpassword,
+                  resetpassword: false,
                 },
               });
             } else {
@@ -66,18 +90,23 @@ const ProfilePassword = (props) => {
         contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24 }}
       >
         <View style={{ marginTop: 33 }}>
-          <View style={styles.textLabel}>
-            <Text style={styles.textStyle}>Current password</Text>
-          </View>
-          <View style={styles.inputView}>
-            <TextInput
-              secureTextEntry={true}
-              style={styles.inputText}
-              onChangeText={setPassword}
-              value={password}
-            />
-          </View>
-          <Divider style={styles.divider} />
+          {props.route.params?.from !== "login" && (
+            <>
+              <View style={styles.textLabel}>
+                <Text style={styles.textStyle}>Current password</Text>
+              </View>
+              <View style={styles.inputView}>
+                <TextInput
+                  secureTextEntry={true}
+                  style={styles.inputText}
+                  onChangeText={setPassword}
+                  value={password}
+                />
+              </View>
+              <Divider style={styles.divider} />
+            </>
+          )}
+
           <View style={styles.textLabel}>
             <Text style={styles.textStyle}>Set a new Password</Text>
           </View>
@@ -119,7 +148,9 @@ const ProfilePassword = (props) => {
         color={"#006bcc"}
         uppercase={false}
         style={styles.submitButton}
-        onPress={onSubmit}
+        onPress={
+          props.route.params?.from === "login" ? setUserPassword : onSubmit
+        }
       >
         Continue
       </Button>

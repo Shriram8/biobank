@@ -13,7 +13,10 @@ import {
 } from "react-native";
 import { useQuery, gql } from "@apollo/client";
 import { client } from "../src/graphql/ApolloClientProvider";
-import { GetUserDetails } from "../src/graphql/queries";
+import {
+  GetUserDetails,
+  GetDetailsWithEmployeeId,
+} from "../src/graphql/queries";
 import { Divider, HelperText } from "react-native-paper";
 import { createStackNavigator } from "@react-navigation/stack";
 import { connect } from "react-redux";
@@ -25,33 +28,70 @@ const LoginRootStack = createStackNavigator();
 function login(props, navigation) {
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [showHelperText, setShowHelperText] = useState(false);
+  const [register, setRegister] = useState(false);
   const verifyLogin = () => {
+    if (password.trim().length != " " && userId.trim().length != " ") {
+      apolloClient
+        .query({
+          query: GetDetailsWithEmployeeId,
+          variables: {
+            employeeid: userId,
+            // userID: userId,
+          },
+        })
+        .then((Result) => {
+          console.log("result", Result);
+          if (Result.data.appUsers[0].password === password) {
+            props.changeLogin(
+              Result.data.appUsers[0].id,
+              Result.data.appUsers[0].userType
+            );
+            navigation.navigate("homeScreen", {
+              userId: userId,
+              userType: Result.data.appUsers[0].userType,
+            });
+          } else {
+            console.log("failed");
+            setShowHelperText(true);
+            setErrorMsg("Username and password didn’t match.");
+          }
+        })
+        .catch(() => {
+          setShowHelperText(true);
+          setErrorMsg("Username and password didn’t match.");
+        });
+    } else {
+      setShowHelperText(true);
+      setErrorMsg("Please fill all the fields.");
+    }
+  };
+
+  const getUserDetails = () => {
     apolloClient
       .query({
-        query: GetUserDetails,
+        query: GetDetailsWithEmployeeId,
         variables: {
-          userID: userId,
+          employeeid: userId,
         },
       })
       .then((Result) => {
         console.log("result", Result);
-        if (Result.data.appUsers[0].password === password) {
-          props.changeLogin(
-            Result.data.appUsers[0].id,
-            Result.data.appUsers[0].userType
-          );
-          navigation.navigate("homeScreen", {
-            userId: userId,
-            userType: Result.data.appUsers[0].userType,
+        if (Result.data.appUsers[0]?.resetpassword === true) {
+          props.navigation.navigate("setPassword", {
+            from: "login",
+            userId: Result.data.appUsers[0].id,
           });
+          setRegister(false);
         } else {
-          console.log("failed");
           setShowHelperText(true);
+          setErrorMsg("You are not allowed to reset password");
         }
-      })
-      .catch(() => {
-        setShowHelperText(true);
+        if (Result.data.appUsers.length === 0) {
+          setShowHelperText(true);
+          setErrorMsg("Mobile/employee ID not found");
+        }
       });
   };
 
@@ -81,7 +121,7 @@ function login(props, navigation) {
             }}
           />
           <View style={styles.textLabel}>
-            <Text style={styles.textStyle}>Email/userId</Text>
+            <Text style={styles.textStyle}>Mobile No/Employee ID</Text>
           </View>
           <View style={styles.inputView}>
             <TextInput
@@ -91,32 +131,61 @@ function login(props, navigation) {
             />
           </View>
           <Divider style={{ width: "80%", height: 1, borderColor: "black" }} />
-          <View style={styles.textLabel}>
-            <Text style={styles.textStyle}>Password</Text>
-          </View>
-          <View style={styles.inputView}>
-            <TextInput
-              secureTextEntry
-              style={styles.inputText}
-              onChangeText={(input) => setPassword(input)}
-              value={password}
-            />
-          </View>
-          <Divider style={{ width: "80%", height: 1, borderColor: "black" }} />
-          <TouchableOpacity style={styles.loginBtn} onPress={verifyLogin}>
-            <Text style={styles.loginText}>LOGIN</Text>
+          {!register && (
+            <>
+              <View style={styles.textLabel}>
+                <Text style={styles.textStyle}>Password</Text>
+              </View>
+              <View style={styles.inputView}>
+                <TextInput
+                  secureTextEntry
+                  style={styles.inputText}
+                  onChangeText={(input) => setPassword(input)}
+                  value={password}
+                />
+              </View>
+              <Divider
+                style={{ width: "80%", height: 1, borderColor: "black" }}
+              />
+            </>
+          )}
+          {showHelperText && (
+            <Text
+              type="error"
+              visible={showHelperText}
+              style={{
+                marginTop: 20,
+                color: "#fa796f",
+                fontSize: 14,
+                alignSelf: "flex-start",
+                marginLeft: 155,
+              }}
+            >
+              {errorMsg}
+            </Text>
+          )}
+
+          <TouchableOpacity
+            style={styles.loginBtn}
+            onPress={register ? getUserDetails : verifyLogin}
+          >
+            <Text style={styles.loginText}>
+              {register ? "Register" : "Login"}
+            </Text>
           </TouchableOpacity>
-          <Text style={styles.register}>Register with username</Text>
+          {!register && (
+            <Text
+              style={styles.register}
+              onPress={() => {
+                setRegister(true);
+                setShowHelperText(false);
+              }}
+            >
+              Register with username
+            </Text>
+          )}
         </View>
         <Divider style={{ width: "80%", height: 1, borderColor: "black" }} />
-
-        <HelperText type="error" visible={showHelperText}>
-          Userid or Password is incorrect!
-        </HelperText>
-
-        <TouchableOpacity style={styles.loginBtn} onPress={verifyLogin}>
-          <Text style={styles.loginText}>LOGIN</Text>
-        </TouchableOpacity>
       </ScrollView>
     </>
   );

@@ -10,6 +10,18 @@ export const GetUserDetails = gql`
   }
 `;
 
+export const GetDetailsWithEmployeeId = gql`
+  query($employeeid: String) {
+    appUsers(where: { employeeid: $employeeid }) {
+      id
+      name
+      userType
+      password
+      resetpassword
+    }
+  }
+`;
+
 export const GetResourcesDetails = gql`
   query {
     appResources {
@@ -53,9 +65,12 @@ export const GetPassword = gql`
 `;
 
 export const UpdatePassword = gql`
-  mutation($userId: ID!, $password: String!) {
+  mutation($userId: ID!, $password: String!, $resetpassword: Boolean!) {
     updateAppUser(
-      input: { where: { id: $userId }, data: { password: $password } }
+      input: {
+        where: { id: $userId }
+        data: { password: $password, resetpassword: $resetpassword }
+      }
     ) {
       appUser {
         id

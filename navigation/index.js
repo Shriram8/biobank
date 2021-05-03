@@ -167,6 +167,17 @@ const Navigation = (props) => {
             component={LoginScreen}
             options={{ headerShown: false }}
           />
+          <MainStack.Screen
+            name="setPassword"
+            component={ProfilePassword}
+            options={({ route }) => ({
+              title: "Set Password",
+              headerTitleAlign: "center",
+              headerStyle: {
+                backgroundColor: "white",
+              },
+            })}
+          />
         </MainStack.Navigator>
       )}
     </NavigationContainer>
