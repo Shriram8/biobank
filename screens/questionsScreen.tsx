@@ -3,7 +3,7 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
   TextInput, TouchableOpacity ,Image, DevSettings} from 'react-native';
 import { useQuery, gql, useMutation } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetQuestionDetails,SubmitAnswerForQuestion,UpdateSubmittedAnswerForQuestion,SubmitCompleted} from '../src/graphql/queries';
+import {UpdateSubmitCompleted,GetQuestionDetails,SubmitAnswerForQuestion,UpdateSubmittedAnswerForQuestion,SubmitCompleted} from '../src/graphql/queries';
 import { Avatar, Button, Card, Title, Paragraph,List } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -26,13 +26,14 @@ var dict: string[] = [];
 var key;
 var value;
 var dictId:string[] = [];
+var editableId: string[] = [];
 var temp = new Array();
 var questionCount: number;
 var processDataId: any[];
 var _processCleared: boolean;
 export default function questionsScreen({route,navigation}: {route: any,navigation: any}) {
 
-  const { userId,operationTheaterID,processID, processName,instance } = route.params;
+  const { userId,operationTheaterID,processID, processName,instance,userType } = route.params;
   const [_data,setfetchData] = React.useState(false);
   const [disbaleCompleted,setDisableCompleted] = React.useState(true);
   const [disableButtons,setDisableButtons] = React.useState(false);
@@ -40,14 +41,14 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   let { loading, error, data:questions_data ,refetch} = useQuery(GetQuestionDetails,{variables:{
             processID:processID,
             Date:new Date().toISOString().slice(0, 10),
-            app_user:userId,
+            //app_user:userId,
             operation_theater:operationTheaterID,
             instance:instance,
   }}); 
 
   useEffect(() => {
     if(questions_data){
-        
+       console.log("USER TYPE__",userType) 
     }
   },[questions_data]);
 
@@ -61,7 +62,6 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
           variables:{
             processID:processID,
             Date:new Date().toISOString().slice(0, 10),
-            app_user:userId,
             operation_theater:operationTheaterID,
             instance:instance,
           },
@@ -73,18 +73,26 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
             dictId = []
             temp=[];
             processDataId=[];
+            editableId = [];
             questionCount = questions_data.processDetail.questions.length;
             if(questions_data.processesData.length == questionCount){
               setDisableCompleted(false);
             }
             if(questions_data.processesData.length>=1 && questions_data.processesData[0].check_editable){
               setDisableButtons(true);
-              setDisableCompleted(true);
+              if(userType !="OTIncharge")
+                setDisableCompleted(true);
             }
+            
             for(var i =0; i< questions_data.processesData.length;i++){
               key =  questions_data.processesData[i].question.id,
               value = questions_data.processesData[i].Answer,
               dict[key] = value;
+              try{
+              editableId[key] = questions_data.processesData[0].check_editable.id;
+              }catch{
+                
+              }
               processDataId.push(questions_data.processesData[i].id);
               dictId[key] = questions_data.processesData[i].id;
               temp.push(key);  
@@ -104,7 +112,6 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         processDataId.push(data.createProcessesDatum.processesDatum.id);
         if(Object.keys(dictId).length == questionCount){
           setDisableCompleted(false);
-          
         }
       }
   },[data]);
@@ -151,16 +158,40 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   }
 
   const [mutateEditableFunction, {data:SubmitEditableData }] = useMutation(SubmitCompleted);
+  const [updateEditableFunction, {data:UpdateEditableData }] = useMutation(UpdateSubmitCompleted);
 
   const submitEditable = ()=>{
       setDisableButtons(true);
       setDisableCompleted(true);
-      mutateEditableFunction({
-      variables: { 
-        processes_data: processDataId.map(Number),
-        processCleared:_processCleared,
+      if(userType == "OTIncharge"){
+        // mutateEditableFunction({
+        //   variables: { 
+        //     processes_data: processDataId.map(Number),
+        //     processCleared:true,
+        //   }
+        // });
+        for(var i=0;i<temp.length;i++){
+          console.log(dict,processDataId,dictId,temp)
+          if(dict[temp[i]]=="False"){
+            updateQuery(dictId[temp[i]],"True");
+            updateEditableFunction({
+              variables: {
+                checkEditable_Id: parseInt(editableId[temp[i]]),
+             }})
+          }
+          
+        }
+
+
+      }else{
+        mutateEditableFunction({
+          variables: { 
+            processes_data: processDataId.map(Number),
+            processCleared:_processCleared,
+          }
+        });
       }
-    });
+      
   }
 
   const renderResources = ({item}: {item: any}) => {
@@ -265,7 +296,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
           <Button  mode="contained" color ={"#006bcc"} disabled={disbaleCompleted}  
           style={{width:"100%",height:40, justifyContent:"center",alignSelf:"center"}} 
           onPress={() => submitEditable()}>
-            Completed
+            {userType=="OTIncharge"?"Override":"Completed"}
           </Button> 
         </View>
         </View>
