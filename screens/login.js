@@ -4,7 +4,7 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
 import {GetUserDetails} from '../src/graphql/queries';
-import { Divider } from 'react-native-paper';
+import { Divider, HelperText } from 'react-native-paper';
 import { createStackNavigator } from '@react-navigation/stack';
 import { connect } from 'react-redux';
 import { changeUserLogin } from '../src/Actions/UserLogin';
@@ -14,9 +14,9 @@ import { AnyAction, bindActionCreators, Dispatch } from 'redux';
 const apolloClient = client;
 const LoginRootStack = createStackNavigator();
 function login(props,navigation) {
-
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
+  const [showHelperText, setShowHelperText] = useState(false);
   const verifyLogin=()=>{
    apolloClient
         .query({
@@ -26,17 +26,20 @@ function login(props,navigation) {
           }
         })
         .then((Result) => {
-          if(Result.data.appUsers[0].password === password){
-            props.changeLogin(Result.data.appUsers[0].id);
-            navigation.navigate('homeScreen',{
-            userId: userId,
-          })
-        }
+          console.log("result",Result)
+            if(Result.data.appUsers[0].password === password){
+              props.changeLogin(Result.data.appUsers[0].id);
+              navigation.navigate('homeScreen',{
+              userId: userId,
+            }
+            )
+          }
           else{
-            //console.log("failed");
+            console.log("failed");
+            setShowHelperText(true);
           }
         })
-        .catch(() => { });
+        .catch(() => { setShowHelperText(true);});
   }
 
   return (
@@ -81,6 +84,11 @@ function login(props,navigation) {
             />
         </View>
         <Divider style={{width:"80%",height:1,borderColor:'black'}}/>
+
+        <HelperText type="error" visible={showHelperText}>
+        Userid or Password is incorrect!
+      </HelperText>
+
         <TouchableOpacity style={styles.loginBtn} onPress={verifyLogin}>
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>

@@ -19,12 +19,17 @@ var colorValue: any[] = [];
 var processCount: any[] = [];
 var netProgress: any[] = [];
 var _text: string;
+var red = "#f40000";
+var green = "#0fbb5b";
+var orange = "#ff8d48";
+
 export default function preProcessScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId, operationTheaterID, operationTheaterName } = route.params;
     const [renderFlatlistData,setRenderFlatlistData] = useState();
-    const [message,setMessage]=useState("Ongoing start of the day");
+    const [message,setMessage]=useState(null);
     const [refresh,setRefresh] = useState(0);
     const [updateMessage,setUpdateMessage] = useState(0);
+    const [headerColor,setHeaderColor] = useState("")
     const jewelStyle = (item: number | undefined)=>{
       return (item == 1)?{backgroundColor:"white"}:{backgroundColor:"#b6b6b6"}
     }
@@ -95,16 +100,22 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
                         //console.log("Result----data",Result);
                         try{
                           if(Result.data.processesData[0].check_editable){
-                            //console.log("instance-----",Result.data.processesData[0]);
+                            console.log("instance-----",Result.data.processesData[0]);
                             var p = Result.data.processesData[0].instance;
                             progress[p] = progress[p]+1;
                             netProgress[p] = progress[p]/processCount[p];
-                            if(netProgress[p] == 1 && Result.data.processesData[0].check_editable.processCleared){
-                              // if(p<preSurgeryProcessCount ){
-                              //   moduleLock = true;
-                              // }
+                            if(netProgress[p] == 1 ){
+                              if(p<preSurgeryProcessCount && !Result.data.processesData[0].check_editable.processCleared){
+                                moduleLock = true;
+                                console.log("Module Lock",moduleLock,"Process instance",p)
+                              }
                               try{
-                                lock[p+1] = false;
+                                if(moduleLock == true && p == preSurgeryProcessCount-1){
+                                  console.log("MMMMMMM",)
+                                  lock[preSurgeryProcessCount] = true;
+                                  setRefresh(prevCount => prevCount + 1);
+                                }
+                                else lock[p+1] = false;
                               }catch{
 
                               }
@@ -124,7 +135,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
                           //console.log("Process---",processCount,"Progress---",progress)
                           //console.log("net progress--",netProgress);
                           setRefresh(prevCount => prevCount + 1);
-                          console.log("----------Color--",colorValue);
+                          //console.log("----------Color--",colorValue);
                           //console.log("Refresh",refresh);
                         }
                         catch{
@@ -165,13 +176,6 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
     const changeColorSet=(id: number)=>{
       try{
         if(progress[id]){
-            // if(netProgress[id] == 1){
-            //   return "#0fbb5b";
-            // }
-            // // else if(colorValue[id] == "#f40000")
-            // //   return "alert-box"
-            // else
-            //   return "#959595"
             return colorValue[id];
         }
       }
@@ -186,6 +190,21 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
     ((processOrder == 3)?("Cleared for Surgery"+(id == 4 ?"-0"+(index-1):"")):("Cleared for end of the day"))
     }
 
+    const changeColorSetText=(id: number)=>{
+      try{
+        if(progress[id]){
+            if(moduleLock && id<preSurgeryProcessCount){
+              return "#f40000"
+            }
+            return colorValue[id];
+        }
+      }
+      catch{
+        return "#959595"
+      }
+      return "#959595"
+    }
+
     const changeColorStyle=(processOrder: number,id: number,index: number)=>{
       try{
         if(progress[index]){
@@ -197,6 +216,10 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
               }
               catch{
 
+              }
+              if(moduleLock && index<preSurgeryProcessCount){
+                _text = "Not - "+_text;
+                return {color:"#f40000"};
               }
               return {color:colorValue[index]};
             }
@@ -257,7 +280,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       <View style={[styles.appFlagContainer,{flex:1}]} >
       <View style={{width:30,height:30}}>
       <MaterialCommunityIcons
-      name='flag' size={30} color={changeColorSet(index)}/>
+      name='flag' size={30} color={changeColorSetText(index)}/>
       </View>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,},changeColorStyle(item.processOrder,item.id,index)]}>
         {getText(item.processOrder,item.id,index)}
