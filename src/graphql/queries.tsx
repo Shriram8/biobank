@@ -500,3 +500,25 @@ export const addNewUser = gql`
     }
   }
 `;
+
+export const UpdateUser = gql`
+  mutation(
+    $userId: ID!
+    $name: String!
+    $userType: ENUM_APPUSERS_USERTYPE
+    $gender: ENUM_APPUSERS_GENDER
+    $uid: String!
+  ) {
+    updateAppUser(
+      input: {
+        where: { id: $userId }
+        data: { name: $name, userType: $userType, uid: $uid, gender: $gender }
+      }
+    ) {
+      appUser {
+        id
+        name
+      }
+    }
+  }
+`;

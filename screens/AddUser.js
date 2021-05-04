@@ -11,6 +11,7 @@ import {
   addNewUser,
   GetUserDataById,
   ResetPassword,
+  UpdateUser,
 } from "../src/graphql/queries";
 import { useMutation } from "@apollo/client";
 import { client } from "../src/graphql/ApolloClientProvider";
@@ -45,6 +46,12 @@ const AddUser = (props) => {
     },
   });
 
+  let [update, { data: updateUserData }] = useMutation(UpdateUser, {
+    onCompleted: () => {
+      props.navigation.goBack();
+    },
+  });
+
   useEffect(() => {
     if (props.route.params?.from === "admin") {
       apolloClient
@@ -67,7 +74,7 @@ const AddUser = (props) => {
 
   const onSubmit = () => {
     setShowError(false);
-    if (mobile.trim() !== "" && name.trim() !== "") {
+    if (mobile.trim() !== "" && name.trim() !== "" && empId.trim !== "") {
       usermutate({
         variables: {
           name: name,
@@ -78,6 +85,24 @@ const AddUser = (props) => {
           employeeid: empId,
           active: true,
           resetpassword: true,
+        },
+      });
+    } else {
+      setShowError(true);
+      setErrorMsg("Please fill all the fields");
+    }
+  };
+
+  const toUpdate = () => {
+    setShowError(false);
+    if (mobile.trim() !== "" && name.trim() !== "" && empId.trim !== "") {
+      update({
+        variables: {
+          name: name,
+          userType: list,
+          uid: mobile,
+          gender: checked,
+          userId: props.route.params?.userId,
         },
       });
     } else {
@@ -236,7 +261,7 @@ const AddUser = (props) => {
         color={"#006bcc"}
         uppercase={false}
         style={styles.submitButton}
-        onPress={onSubmit}
+        onPress={props.route.params?.from ? toUpdate : onSubmit}
       >
         {props.route.params?.from ? "Update user" : "Add a New User"}
       </Button>

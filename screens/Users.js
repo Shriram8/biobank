@@ -7,7 +7,9 @@ import { useQuery, useMutation } from "@apollo/client";
 import { TouchableOpacity } from "react-native";
 
 const Users = (props) => {
-  const { data, refetch } = useQuery(GetUsers);
+  const { data, refetch } = useQuery(GetUsers, {
+    fetchPolicy: "network-only",
+  });
   // const [showPop, setShowPop] = useState(false);
   const [sectionData, setSectionData] = useState([]);
   // const [deactivateId, setDeactivateId] = useState("");
