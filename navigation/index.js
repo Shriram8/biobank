@@ -48,6 +48,8 @@ import ProfilePassword from "../screens/ProfilePassword";
 
 const Drawer = createDrawerNavigator();
 const Navigation = (props) => {
+  console.log("---------", props.userType);
+
   return (
     <NavigationContainer>
       {/* <MainStackNavigator isLoggedIn={props.isLoggedIn}  /> */}
@@ -131,20 +133,22 @@ const Navigation = (props) => {
             name="Profile"
             component={ProfileStackNavigator}
           />
-          <Drawer.Screen
-            headerShown={true}
-            options={{
-              // headerShown: true,
-              drawerIcon: () => (
-                <Image
-                  style={{ height: 30, width: 30 }}
-                  source={require("./../assets/screenIcons/group.png")}
-                />
-              ),
-            }}
-            name="Users"
-            component={UserStackNavigator}
-          />
+          {props.userType !== "OTStaff" && (
+            <Drawer.Screen
+              headerShown={true}
+              options={{
+                // headerShown: true,
+                drawerIcon: () => (
+                  <Image
+                    style={{ height: 30, width: 30 }}
+                    source={require("./../assets/screenIcons/group.png")}
+                  />
+                ),
+              }}
+              name="Users"
+              component={UserStackNavigator}
+            />
+          )}
           <Drawer.Screen
             headerShown={true}
             options={{
@@ -186,6 +190,7 @@ const Navigation = (props) => {
 
 const mapStateToProps = (state) => ({
   isLoggedIn: state.isLoggedIn,
+  userType: state.userType,
 });
 export default connect(mapStateToProps)(Navigation);
 

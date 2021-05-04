@@ -40,6 +40,7 @@ function login(props, navigation) {
             employeeid: userId,
             // userID: userId,
           },
+          fetchPolicy: "network-only",
         })
         .then((Result) => {
           console.log("result", Result);
@@ -69,30 +70,33 @@ function login(props, navigation) {
   };
 
   const getUserDetails = () => {
-    apolloClient
-      .query({
-        query: GetDetailsWithEmployeeId,
-        variables: {
-          employeeid: userId,
-        },
-      })
-      .then((Result) => {
-        console.log("result", Result);
-        if (Result.data.appUsers[0]?.resetpassword === true) {
-          props.navigation.navigate("setPassword", {
-            from: "login",
-            userId: Result.data.appUsers[0].id,
-          });
-          setRegister(false);
-        } else {
-          setShowHelperText(true);
-          setErrorMsg("You are not allowed to reset password");
-        }
-        if (Result.data.appUsers.length === 0) {
-          setShowHelperText(true);
-          setErrorMsg("Mobile/employee ID not found");
-        }
-      });
+    if (userId.trim() !== "") {
+      apolloClient
+        .query({
+          query: GetDetailsWithEmployeeId,
+          variables: {
+            employeeid: userId,
+          },
+          fetchPolicy: "network-only",
+        })
+        .then((Result) => {
+          console.log("result", Result);
+          if (Result.data.appUsers[0]?.resetpassword === true) {
+            props.navigation.navigate("setPassword", {
+              from: "login",
+              userId: Result.data.appUsers[0].id,
+            });
+            setRegister(false);
+          } else {
+            setShowHelperText(true);
+            setErrorMsg("You are not allowed to reset password");
+          }
+          if (Result.data.appUsers.length === 0) {
+            setShowHelperText(true);
+            setErrorMsg("Mobile/employee ID not found");
+          }
+        });
+    }
   };
 
   return (
@@ -150,19 +154,20 @@ function login(props, navigation) {
             </>
           )}
           {showHelperText && (
-            <Text
-              type="error"
-              visible={showHelperText}
-              style={{
-                marginTop: 20,
-                color: "#fa796f",
-                fontSize: 14,
-                alignSelf: "flex-start",
-                marginLeft: 155,
-              }}
-            >
-              {errorMsg}
-            </Text>
+            <View style={{ width: "80%" }}>
+              <Text
+                type="error"
+                visible={showHelperText}
+                style={{
+                  marginTop: 20,
+                  color: "#fa796f",
+                  fontSize: 14,
+                  alignSelf: "flex-start",
+                }}
+              >
+                {errorMsg}
+              </Text>
+            </View>
           )}
 
           <TouchableOpacity

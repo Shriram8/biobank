@@ -74,7 +74,7 @@ const AddUser = (props) => {
 
   const onSubmit = () => {
     setShowError(false);
-    if (mobile.trim() !== "" && name.trim() !== "" && empId.trim !== "") {
+    if (mobile !== "" && name !== "" && empId !== "") {
       usermutate({
         variables: {
           name: name,
@@ -95,7 +95,7 @@ const AddUser = (props) => {
 
   const toUpdate = () => {
     setShowError(false);
-    if (mobile.trim() !== "" && name.trim() !== "" && empId.trim !== "") {
+    if (mobile !== "" && name !== "" && empId !== "") {
       update({
         variables: {
           name: name,
@@ -113,17 +113,22 @@ const AddUser = (props) => {
 
   const checkUser = () => {
     if (props.route.params?.from) {
-      if (props.userType !== "OTStaff") {
-        if (props.route.params?.userType === "OTStaff") {
-          return true;
-        } else {
+      switch (props.userType) {
+        case "OTStaff":
           return false;
-        }
-      } else {
-        return false;
+        case "OTIncharge":
+          if (props.route.params?.userType === "OTStaff") {
+            return true;
+          } else {
+            return false;
+          }
+        case "OTAdmin":
+          if (props.route.params?.userType !== "OTAdmin") {
+            return true;
+          } else {
+            return false;
+          }
       }
-    } else {
-      return false;
     }
   };
 
@@ -149,6 +154,7 @@ const AddUser = (props) => {
         </View>
         <View style={styles.inputView}>
           <TextInput
+            editable={checkUser()}
             style={styles.inputText}
             onChangeText={setName}
             value={name}
@@ -161,6 +167,7 @@ const AddUser = (props) => {
         <View style={{ flexDirection: "row" }}>
           <View style={styles.radioView}>
             <RadioButton
+              disabled={!props.route.params?.from ? false : !checkUser()}
               value="Male"
               color={"#006bcc"}
               status={checked === "male" ? "checked" : "unchecked"}
@@ -170,6 +177,7 @@ const AddUser = (props) => {
           </View>
           <View style={styles.radioView}>
             <RadioButton
+              disabled={!props.route.params?.from ? false : !checkUser()}
               value="Female"
               color={"#006bcc"}
               status={checked === "female" ? "checked" : "unchecked"}
@@ -179,6 +187,7 @@ const AddUser = (props) => {
           </View>
           <View style={styles.radioView}>
             <RadioButton
+              disabled={!props.route.params?.from ? false : !checkUser()}
               value="Others"
               color={"#006bcc"}
               status={checked === "others" ? "checked" : "unchecked"}
@@ -192,6 +201,7 @@ const AddUser = (props) => {
         </View>
         <View style={styles.inputView}>
           <TextInput
+            editable={checkUser()}
             style={styles.inputText}
             onChangeText={setMobile}
             value={mobile}
@@ -203,6 +213,7 @@ const AddUser = (props) => {
         </View>
         <View style={styles.inputView}>
           <TextInput
+            editable={checkUser()}
             style={styles.inputText}
             onChangeText={setEmpId}
             value={empId}
@@ -213,6 +224,7 @@ const AddUser = (props) => {
           <Text style={styles.textStyle}>Role</Text>
         </View>
         <List.Accordion
+          expanded={checkUser()}
           title={list.slice(2)}
           style={styles.listHead}
           titleStyle={styles.listTitle}
@@ -256,15 +268,28 @@ const AddUser = (props) => {
           </Text>
         )}
       </ScrollView>
-      <Button
-        mode="contained"
-        color={"#006bcc"}
-        uppercase={false}
-        style={styles.submitButton}
-        onPress={props.route.params?.from ? toUpdate : onSubmit}
-      >
-        {props.route.params?.from ? "Update user" : "Add a New User"}
-      </Button>
+      {checkUser() && (
+        <Button
+          mode="contained"
+          color={"#006bcc"}
+          uppercase={false}
+          style={styles.submitButton}
+          onPress={toUpdate}
+        >
+          Update user
+        </Button>
+      )}
+      {!props.route.params?.from && (
+        <Button
+          mode="contained"
+          color={"#006bcc"}
+          uppercase={false}
+          style={styles.submitButton}
+          onPress={onSubmit}
+        >
+          Add a New User
+        </Button>
+      )}
     </View>
   );
 };
@@ -352,7 +377,8 @@ const styles = StyleSheet.create({
   reset: {
     width: "100%",
     height: 40,
-    marginVertical: 10,
+    marginTop: 10,
+    marginBottom: 20,
     justifyContent: "center",
   },
 });
