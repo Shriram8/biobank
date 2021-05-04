@@ -12,7 +12,9 @@ export const GetUserDetails = gql`
 
 export const GetDetailsWithEmployeeId = gql`
   query($employeeid: String) {
-    appUsers(where: { employeeid: $employeeid }) {
+    appUsers(
+      where: { _or: [{ employeeid: $employeeid }, { uid: $employeeid }] }
+    ) {
       id
       name
       userType
