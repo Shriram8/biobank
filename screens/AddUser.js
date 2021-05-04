@@ -133,25 +133,21 @@ const AddUser = (props) => {
   };
 
   const createUserTypeValidation = (val) => {
-    if (!props.route.params?.from) {
-      switch (props.userType) {
-        case "OTStaff":
+    switch (props.userType) {
+      case "OTStaff":
+        return false;
+      case "OTIncharge":
+        if (val === "OTStaff") {
+          return true;
+        } else {
           return false;
-        case "OTIncharge":
-          if (val === "OTStaff") {
-            return true;
-          } else {
-            return false;
-          }
-        case "OTAdmin":
-          if (val !== "OTAdmin") {
-            return true;
-          } else {
-            return false;
-          }
-      }
-    } else {
-      return true;
+        }
+      case "OTAdmin":
+        if (val !== "OTAdmin") {
+          return true;
+        } else {
+          return false;
+        }
     }
   };
 
