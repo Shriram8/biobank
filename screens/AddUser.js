@@ -132,6 +132,29 @@ const AddUser = (props) => {
     }
   };
 
+  const createUserTypeValidation = (val) => {
+    if (!props.route.params?.from) {
+      switch (props.userType) {
+        case "OTStaff":
+          return false;
+        case "OTIncharge":
+          if (val === "OTStaff") {
+            return true;
+          } else {
+            return false;
+          }
+        case "OTAdmin":
+          if (val !== "OTAdmin") {
+            return true;
+          } else {
+            return false;
+          }
+      }
+    } else {
+      return true;
+    }
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.modalHeader}>
@@ -230,8 +253,12 @@ const AddUser = (props) => {
           titleStyle={styles.listTitle}
         >
           <List.Item title="Staff" onPress={() => setList("OTStaff")} />
-          <List.Item title="Incharge" onPress={() => setList("OTIncharge")} />
-          <List.Item title="Admin" onPress={() => setList("OTAdmin")} />
+          {createUserTypeValidation("OTIncharge") && (
+            <List.Item title="Incharge" onPress={() => setList("OTIncharge")} />
+          )}
+          {createUserTypeValidation("OTAdmin") && (
+            <List.Item title="Admin" onPress={() => setList("OTAdmin")} />
+          )}
         </List.Accordion>
         {checkUser() && (
           <>
