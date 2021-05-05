@@ -20,6 +20,9 @@ export const GetDetailsWithEmployeeId = gql`
       userType
       password
       resetpassword
+      branch {
+        id
+      }
     }
   }
 `;
@@ -34,8 +37,8 @@ export const GetResourcesDetails = gql`
 `;
 
 export const GetUsers = gql`
-  query {
-    appUsers {
+  query($branch: ID!) {
+    appUsers(where: { branch: $branch, active: true }) {
       id
       name
       userType
@@ -103,6 +106,9 @@ export const ResetPassword = gql`
       appUser {
         id
         name
+        branch {
+          id
+        }
       }
     }
   }
@@ -480,6 +486,7 @@ export const addNewUser = gql`
     $employeeid: String
     $active: Boolean!
     $resetpassword: Boolean!
+    $branch: ID
   ) {
     createAppUser(
       input: {
@@ -492,12 +499,16 @@ export const addNewUser = gql`
           employeeid: $employeeid
           active: $active
           resetpassword: $resetpassword
+          branch: $branch
         }
       }
     ) {
       appUser {
         id
         name
+        branch {
+          id
+        }
       }
     }
   }
@@ -520,7 +531,30 @@ export const UpdateUser = gql`
       appUser {
         id
         name
+        branch {
+          id
+        }
       }
+    }
+  }
+`;
+
+export const addNewBranch = gql`
+  mutation($name: String!) {
+    createBranch(input: { data: { name: $name } }) {
+      branch {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const getBranchDetails = gql`
+  query {
+    branches {
+      id
+      name
     }
   }
 `;

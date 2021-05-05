@@ -29,8 +29,8 @@ const AddUser = (props) => {
   const [errorMsg, setErrorMsg] = useState("");
 
   let [usermutate, { data }] = useMutation(addNewUser, {
-    onCompleted: () => {
-      props.navigation.goBack();
+    onCompleted: (data) => {
+      navigateToUsers(data.createAppUser.appUser.branch.id);
     },
     onError: (err) => {
       if (err.message === "Duplicate entry") {
@@ -41,14 +41,14 @@ const AddUser = (props) => {
   });
 
   let [reset, { data: resetPasswordData }] = useMutation(ResetPassword, {
-    onCompleted: () => {
-      props.navigation.goBack();
+    onCompleted: (data) => {
+      navigateToUsers(data.updateAppUser.appUser.branch.id);
     },
   });
 
   let [update, { data: updateUserData }] = useMutation(UpdateUser, {
-    onCompleted: () => {
-      props.navigation.goBack();
+    onCompleted: (data) => {
+      navigateToUsers(data.updateAppUser.appUser.branch.id);
     },
   });
 
@@ -85,6 +85,7 @@ const AddUser = (props) => {
           employeeid: empId,
           active: true,
           resetpassword: true,
+          branch: props.route.params?.branch,
         },
       });
     } else {
@@ -114,6 +115,8 @@ const AddUser = (props) => {
   const checkUser = () => {
     if (props.route.params?.from) {
       switch (props.userType) {
+        case "OTSuperUser":
+          return true;
         case "OTStaff":
           return false;
         case "OTIncharge":
@@ -134,6 +137,8 @@ const AddUser = (props) => {
 
   const createUserTypeValidation = (val) => {
     switch (props.userType) {
+      case "OTSuperUser":
+        return true;
       case "OTStaff":
         return false;
       case "OTIncharge":
@@ -149,6 +154,13 @@ const AddUser = (props) => {
           return false;
         }
     }
+  };
+
+  const navigateToUsers = (id) => {
+    props.navigation.navigate("users", {
+      from: "adduser",
+      branch: id,
+    });
   };
 
   return (

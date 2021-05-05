@@ -5,14 +5,26 @@ import { GetUsers, DeactivateUser } from "../src/graphql/queries";
 import { useQuery, useMutation } from "@apollo/client";
 // import Popover from "react-native-popover-view";
 import { TouchableOpacity } from "react-native";
+import { client } from "../src/graphql/ApolloClientProvider";
+import { connect } from "react-redux";
+
+const apolloClient = client;
 
 const Users = (props) => {
-  const { data, refetch } = useQuery(GetUsers, {
-    fetchPolicy: "network-only",
-  });
   // const [showPop, setShowPop] = useState(false);
   const [sectionData, setSectionData] = useState([]);
   // const [deactivateId, setDeactivateId] = useState("");
+
+  const { data, refetch } = useQuery(GetUsers, {
+    fetchPolicy: "network-only",
+    variables: {
+      branch:
+        props.route.params?.from === "branches" ||
+        props.route.params?.from === "adduser"
+          ? props.route.params?.branch
+          : props.branch,
+    },
+  });
 
   let [deactivateUser, { data: deactivatedData }] = useMutation(
     DeactivateUser,
@@ -24,18 +36,11 @@ const Users = (props) => {
     }
   );
 
-  const emptyComponent = () => {
-    return <Text style={styles.empty}>No members</Text>;
-  };
-
-  const deactivate = (id) => {
-    deactivateUser({
-      variables: {
-        userId: id,
-        active: false,
-      },
-    });
-  };
+  useEffect(() => {
+    if (props.route.params?.from === "adduser") {
+      refetch();
+    }
+  }, [props.route.params]);
 
   const DATA = [
     {
@@ -70,6 +75,19 @@ const Users = (props) => {
       setSectionData(DATA);
     }
   }, [data]);
+
+  const emptyComponent = () => {
+    return <Text style={styles.empty}>No members</Text>;
+  };
+
+  const deactivate = (id) => {
+    deactivateUser({
+      variables: {
+        userId: id,
+        active: false,
+      },
+    });
+  };
 
   const Item = ({ title }) => (
     <TouchableOpacity
@@ -108,7 +126,14 @@ const Users = (props) => {
           color={"#006bcc"}
           uppercase={false}
           style={{ borderRadius: 7 }}
-          onPress={() => props.navigation.navigate("adduser")}
+          onPress={() =>
+            props.navigation.navigate("adduser", {
+              branch:
+                props.route.params?.from === "branches"
+                  ? props.route.params?.branch
+                  : props.branch,
+            })
+          }
         >
           Add
         </Button>
@@ -158,7 +183,11 @@ const Users = (props) => {
   );
 };
 
-export default Users;
+const mapStateToProps = (state) => ({
+  branch: state.branch,
+});
+
+export default connect(mapStateToProps)(Users);
 
 const styles = StyleSheet.create({
   container: {
