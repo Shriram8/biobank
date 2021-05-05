@@ -37,7 +37,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   const [_data,setfetchData] = React.useState(false);
   const [disbaleCompleted,setDisableCompleted] = React.useState(true);
   const [disableButtons,setDisableButtons] = React.useState(false);
-  
+  const [override,setOverride]= React.useState(false);
   let { loading, error, data:questions_data ,refetch} = useQuery(GetQuestionDetails,{variables:{
             processID:processID,
             Date:new Date().toISOString().slice(0, 10),
@@ -55,6 +55,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   React.useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {
         setDisableCompleted(true);
+        setOverride(false);
         _processCleared = true;
         apolloClient
         .query({
@@ -179,7 +180,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
                 checkEditable_Id: parseInt(editableId[temp[i]]),
              }})
           }
-          
+          setOverride(true);
         }
 
 
@@ -241,7 +242,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       </Picker>
       </>):(
        <RadioGroup 
-          selectedIndex={dict[item.id] == "True"? 0 : (dict[item.id]=="False"?1:null)}
+          selectedIndex={override?0:(dict[item.id] == "True"? 0 : (dict[item.id]=="False"?1:null))}
           onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
           style={{flexDirection:"row",justifyContent: 'space-between'}}
           >
