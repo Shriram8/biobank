@@ -85,6 +85,7 @@ const AddUser = (props) => {
           employeeid: empId,
           active: true,
           resetpassword: true,
+          branch: props.route.params?.branch,
         },
       });
     } else {
@@ -114,6 +115,8 @@ const AddUser = (props) => {
   const checkUser = () => {
     if (props.route.params?.from) {
       switch (props.userType) {
+        case "OTSuperUser":
+          return true;
         case "OTStaff":
           return false;
         case "OTIncharge":
@@ -134,6 +137,8 @@ const AddUser = (props) => {
 
   const createUserTypeValidation = (val) => {
     switch (props.userType) {
+      case "OTSuperUser":
+        return true;
       case "OTStaff":
         return false;
       case "OTIncharge":

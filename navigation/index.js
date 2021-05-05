@@ -45,11 +45,11 @@ import Users from "../screens/Users";
 import AddUser from "../screens/AddUser";
 import Profile from "../screens/Profile";
 import ProfilePassword from "../screens/ProfilePassword";
+import Branches from "../screens/Branches";
+import AddBranch from "../screens/AddBranch";
 
 const Drawer = createDrawerNavigator();
 const Navigation = (props) => {
-  console.log("---------", props.userType);
-
   return (
     <NavigationContainer>
       {/* <MainStackNavigator isLoggedIn={props.isLoggedIn}  /> */}
@@ -146,7 +146,7 @@ const Navigation = (props) => {
                 ),
               }}
               name="Users"
-              component={UserStackNavigator}
+              component={(params) => UserStackNavigator(params, props.userType)}
             />
           )}
           <Drawer.Screen
@@ -271,14 +271,44 @@ const MainStackNavigator = (props) => {
 };
 
 const UserStack = createStackNavigator();
-const UserStackNavigator = (props) => {
+const UserStackNavigator = (props, type) => {
+  console.log(type);
   return (
-    <UserStack.Navigator initialRouteName="users">
+    <UserStack.Navigator
+      initialRouteName={type === "OTSuperUser" ? "branches" : "users"}
+    >
       <UserStack.Screen
         name="users"
         component={Users}
         options={({ route }) => ({
           title: "Users",
+          headerTitleAlign: "center",
+          headerLeft: () => (
+            <Button
+              onPress={() => {
+                if (type === "OTSuperUser") {
+                  props.navigation.navigate("branches");
+                } else {
+                  props.navigation.goBack();
+                }
+              }}
+              icon={() => (
+                <MaterialCommunityIcons
+                  name="arrow-left"
+                  size={25}
+                  color="black"
+                  style={{ marginLeft: 2 }}
+                />
+              )}
+            ></Button>
+          ),
+        })}
+      />
+      <UserStack.Screen
+        name="branches"
+        component={Branches}
+        options={({ route }) => ({
+          title: "User Management",
           headerTitleAlign: "center",
           headerLeft: () => (
             <Button
@@ -303,6 +333,14 @@ const UserStackNavigator = (props) => {
         options={({ route }) => ({
           headerShown: false,
           title: "Add a new user",
+          headerTitleAlign: "center",
+        })}
+      />
+      <UserStack.Screen
+        name="addbranch"
+        component={AddBranch}
+        options={({ route }) => ({
+          title: "Add a new branch",
           headerTitleAlign: "center",
         })}
       />

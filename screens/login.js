@@ -47,7 +47,8 @@ function login(props, navigation) {
           if (Result.data.appUsers[0].password === password) {
             props.changeLogin(
               Result.data.appUsers[0].id,
-              Result.data.appUsers[0].userType
+              Result.data.appUsers[0].userType,
+              Result.data.appUsers[0].branch.id
             );
             navigation.navigate("homeScreen", {
               userId: userId,
@@ -287,12 +288,13 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    changeLogin: (userId, userType) =>
+    changeLogin: (userId, userType, branch) =>
       dispatch({
         type: "CHANGE_LOGIN",
         payload: {
           userId,
           userType,
+          branch,
         },
       }),
   };
