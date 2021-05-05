@@ -4,7 +4,7 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
 import { useQuery, gql, useMutation } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
 import {UpdateSubmitCompleted,GetQuestionDetails,SubmitAnswerForQuestion,UpdateSubmittedAnswerForQuestion,SubmitCompleted} from '../src/graphql/queries';
-import { Avatar, Button, Card, Title, Paragraph,List } from 'react-native-paper';
+import { Avatar, Button, Card, Title, Paragraph,List, Provider, Portal,Modal } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RadioGroup, RadioButton } from 'react-native-radio-btn';
@@ -38,6 +38,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   const [disbaleCompleted,setDisableCompleted] = React.useState(true);
   const [disableButtons,setDisableButtons] = React.useState(false);
   const [override,setOverride]= React.useState(false);
+  const [_cleared,setCleared] = React.useState(false);
   let { loading, error, data:questions_data ,refetch} = useQuery(GetQuestionDetails,{variables:{
             processID:processID,
             Date:new Date().toISOString().slice(0, 10),
@@ -45,6 +46,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
             operation_theater:operationTheaterID,
             instance:instance,
   }}); 
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     if(questions_data){
@@ -57,6 +59,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         setDisableCompleted(true);
         setOverride(false);
         _processCleared = true;
+        setCleared(true);
         apolloClient
         .query({
           query: GetQuestionDetails,
@@ -86,8 +89,11 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
             }
             
             for(var i =0; i< questions_data.processesData.length;i++){
-              key =  questions_data.processesData[i].question.id,
-              value = questions_data.processesData[i].Answer,
+              key =  questions_data.processesData[i].question.id;
+              value = questions_data.processesData[i].Answer;
+              if(value == "False"){
+                setCleared(false);
+              }
               dict[key] = value;
               try{
               editableId[key] = questions_data.processesData[0].check_editable.id;
@@ -150,6 +156,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       value = (value == 0 ? "True": "False")
       if(value == "False"){
         _processCleared = false;
+        setCleared(false);
       }
     }
     if(temp.indexOf(index)!=-1){ 
@@ -162,6 +169,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   const [updateEditableFunction, {data:UpdateEditableData }] = useMutation(UpdateSubmitCompleted);
 
   const submitEditable = ()=>{
+    
       setDisableButtons(true);
       setDisableCompleted(true);
       if(userType == "OTIncharge"){
@@ -192,8 +200,10 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
           }
         });
       }
-      
+      setModalVisible(true);
   }
+
+  
 
   const renderResources = ({item}: {item: any}) => {
     return (
@@ -265,13 +275,40 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
     </View>
     );
   };
-         
+     
+  
+  const getStyle =()=>{
+    if(_cleared){
+      return [styles.headerTextStyle,{margin:10,fontSize:18,color:"green"}]
+    }
+    else
+    return [styles.headerTextStyle,{margin:10,fontSize:18,color:"red"}]
+  }
+
   return (  
+     
     <>
+    <Provider>
+      <Portal>
+        <Modal visible={modalVisible} style={{width:"100%",height:100,position:"relative",}} contentContainerStyle={{backgroundColor: 'blue'}}>
+          <View style={{width:"100%",height:142,backgroundColor:"white"}}>
+            <View style={{height:102}}>
+          <Text style={getStyle()}>{_cleared?"Process Completed":"Process Incomplete"}</Text>
+          <Text style={[styles.headerTextStyle,{margin:10,fontSize:14,fontWeight:"normal"}]}>{_cleared?"Continue finishing next tasks":"Contact admin to complete the tasks."}</Text>
+          </View>
+          <Button  mode="contained" color ={"#006bcc"}  
+          style={{width:"100%",height:40,justifyContent:"center",alignItems:"center"}} 
+          onPress={() =>  navigation.goBack()}>
+            Continue
+          </Button> 
+          </View>
+        </Modal>
+      </Portal>
        <StatusBar
         animated={true}
         backgroundColor="#ff8d48"
         hidden={false} />
+        
          <View style={{backgroundColor:"#ff8d48",width:"100%",height:"100%"}}>
           <View style={styles.header}>
             <Image
@@ -302,7 +339,9 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         </View>
         </View>
         </View>
+        </Provider>
       </>
+      
   );
 
 }
