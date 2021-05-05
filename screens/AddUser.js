@@ -29,8 +29,8 @@ const AddUser = (props) => {
   const [errorMsg, setErrorMsg] = useState("");
 
   let [usermutate, { data }] = useMutation(addNewUser, {
-    onCompleted: () => {
-      navigateToUsers();
+    onCompleted: (data) => {
+      navigateToUsers(data.createAppUser.appUser.branch.id);
     },
     onError: (err) => {
       if (err.message === "Duplicate entry") {
@@ -41,14 +41,14 @@ const AddUser = (props) => {
   });
 
   let [reset, { data: resetPasswordData }] = useMutation(ResetPassword, {
-    onCompleted: () => {
-      navigateToUsers();
+    onCompleted: (data) => {
+      navigateToUsers(data.updateAppUser.appUser.branch.id);
     },
   });
 
   let [update, { data: updateUserData }] = useMutation(UpdateUser, {
-    onCompleted: () => {
-      navigateToUsers();
+    onCompleted: (data) => {
+      navigateToUsers(data.updateAppUser.appUser.branch.id);
     },
   });
 
@@ -156,9 +156,10 @@ const AddUser = (props) => {
     }
   };
 
-  const navigateToUsers = () => {
+  const navigateToUsers = (id) => {
     props.navigation.navigate("users", {
       from: "adduser",
+      branch: id,
     });
   };
 
@@ -170,7 +171,9 @@ const AddUser = (props) => {
           color={"#010101"}
           size={25}
           style={{ position: "absolute", left: 2 }}
-          onPress={navigateToUsers}
+          onPress={() => {
+            props.navigation.goBack();
+          }}
         />
         <Text style={styles.headerTitle}>
           {props.route.params?.from ? "Update user" : "Add a New User"}

@@ -19,7 +19,8 @@ const Users = (props) => {
     fetchPolicy: "network-only",
     variables: {
       branch:
-        props.route.params?.from === "branches"
+        props.route.params?.from === "branches" ||
+        props.route.params?.from === "adduser"
           ? props.route.params?.branch
           : props.branch,
     },

@@ -38,7 +38,7 @@ export const GetResourcesDetails = gql`
 
 export const GetUsers = gql`
   query($branch: ID!) {
-    appUsers(where: { branch: $branch }) {
+    appUsers(where: { branch: $branch, active: true }) {
       id
       name
       userType
@@ -106,6 +106,9 @@ export const ResetPassword = gql`
       appUser {
         id
         name
+        branch {
+          id
+        }
       }
     }
   }
@@ -503,6 +506,9 @@ export const addNewUser = gql`
       appUser {
         id
         name
+        branch {
+          id
+        }
       }
     }
   }
@@ -525,6 +531,9 @@ export const UpdateUser = gql`
       appUser {
         id
         name
+        branch {
+          id
+        }
       }
     }
   }
