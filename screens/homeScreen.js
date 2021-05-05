@@ -112,12 +112,11 @@ function homeScreen(props, route) {
          
           let global_process_status = [];
           for (var i = 0; i < Result.data.operationTheaters.length; i++) {
-            //  console.log("=========", parseInt(props.userId));
             await apolloClient
               .query({
                 query: Check_Process_Progress,
                 variables: {
-                  userId: parseInt(props.userId),
+                 // userId: parseInt(props.userId),
                   otID: Result.data.operationTheaters[i].id,
                   date: new Date(),
                 },

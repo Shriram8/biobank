@@ -5,7 +5,7 @@ query($otID:ID!,$date:String){
       
       name
       processes_data( where: {Date:$date} sort:"created_at:ASC" ){
-         
+        created_at
        
         process_detail{
           process_name 
@@ -25,6 +25,7 @@ query($otID:ID!,$date:String){
         Answer
         check_editable{
            editable
+           processCleared
         }
       }
     }

@@ -19,23 +19,55 @@ const GenerateHistoryCSV = (props)=>{
         }
     })
     if(data){
-        console.log("data**********")
+        console.log("data**********", data)
     }
-
+    const getCurrentTime=(date)=>{
+        var d=new Date(date)
+       return d.getHours()+":"+ d.getMinutes(0)
+    }
     //const { parse } = require('json2csv');
     const jsonexport = require("jsonexport/dist")
-    
+    const jsonToCSV = (otData, success)=>{
+         let csv = ""
+         for(var i=0;i<otData.length;i++){
+             
+               if(i===0){
+                   csv= csv+"date,time, name, question,answer,process_completed,user_name, user_type\n"
+               }
+               csv=csv+otData[i].Date+ ","+ getCurrentTime(otData[i].created_at)+"," 
+               + otData[i]?.process_detail.process_name+"," 
+               + otData[i].question.Question+","+ 
+               otData[i].Answer+","+ (otData[i]?.check_editable?.processCleared!=undefined?otData[i].check_editable.processCleared: false ) +"," +
+                (otData[i]?.app_user?.name!=undefined?otData[i].app_user.name: " - " )  +"," + (otData[i]?.app_user?.userType!=undefined?otData[i].app_user.userType: " - " )  +"," + "\n" 
+                if(i===18){
+                console.log("==== only 19 logs====",otData[18].Date+ ","+ getCurrentTime(otData[18].created_at)+"," 
+                + otData[18]?.process_detail.process_name+"," 
+                + otData[18].question.Question+","+ 
+                otData[18].Answer+","+ (otData[18]?.check_editable?.processCleared!=undefined?otData[18].check_editable.processCleared: false ) +"," +
+                 (otData[18]?.app_user?.name!=undefined?otData[18].app_user.name: " - " )  +"," + (otData[18]?.app_user?.userType!=undefined?otData[18].app_user.userType: " - " )  +"," + "\n")   
+                }            
+         }
+//console.log("OT DATA",csv)
+       
+        success(csv)
+
+    }
     useEffect(()=>{
         if(data){ 
             if(data.operationTheaters[0].processes_data.length>0){
                 if(fileDownloadControl){
                     console.log("=========",fileDownloadControl)
-                    json2csv(data.operationTheaters[0].processes_data,{expandArrayObjects :true}, function(err, csv){
-                        if (err) return console.error(err);
-                        //console.log(csv);
+                    // json2csv(data.operationTheaters[0].processes_data,{expandArrayObjects :true}, function(err, csv){
+                    //     if (err) return console.error(err);
+                    //     //console.log(csv);
+                    //     setFileDownloadControl(false)
+                    //     props.saveFile(data.operationTheaters[0].name+"_"+getDate(date)+".csv", csv)
+                    // });
+                    jsonToCSV(data.operationTheaters[0].processes_data,function(csv){
                         setFileDownloadControl(false)
                         props.saveFile(data.operationTheaters[0].name+"_"+getDate(date)+".csv", csv)
-                    });
+                    })
+                    
                 }
                
             }else{
