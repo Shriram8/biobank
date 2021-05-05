@@ -4,7 +4,7 @@ import {View,Text, StyleSheet } from 'react-native';
 
 const MessageComponent = (props)=>{
   
-    const message = props.message?props.message:"Process Message"
+    const item = props.message?props.message:"Process Message"
     return(
         <View style={[{
             flexDirection:"row",
@@ -16,10 +16,10 @@ const MessageComponent = (props)=>{
             margin:0},{flex:1}]}>
 <View style={{width:30,height:30,marginLeft:14}}>
   <MaterialCommunityIcons
-  name='play-box' size={30}/>
+  name={item.icon} size={30} color={item.color}/>
 </View>
-<Text style={[styles.appButtonText,{flex:1, marginRight:14,}]} numberOfLines={1}>
-  {message}
+<Text style={[styles.appButtonText,{flex:1, marginRight:14,color:item.color}]} numberOfLines={1}>
+  {item.message}
 </Text>
 <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
 

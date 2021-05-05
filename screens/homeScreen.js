@@ -33,6 +33,12 @@ var location = "Coles Road";
 var _data;
 var _operationTheaterData = [];
 var message = [];
+var red = "#f40000";
+var green = "#0fbb5b";
+var orange = "#ff8d48";
+var alert = "alert-box";
+var check = "checkbox-marked";
+var minusBox = "minus-box";
 function homeScreen(props, route) {
   const [renderFlatlistData, setRenderFlatlistData] = useState();
   const [processMessageData, setProcessMessageData] = useState([]);
@@ -124,84 +130,79 @@ function homeScreen(props, route) {
                 for (var t = 0; t <= 4 - 1; t++) {
                   status_arr[t] = 0;
                 }
-                process_details: for (var m = 0; m < 4; m++) {
-                  for (
-                    var q = 0;
-                    q < processData[m].process_details.length;
-                    q++
-                  ) {
-                    if (
-                      processData[m].process_details[q].processes_data.length >
-                      0
-                    ) {
-                      // if(m!==2){
-                      for (var i in processData[m].process_details[q]
-                        .processes_data) {
-                        if (
-                          processData[m].process_details[q].processes_data[i]
-                            .Answer != "False"
-                        ) {
-                          if (
-                            processData[m].process_details[q].processes_data[i]
-                              .check_editable
-                          ) {
-                            if (m === 2) {
-                              status_arr[m] = {
-                                instance:
-                                  processData[m].process_details[q]
-                                    .processes_data[i].instance,
+                process_details: 
+                for (var m = 0; m < 4; m++) {
+                  var start_count = 0;
+                  var instance = 0;
+                  for (var q = 0;q < processData[m].process_details.length; q++) {
+                    if (processData[m].process_details[q].processes_data.length >0) {
+                       for (var i in processData[m].process_details[q].processes_data) {
+                        if (processData[m].process_details[q].processes_data[i].Answer != "False") {
+                          if (processData[m].process_details[q].processes_data[i].check_editable) {
+                            instance=  processData[m].process_details[q].processes_data[i].instance
+                            if (m === 2) {status_arr[m] = {
+                                instance:processData[m].process_details[q].processes_data[i].instance,
                                 status: "success",
-                                surgeries:
-                                  processData[0].process_details[0]
-                                    .processes_data[4].Answer,
+                                surgeries : processData[0].process_details[0].processes_data[4].Answer,
                               }; 
                             } else {
                               status_arr[m] = {
-                                instance:
-                                  processData[m].process_details[q]
-                                    .processes_data[i].instance,
+                                instance:processData[m].process_details[q].processes_data[i].instance,
                                 status: "success",
                               };
                             }
+                            try {
+                              var temp =processData[m].process_details[q].processes_data[i].check_editable.id;
+                            } catch (err) {
+                              status_arr[m] = {
+                                instance:processData[m].process_details[q].processes_data[i].instance,
+                                status: "pending",
+                              };
+                               
+                              break process_details;
+                            }
                           }
-                          try {
-                            var temp =
-                              processData[m].process_details[q].processes_data[
-                                i
-                              ].check_editable.id;
-                          } catch (err) {
-                            status_arr[m] = {
-                              instance:
-                                processData[m].process_details[q]
-                                  .processes_data[i].instance,
-                              status: "pending",
-                            };
-                            break process_details;
-                          }
-                        } else {
+                          
+                        } else if(processData[m].process_details[q].processes_data[i].Answer == "False") {
                           status_arr[m] = {
-                            instance:
-                              processData[m].process_details[q].processes_data[
-                                i
-                              ].instance,
+                            instance:processData[m].process_details[q].processes_data[i].instance,
                             status: "fail",
                           };  
+                          break process_details;
+                        }else if(processData[m].process_details[q].processes_data.length<processData[m].process_details[q].questions.length-1){
+                         
+                          status_arr[m] = {
+                            instance:processData[m].process_details[q].processes_data[i].instance,
+                            status: "pending",
+                          };
+                          break process_details;
+                        }else{
+                          status_arr[m] = {
+                            instance:processData[m].process_details[q].processes_data[i].instance,
+                            status: "pending",
+                          };
                           break process_details;
                         }
                       } 
                     } else {
-                      if (m == 2) {
-                        if (status_arr[m] === 0) {
-                          status_arr[m] = { status: "start" };
-                          break process_details;
-                        } else {
-                          status_arr[m].status = "orange";
-                          break process_details;
-                        }
-                      } else {
-                        status_arr[m] = { status: "start" };
-                        break process_details;
-                      }
+                       start_count ++;
+                       //status_arr[m] === 0
+                       if (start_count===processData[m].process_details.length ) {
+                           
+                            status_arr[m] = { status: "start" };
+                            //break process_details;
+                          } 
+                          else {
+                             
+                                status_arr[m] =  {
+                                  instance: instance,
+                                  status: "pending",
+                                }
+                             
+                            //break process_details;
+                          }
+                        
+                     
                     }
                   }
                 }
@@ -220,37 +221,75 @@ function homeScreen(props, route) {
   }, [props.navigation]);
   const getTextForProcessMessage = (index,global_process_status) => {
     let varArra = global_process_status;
-    let message = "Ongoing start of the day.";
+    let message = "Ongoing start of the day";
+    let msgObj = {message:"Ongoing start of the day",
+                  icon: "play-box",
+                  color:"black"}
     if (varArra.length > 0) {
        if (
         varArra[index][0].status === "success" ||
         varArra[index][1].status === "success"
       ) {
-        message = "Cleared for start of day";
+        msgObj = {message:"Cleared for start of day",
+                  icon: check,
+                  color:green}
+         message="Cleared for start of day"
         if (varArra[index][2].status === "success") {
           message = "Cleared for surgery -0" + (varArra[index][2].instance - 1);
+
+          msgObj = {message: message,
+                  icon: check,
+                  color:green}
+
           if (varArra[index][3].status === "success") {
             message = "Cleared for end of day";
+            msgObj = {message:message,
+                  icon: check,
+                  color:green}
+
           } else if (varArra[index][3].status === "pending") {
             message = "Ongoing end of day";
+
+            msgObj = {message:message,
+            icon: minusBox,
+            color:orange}
+
           } else if (varArra[index][3].status === "fail") {
             message = "Not Cleared for end of day";
+            
+            msgObj = {message:message,
+              icon: alert,
+              color:red}
           }
         } else if (varArra[index][2].status === "pending") {
           message = "Ongoing for surgery -0" + (varArra[index][2].instance - 1);
+
+          
+          msgObj = {message:message,
+            icon: minusBox,
+            color:orange}
+
         } else if (varArra[index][2].status === "fail") {
           message =
             "Not Cleared for surgery -0" + (varArra[index][2].instance - 1);
+            
+            msgObj = {message:message,
+              icon: alert,
+              color:red}
         }
       } else if (
         varArra[index][0].status === "fail" ||
         varArra[index][1].status === "fail"
       ) {
         message = "Not Cleared for start of day";
+        
+        msgObj = {message:message,
+          icon: alert,
+          color:red}
       } 
     }
-
-    return message;
+    console.log("msgOBJ ======",msgObj)
+    return msgObj;
   };
   const renderResources = (item) => {
     return (
