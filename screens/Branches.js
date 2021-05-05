@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   View,
   FlatList,
@@ -14,6 +14,12 @@ const Branches = (props) => {
   const { data, refetch } = useQuery(getBranchDetails, {
     fetchPolicy: "network-only",
   });
+
+  useEffect(() => {
+    if (props.route.params?.from === "addbranch") {
+      refetch();
+    }
+  }, [props.route.params]);
 
   const ListHeaderComponent = () => {
     return (

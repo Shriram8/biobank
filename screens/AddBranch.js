@@ -12,7 +12,9 @@ const AddBranch = (props) => {
 
   let [branchmutate, { data }] = useMutation(addNewBranch, {
     onCompleted: () => {
-      props.navigation.goBack();
+      props.navigation.navigate("branches", {
+        from: "addbranch",
+      });
     },
     onError: (err) => {
       if (err.message === "Duplicate entry") {

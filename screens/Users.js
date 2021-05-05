@@ -35,6 +35,12 @@ const Users = (props) => {
     }
   );
 
+  useEffect(() => {
+    if (props.route.params?.from === "adduser") {
+      refetch();
+    }
+  }, [props.route.params]);
+
   const DATA = [
     {
       title: "Staff",

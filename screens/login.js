@@ -32,7 +32,7 @@ function login(props, navigation) {
   const [showHelperText, setShowHelperText] = useState(false);
   const [register, setRegister] = useState(false);
   const verifyLogin = () => {
-    if (password.trim().length != " " && userId.trim().length != " ") {
+    if (password.trim().length != "" && userId.trim().length != "") {
       apolloClient
         .query({
           query: GetDetailsWithEmployeeId,
@@ -43,12 +43,12 @@ function login(props, navigation) {
           fetchPolicy: "network-only",
         })
         .then((Result) => {
-          console.log("result", Result);
+          console.log("result", Result.data.appUsers[0].branch);
           if (Result.data.appUsers[0].password === password) {
             props.changeLogin(
               Result.data.appUsers[0].id,
               Result.data.appUsers[0].userType,
-              Result.data.appUsers[0].branch.id
+              Result.data.appUsers[0].branch?.id
             );
             navigation.navigate("homeScreen", {
               userId: userId,

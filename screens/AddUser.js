@@ -30,7 +30,7 @@ const AddUser = (props) => {
 
   let [usermutate, { data }] = useMutation(addNewUser, {
     onCompleted: () => {
-      props.navigation.goBack();
+      navigateToUsers();
     },
     onError: (err) => {
       if (err.message === "Duplicate entry") {
@@ -42,13 +42,13 @@ const AddUser = (props) => {
 
   let [reset, { data: resetPasswordData }] = useMutation(ResetPassword, {
     onCompleted: () => {
-      props.navigation.goBack();
+      navigateToUsers();
     },
   });
 
   let [update, { data: updateUserData }] = useMutation(UpdateUser, {
     onCompleted: () => {
-      props.navigation.goBack();
+      navigateToUsers();
     },
   });
 
@@ -156,6 +156,12 @@ const AddUser = (props) => {
     }
   };
 
+  const navigateToUsers = () => {
+    props.navigation.navigate("users", {
+      from: "adduser",
+    });
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.modalHeader}>
@@ -164,9 +170,7 @@ const AddUser = (props) => {
           color={"#010101"}
           size={25}
           style={{ position: "absolute", left: 2 }}
-          onPress={() => {
-            props.navigation.goBack();
-          }}
+          onPress={navigateToUsers}
         />
         <Text style={styles.headerTitle}>
           {props.route.params?.from ? "Update user" : "Add a New User"}
