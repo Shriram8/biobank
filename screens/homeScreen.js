@@ -300,12 +300,14 @@ function homeScreen(props, route) {
             item.item.__typename == "AppResource"
               ? props.navigation.navigate("processScreen", {
                   userId: props.userId,
+                  userType: props.userType,
                   resourceID: item.item.id,
                   operationTheaterID: item.item.id,
                   resourceName: item.item.name,
                 })
               : props.navigation.navigate("preProcessScreen", {
                   userId: props.userId,
+                  userType: props.userType,
                   operationTheaterID: item.item.id,
                   operationTheaterName: item.item.name,
                 });
@@ -433,6 +435,7 @@ function homeScreen(props, route) {
 
 const mapStateToProps = (state) => ({
   userId: state.userId,
+  userType: state.userType,
 });
 export default connect(mapStateToProps)(withNavigation(homeScreen));
 

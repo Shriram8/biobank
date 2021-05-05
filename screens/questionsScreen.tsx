@@ -3,8 +3,8 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
   TextInput, TouchableOpacity ,Image, DevSettings} from 'react-native';
 import { useQuery, gql, useMutation } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetQuestionDetails,SubmitAnswerForQuestion,UpdateSubmittedAnswerForQuestion,SubmitCompleted} from '../src/graphql/queries';
-import { Avatar, Button, Card, Title, Paragraph,List } from 'react-native-paper';
+import {UpdateSubmitCompleted,GetQuestionDetails,SubmitAnswerForQuestion,UpdateSubmittedAnswerForQuestion,SubmitCompleted} from '../src/graphql/queries';
+import { Avatar, Button, Card, Title, Paragraph,List, Provider, Portal,Modal } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RadioGroup, RadioButton } from 'react-native-radio-btn';
@@ -26,42 +26,46 @@ var dict: string[] = [];
 var key;
 var value;
 var dictId:string[] = [];
+var editableId: string[] = [];
 var temp = new Array();
 var questionCount: number;
 var processDataId: any[];
 var _processCleared: boolean;
 export default function questionsScreen({route,navigation}: {route: any,navigation: any}) {
 
-  const { userId,operationTheaterID,processID, processName,instance } = route.params;
+  const { userId,operationTheaterID,processID, processName,instance,userType } = route.params;
   const [_data,setfetchData] = React.useState(false);
   const [disbaleCompleted,setDisableCompleted] = React.useState(true);
   const [disableButtons,setDisableButtons] = React.useState(false);
-  
+  const [override,setOverride]= React.useState(false);
+  const [_cleared,setCleared] = React.useState(false);
   let { loading, error, data:questions_data ,refetch} = useQuery(GetQuestionDetails,{variables:{
             processID:processID,
             Date:new Date().toISOString().slice(0, 10),
-            app_user:userId,
+            //app_user:userId,
             operation_theater:operationTheaterID,
             instance:instance,
   }}); 
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     if(questions_data){
-        
+       console.log("USER TYPE__",userType) 
     }
   },[questions_data]);
 
   React.useEffect(() => {
       const unsubscribe = navigation.addListener('focus', () => {
         setDisableCompleted(true);
+        setOverride(false);
         _processCleared = true;
+        setCleared(true);
         apolloClient
         .query({
           query: GetQuestionDetails,
           variables:{
             processID:processID,
             Date:new Date().toISOString().slice(0, 10),
-            app_user:userId,
             operation_theater:operationTheaterID,
             instance:instance,
           },
@@ -73,18 +77,29 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
             dictId = []
             temp=[];
             processDataId=[];
+            editableId = [];
             questionCount = questions_data.processDetail.questions.length;
             if(questions_data.processesData.length == questionCount){
               setDisableCompleted(false);
             }
             if(questions_data.processesData.length>=1 && questions_data.processesData[0].check_editable){
               setDisableButtons(true);
-              setDisableCompleted(true);
+              if(userType !="OTIncharge")
+                setDisableCompleted(true);
             }
+            
             for(var i =0; i< questions_data.processesData.length;i++){
-              key =  questions_data.processesData[i].question.id,
-              value = questions_data.processesData[i].Answer,
+              key =  questions_data.processesData[i].question.id;
+              value = questions_data.processesData[i].Answer;
+              if(value == "False"){
+                setCleared(false);
+              }
               dict[key] = value;
+              try{
+              editableId[key] = questions_data.processesData[0].check_editable.id;
+              }catch{
+                
+              }
               processDataId.push(questions_data.processesData[i].id);
               dictId[key] = questions_data.processesData[i].id;
               temp.push(key);  
@@ -104,7 +119,6 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         processDataId.push(data.createProcessesDatum.processesDatum.id);
         if(Object.keys(dictId).length == questionCount){
           setDisableCompleted(false);
-          
         }
       }
   },[data]);
@@ -142,6 +156,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       value = (value == 0 ? "True": "False")
       if(value == "False"){
         _processCleared = false;
+        setCleared(false);
       }
     }
     if(temp.indexOf(index)!=-1){ 
@@ -151,17 +166,44 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   }
 
   const [mutateEditableFunction, {data:SubmitEditableData }] = useMutation(SubmitCompleted);
+  const [updateEditableFunction, {data:UpdateEditableData }] = useMutation(UpdateSubmitCompleted);
 
   const submitEditable = ()=>{
+    
       setDisableButtons(true);
       setDisableCompleted(true);
-      mutateEditableFunction({
-      variables: { 
-        processes_data: processDataId.map(Number),
-        processCleared:_processCleared,
+      if(userType == "OTIncharge"){
+        // mutateEditableFunction({
+        //   variables: { 
+        //     processes_data: processDataId.map(Number),
+        //     processCleared:true,
+        //   }
+        // });
+        for(var i=0;i<temp.length;i++){
+          console.log(dict,processDataId,dictId,temp)
+          if(dict[temp[i]]=="False"){
+            updateQuery(dictId[temp[i]],"True");
+            updateEditableFunction({
+              variables: {
+                checkEditable_Id: parseInt(editableId[temp[i]]),
+             }})
+          }
+          setOverride(true);
+        }
+
+
+      }else{
+        mutateEditableFunction({
+          variables: { 
+            processes_data: processDataId.map(Number),
+            processCleared:_processCleared,
+          }
+        });
       }
-    });
+      setModalVisible(true);
   }
+
+  
 
   const renderResources = ({item}: {item: any}) => {
     return (
@@ -210,7 +252,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       </Picker>
       </>):(
        <RadioGroup 
-          selectedIndex={dict[item.id] == "True"? 0 : (dict[item.id]=="False"?1:null)}
+          selectedIndex={override?0:(dict[item.id] == "True"? 0 : (dict[item.id]=="False"?1:null))}
           onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
           style={{flexDirection:"row",justifyContent: 'space-between'}}
           >
@@ -233,13 +275,40 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
     </View>
     );
   };
-         
+     
+  
+  const getStyle =()=>{
+    if(_cleared){
+      return [styles.headerTextStyle,{margin:10,fontSize:18,color:"green"}]
+    }
+    else
+    return [styles.headerTextStyle,{margin:10,fontSize:18,color:"red"}]
+  }
+
   return (  
+     
     <>
+    <Provider>
+      <Portal>
+        <Modal visible={modalVisible} style={{width:"100%",height:100,position:"relative",}} contentContainerStyle={{backgroundColor: 'blue'}}>
+          <View style={{width:"100%",height:142,backgroundColor:"white"}}>
+            <View style={{height:102}}>
+          <Text style={getStyle()}>{_cleared?"Process Completed":"Process Incomplete"}</Text>
+          <Text style={[styles.headerTextStyle,{margin:10,fontSize:14,fontWeight:"normal"}]}>{_cleared?"Continue finishing next tasks":"Contact admin to complete the tasks."}</Text>
+          </View>
+          <Button  mode="contained" color ={"#006bcc"}  
+          style={{width:"100%",height:40,justifyContent:"center",alignItems:"center"}} 
+          onPress={() =>  navigation.goBack()}>
+            Continue
+          </Button> 
+          </View>
+        </Modal>
+      </Portal>
        <StatusBar
         animated={true}
         backgroundColor="#ff8d48"
         hidden={false} />
+        
          <View style={{backgroundColor:"#ff8d48",width:"100%",height:"100%"}}>
           <View style={styles.header}>
             <Image
@@ -265,12 +334,14 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
           <Button  mode="contained" color ={"#006bcc"} disabled={disbaleCompleted}  
           style={{width:"100%",height:40, justifyContent:"center",alignSelf:"center"}} 
           onPress={() => submitEditable()}>
-            Completed
+            {userType=="OTIncharge"?"Override":"Completed"}
           </Button> 
         </View>
         </View>
         </View>
+        </Provider>
       </>
+      
   );
 
 }

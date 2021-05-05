@@ -10,6 +10,23 @@ export const GetUserDetails = gql`
   }
 `;
 
+export const GetDetailsWithEmployeeId = gql`
+  query($employeeid: String) {
+    appUsers(
+      where: { _or: [{ employeeid: $employeeid }, { uid: $employeeid }] }
+    ) {
+      id
+      name
+      userType
+      password
+      resetpassword
+      branch {
+        id
+      }
+    }
+  }
+`;
+
 export const GetResourcesDetails = gql`
   query {
     appResources {
@@ -19,32 +36,80 @@ export const GetResourcesDetails = gql`
   }
 `;
 
-export const GetStaffUsers = gql`
-  query {
-    appUsers(where: { userType: "OTStaff" }) {
+export const GetUsers = gql`
+  query($branch: ID!) {
+    appUsers(where: { branch: $branch, active: true }) {
       id
       name
       userType
+      active
     }
   }
 `;
 
-export const GetAdminUsers = gql`
-  query {
-    appUsers(where: { userType: "OTAdmin" }) {
+export const GetUserDataById = gql`
+  query($userId: ID!) {
+    appUsers(where: { id: $userId }) {
       id
       name
       userType
+      employeeid
+      gender
+      uid
     }
   }
 `;
 
-export const GetInchargeUsers = gql`
-  query {
-    appUsers(where: { userType: "OTIncharge" }) {
+export const GetPassword = gql`
+  query($userId: ID!) {
+    appUsers(where: { id: $userId }) {
       id
-      name
-      userType
+      password
+    }
+  }
+`;
+
+export const UpdatePassword = gql`
+  mutation($userId: ID!, $password: String!, $resetpassword: Boolean!) {
+    updateAppUser(
+      input: {
+        where: { id: $userId }
+        data: { password: $password, resetpassword: $resetpassword }
+      }
+    ) {
+      appUser {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const DeactivateUser = gql`
+  mutation($userId: ID!, $active: Boolean!) {
+    updateAppUser(
+      input: { where: { id: $userId }, data: { active: $active } }
+    ) {
+      appUser {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const ResetPassword = gql`
+  mutation($userId: ID!, $resetpassword: Boolean!) {
+    updateAppUser(
+      input: { where: { id: $userId }, data: { resetpassword: $resetpassword } }
+    ) {
+      appUser {
+        id
+        name
+        branch {
+          id
+        }
+      }
     }
   }
 `;
@@ -68,7 +133,6 @@ export const GetQuestionDetails = gql`
   query(
     $processID: ID!
     $operation_theater: ID!
-    $app_user: ID!
     $instance: Int
     $Date: String
   ) {
@@ -82,7 +146,6 @@ export const GetQuestionDetails = gql`
     }
     processesData(
       where: {
-        app_user: $app_user
         process_detail: $processID
         operation_theater: $operation_theater
         instance: $instance
@@ -104,16 +167,9 @@ export const GetQuestionDetails = gql`
 `;
 
 export const GetAnswersProgress = gql`
-  query(
-    $operation_theater: ID!
-    $app_user: ID!
-    $processID: ID!
-    $instance: Int
-    $Date: Date
-  ) {
+  query($operation_theater: ID!, $processID: ID!, $instance: Int, $Date: Date) {
     processesData(
       where: {
-        app_user: $app_user
         process_detail: $processID
         operation_theater: $operation_theater
         instance: $instance
@@ -145,6 +201,41 @@ export const GetSharedResource_OperationTheaters = gql`
   }
 `;
 
+export const preProcessProgress_OTStaff = gql`
+  query(
+    $operation_theater: ID!
+    $Date: Date
+    $instance: Int
+    $process_detail: ID!
+  ) {
+    processesData(
+      where: {
+        operation_theater: $operation_theater
+        Date: $Date
+        instance: $instance
+        process_detail: $process_detail
+        check_editable_null: false
+      }
+    ) {
+      id
+      Answer
+      Date
+      process_detail {
+        id
+      }
+      check_editable {
+        id
+        processCleared
+      }
+      instance
+      operation_theater {
+        id
+        name
+      }
+    }
+  }
+`;
+
 export const preProcessProgress = gql`
   query(
     $operation_theater: ID!
@@ -169,14 +260,42 @@ export const preProcessProgress = gql`
       process_detail {
         id
       }
-    	check_editable{
-        id,
-        processCleared,
+      check_editable {
+        id
+        processCleared
       }
       instance
       operation_theater {
         id
         name
+      }
+    }
+  }
+`;
+
+export const GetSurgeryDetails_OTStaff = gql`
+  query($operation_theater: ID!, $Date: Date) {
+    appResources(
+      sort: "processOrder:asc"
+      where: { resourceType: "OperationTheater" }
+    ) {
+      id
+      name
+      processOrder
+      process_details {
+        id
+      }
+    }
+    questions(where: { id: 6 }) {
+      processes_data(
+        where: { operation_theater: $operation_theater, Date: $Date }
+      ) {
+        id
+        Answer
+        Date
+        operation_theater {
+          id
+        }
       }
     }
   }
@@ -214,45 +333,44 @@ export const GetSurgeryDetails = gql`
   }
 `;
 export const Check_Process_Progress = gql`
-query($otID:ID!,$date:String,$userId:ID!){
-  appResources( 
-    sort: "processOrder:asc"
-    where: { resourceType: "OperationTheater" }
-     ){
-    name
-    processOrder
-    process_details{
-      id
-      Number
-      questions{
-        Question
-      }
-      process_name
-      processes_data(
-        sort: "id:asc"
-        where:{app_user:$userId operation_theater:{id:$otID} Date:$date}){
-        Date
+  query($otID: ID!, $date: String, $userId: ID!) {
+    appResources(
+      sort: "processOrder:asc"
+      where: { resourceType: "OperationTheater" }
+    ) {
+      name
+      processOrder
+      process_details {
         id
-        Answer
-        operation_theater{
+        Number
+        process_name
+        processes_data(
+          sort: "id:asc"
+          where: {
+            app_user: $userId
+            operation_theater: { id: $otID }
+            Date: $date
+          }
+        ) {
+          Date
           id
-          name
-  
-        }
-        instance
-        question{
-          Question
-        }
-        check_editable{
-          id
+          Answer
+          operation_theater {
+            id
+            name
+          }
+          instance
+          question {
+            Question
+          }
+          check_editable {
+            id
+          }
         }
       }
-      
     }
-  
   }
-}
-`
+`;
 // export const GetPreProcessDetails = gql`
 // query($operationTheaterID:ID!){
 
@@ -308,18 +426,41 @@ export const SubmitAnswerForQuestion = gql`
   }
 `;
 
-export const SubmitCompleted =gql`
-mutation(
-  $processes_data:[ID], $processCleared:Boolean
-){
-  createCheckEditable(input:{data:{editable:true,processes_data:$processes_data,processCleared:$processCleared}}){
-    checkEditable{
-      id,
-      editable,
-      processCleared,
+export const SubmitCompleted = gql`
+  mutation($processes_data: [ID], $processCleared: Boolean) {
+    createCheckEditable(
+      input: {
+        data: {
+          editable: true
+          processes_data: $processes_data
+          processCleared: $processCleared
+        }
+      }
+    ) {
+      checkEditable {
+        id
+        editable
+        processCleared
+      }
     }
   }
-}
+`;
+
+export const UpdateSubmitCompleted = gql`
+  mutation($checkEditable_Id: ID!) {
+    updateCheckEditable(
+      input: {
+        where: { id: $checkEditable_Id }
+        data: { processCleared: true }
+      }
+    ) {
+      checkEditable {
+        id
+        editable
+        processCleared
+      }
+    }
+  }
 `;
 
 export const UpdateSubmittedAnswerForQuestion = gql`
@@ -335,18 +476,17 @@ export const UpdateSubmittedAnswerForQuestion = gql`
   }
 `;
 
-export enum ENUM_APPUSERS_USERTYPE {
-  OTIncharge,
-  OTStaff,
-  OTAdmin,
-}
-
 export const addNewUser = gql`
   mutation(
-    $name: String
+    $name: String!
     $password: String!
-    $uid: String
+    $uid: String!
     $userType: ENUM_APPUSERS_USERTYPE
+    $gender: ENUM_APPUSERS_GENDER
+    $employeeid: String
+    $active: Boolean!
+    $resetpassword: Boolean!
+    $branch: ID
   ) {
     createAppUser(
       input: {
@@ -355,10 +495,54 @@ export const addNewUser = gql`
           password: $password
           uid: $uid
           userType: $userType
+          gender: $gender
+          employeeid: $employeeid
+          active: $active
+          resetpassword: $resetpassword
+          branch: $branch
         }
       }
     ) {
       appUser {
+        id
+        name
+        branch {
+          id
+        }
+      }
+    }
+  }
+`;
+
+export const UpdateUser = gql`
+  mutation(
+    $userId: ID!
+    $name: String!
+    $userType: ENUM_APPUSERS_USERTYPE
+    $gender: ENUM_APPUSERS_GENDER
+    $uid: String!
+  ) {
+    updateAppUser(
+      input: {
+        where: { id: $userId }
+        data: { name: $name, userType: $userType, uid: $uid, gender: $gender }
+      }
+    ) {
+      appUser {
+        id
+        name
+        branch {
+          id
+        }
+      }
+    }
+  }
+`;
+
+export const addNewBranch = gql`
+  mutation($name: String!) {
+    createBranch(input: { data: { name: $name } }) {
+      branch {
         id
         name
       }
@@ -366,12 +550,11 @@ export const addNewUser = gql`
   }
 `;
 
-export const deleteUser = gql`
-  mutation($id: ID!) {
-    deleteAppUser(input: { where: { id: $id } }) {
-      appUser {
-        id
-      }
+export const getBranchDetails = gql`
+  query {
+    branches {
+      id
+      name
     }
   }
 `;

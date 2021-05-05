@@ -21,7 +21,10 @@ import {
   DarkTheme,
   useNavigation,
 } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import {
+  createStackNavigator,
+  HeaderBackButton,
+} from "@react-navigation/stack";
 import * as React from "react";
 import { ColorSchemeName, Image, Text, View } from "react-native";
 import LoginScreen from "../screens/login";
@@ -39,6 +42,11 @@ import Alerts from "../screens/Alerts";
 import HistoryScreen from "../screens/HistoryScreen";
 import Logout from "../screens/Logout";
 import Users from "../screens/Users";
+import AddUser from "../screens/AddUser";
+import Profile from "../screens/Profile";
+import ProfilePassword from "../screens/ProfilePassword";
+import Branches from "../screens/Branches";
+import AddBranch from "../screens/AddBranch";
 
 const Drawer = createDrawerNavigator();
 const Navigation = (props) => {
@@ -47,20 +55,27 @@ const Navigation = (props) => {
       {/* <MainStackNavigator isLoggedIn={props.isLoggedIn}  /> */}
       {props.isLoggedIn ? (
         <Drawer.Navigator
-        drawerContentOptions={{
-          activeBackgroundColor:"#f1f1f1",
-          activeTintColor: '#010101',
-          // labelStyle:{ alignSelf:'center'},
-          itemStyle: {  },
-          headerShown:false
-        }}
-        initialRouteName="Home">
-          <Drawer.Screen 
-          headerShown={false}
-          options={{
-            headerShown:false,
-            drawerIcon:(()=><MaterialCommunityIcons  name={"home"}  size={30} color="#010101"/>),
-            headerRight: () => (
+          drawerContentOptions={{
+            activeBackgroundColor: "#f1f1f1",
+            activeTintColor: "#010101",
+            // labelStyle:{ alignSelf:'center'},
+            itemStyle: {},
+            headerShown: false,
+          }}
+          initialRouteName="Home"
+        >
+          <Drawer.Screen
+            headerShown={false}
+            options={{
+              headerShown: false,
+              drawerIcon: () => (
+                <MaterialCommunityIcons
+                  name={"home"}
+                  size={30}
+                  color="#010101"
+                />
+              ),
+              headerRight: () => (
                 <Button
                   icon={() => (
                     <MaterialCommunityIcons
@@ -107,18 +122,33 @@ const Navigation = (props) => {
           <Drawer.Screen
             headerShown={true}
             options={{
-              headerShown: true,
+              // headerShown: true,
               drawerIcon: () => (
-                <MaterialCommunityIcons
-                  name={"account-box"}
-                  size={30}
-                  color="#010101"
+                <Image
+                  style={{ height: 30, width: 30 }}
+                  source={require("./../assets/screenIcons/profile.png")}
                 />
               ),
             }}
-            name="Users"
-            component={Users}
+            name="Profile"
+            component={ProfileStackNavigator}
           />
+          {props.userType !== "OTStaff" && (
+            <Drawer.Screen
+              headerShown={true}
+              options={{
+                // headerShown: true,
+                drawerIcon: () => (
+                  <Image
+                    style={{ height: 30, width: 30 }}
+                    source={require("./../assets/screenIcons/group.png")}
+                  />
+                ),
+              }}
+              name="Users"
+              component={(params) => UserStackNavigator(params, props.userType)}
+            />
+          )}
           <Drawer.Screen
             headerShown={true}
             options={{
@@ -141,6 +171,17 @@ const Navigation = (props) => {
             component={LoginScreen}
             options={{ headerShown: false }}
           />
+          <MainStack.Screen
+            name="setPassword"
+            component={ProfilePassword}
+            options={({ route }) => ({
+              title: "Set Password",
+              headerTitleAlign: "center",
+              headerStyle: {
+                backgroundColor: "white",
+              },
+            })}
+          />
         </MainStack.Navigator>
       )}
     </NavigationContainer>
@@ -149,6 +190,7 @@ const Navigation = (props) => {
 
 const mapStateToProps = (state) => ({
   isLoggedIn: state.isLoggedIn,
+  userType: state.userType,
 });
 export default connect(mapStateToProps)(Navigation);
 
@@ -156,83 +198,191 @@ const MainStack = createStackNavigator();
 const MainStackNavigator = (props) => {
   return (
     <MainStack.Navigator initialRouteName="login">
-      
-        <>
-          <MainStack.Screen
-            name="homeScreen"
-            component={HomeScreen}
-            options={{
-              headerShown:true,
-              title: "",
-              headerStyle: {
-                elevation: 0,
-                backgroundColor: "#006bcc",
-              },
-              headerLeft: () => (
-                <Button
-                  onPress={() => {
-                     props.navigation.openDrawer();
-                  }}
-                  icon={() => (
-                    <MaterialCommunityIcons
-                      name="menu"
-                      size={30}
-                      color="white"
-                    />
-                  )}
-                ></Button>
-              ),
-              headerRight: () => (
-                <Button
-                  icon={() => (
-                    <MaterialCommunityIcons
-                      name="bell"
-                      size={30}
-                      color="white"
-                    />
-                  )}
-                ></Button>
-              ),
-            }}
-          />
-          <MainStack.Screen
-            name="preProcessScreen"
-            component={PreProcessScreen}
-            initialParams={{ operationTheaterName: "" }}
-            options={({ route }) => ({
-              title: route.params.operationTheaterName,
-              headerTitleAlign: "center",
-              headerStyle: {
-                backgroundColor: "white",
-              },
-            })}
-          />
-          <MainStack.Screen
-            name="processScreen"
-            component={ProcessScreen}
-            initialParams={{ resourceName: "" }}
-            options={({ route }) => ({
-              title: route.params.resourceName,
-              headerTitleAlign: "center",
-              headerStyle: {
-                backgroundColor: "white",
-              },
-            })}
-          />
-          <MainStack.Screen
-            name="questionsScreen"
-            component={QuestionsScreen}
-            initialParams={{ resourceName: "" }}
-            options={({ route }) => ({
-              title: route.params.resourceName,
-              headerTitleAlign: "center",
-              headerStyle: {
-                elevation: 0,
-                backgroundColor: "#ff8d48",
-              },
-            })}
-          />
-        </> 
+      <>
+        <MainStack.Screen
+          name="homeScreen"
+          component={HomeScreen}
+          options={{
+            headerShown: true,
+            title: "",
+            headerStyle: {
+              elevation: 0,
+              backgroundColor: "#006bcc",
+            },
+            headerLeft: () => (
+              <Button
+                onPress={() => {
+                  props.navigation.openDrawer();
+                }}
+                icon={() => (
+                  <MaterialCommunityIcons name="menu" size={30} color="white" />
+                )}
+              ></Button>
+            ),
+            headerRight: () => (
+              <Button
+                icon={() => (
+                  <MaterialCommunityIcons name="bell" size={30} color="white" />
+                )}
+              ></Button>
+            ),
+          }}
+        />
+        <MainStack.Screen
+          name="preProcessScreen"
+          component={PreProcessScreen}
+          initialParams={{ operationTheaterName: "" }}
+          options={({ route }) => ({
+            title: route.params.operationTheaterName,
+            headerTitleAlign: "center",
+            headerStyle: {
+              backgroundColor: "white",
+            },
+          })}
+        />
+        <MainStack.Screen
+          name="processScreen"
+          component={ProcessScreen}
+          initialParams={{ resourceName: "" }}
+          options={({ route }) => ({
+            title: route.params.resourceName,
+            headerTitleAlign: "center",
+            headerStyle: {
+              backgroundColor: "white",
+            },
+          })}
+        />
+        <MainStack.Screen
+          name="questionsScreen"
+          component={QuestionsScreen}
+          initialParams={{ resourceName: "" }}
+          options={({ route }) => ({
+            title: route.params.resourceName,
+            headerTitleAlign: "center",
+            headerStyle: {
+              elevation: 0,
+              backgroundColor: "#ff8d48",
+            },
+          })}
+        />
+      </>
     </MainStack.Navigator>
+  );
+};
+
+const UserStack = createStackNavigator();
+const UserStackNavigator = (props, type) => {
+  console.log(type);
+  return (
+    <UserStack.Navigator
+      initialRouteName={type === "OTSuperUser" ? "branches" : "users"}
+    >
+      <UserStack.Screen
+        name="users"
+        component={Users}
+        options={({ route }) => ({
+          title: "Users",
+          headerTitleAlign: "center",
+          headerLeft: () => (
+            <Button
+              onPress={() => {
+                if (type === "OTSuperUser") {
+                  props.navigation.navigate("branches");
+                } else {
+                  props.navigation.goBack();
+                }
+              }}
+              icon={() => (
+                <MaterialCommunityIcons
+                  name="arrow-left"
+                  size={25}
+                  color="black"
+                  style={{ marginLeft: 2 }}
+                />
+              )}
+            ></Button>
+          ),
+        })}
+      />
+      <UserStack.Screen
+        name="branches"
+        component={Branches}
+        options={({ route }) => ({
+          title: "User Management",
+          headerTitleAlign: "center",
+          headerLeft: () => (
+            <Button
+              onPress={() => {
+                props.navigation.goBack();
+              }}
+              icon={() => (
+                <MaterialCommunityIcons
+                  name="arrow-left"
+                  size={25}
+                  color="black"
+                  style={{ marginLeft: 2 }}
+                />
+              )}
+            ></Button>
+          ),
+        })}
+      />
+      <UserStack.Screen
+        name="adduser"
+        component={AddUser}
+        options={({ route }) => ({
+          headerShown: false,
+          title: "Add a new user",
+          headerTitleAlign: "center",
+        })}
+      />
+      <UserStack.Screen
+        name="addbranch"
+        component={AddBranch}
+        options={({ route }) => ({
+          title: "Add a new branch",
+          headerTitleAlign: "center",
+        })}
+      />
+    </UserStack.Navigator>
+  );
+};
+
+const ProfileStack = createStackNavigator();
+const ProfileStackNavigator = (props) => {
+  return (
+    <ProfileStack.Navigator initialRouteName="profile">
+      <ProfileStack.Screen
+        name="profile"
+        component={Profile}
+        options={({ route }) => ({
+          title: "Profile",
+          headerTitleAlign: "center",
+          headerLeft: () => (
+            <Button
+              onPress={() => {
+                props.navigation.goBack();
+              }}
+              icon={() => (
+                <MaterialCommunityIcons
+                  name="arrow-left"
+                  size={25}
+                  color="black"
+                  style={{ marginLeft: 2 }}
+                />
+              )}
+            ></Button>
+          ),
+        })}
+      />
+      <ProfileStack.Screen
+        name="profilepassword"
+        component={ProfilePassword}
+        options={({ route }) => ({
+          title: "Change Password",
+          headerTitleAlign: "center",
+        })}
+      />
+    </ProfileStack.Navigator>
   );
 };
