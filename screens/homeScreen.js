@@ -209,6 +209,7 @@ function homeScreen(props, route) {
                 global_process_status = [...global_process_status, status_arr];
               });
           } 
+          console.log("******************",global_process_status)
           var msg=[];
           for(var temp=0;temp<global_process_status.length;temp++){
              msg=[...msg,getTextForProcessMessage(temp,global_process_status) ]
@@ -227,7 +228,7 @@ function homeScreen(props, route) {
                   color:"black"}
     if (varArra.length > 0) {
        if (
-        varArra[index][0].status === "success" ||
+        varArra[index][0].status === "success" &&
         varArra[index][1].status === "success"
       ) {
         msgObj = {message:"Cleared for start of day",
