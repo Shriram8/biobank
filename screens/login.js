@@ -31,6 +31,7 @@ function login(props, navigation) {
   const [errorMsg, setErrorMsg] = useState("");
   const [showHelperText, setShowHelperText] = useState(false);
   const [register, setRegister] = useState(false);
+  const [forgot, setForgot] = useState(false);
   const verifyLogin = () => {
     if (password.trim().length != "" && userId.trim().length != "") {
       apolloClient
@@ -100,31 +101,30 @@ function login(props, navigation) {
     }
   };
 
+  const rendereHeaderText = () => {
+    if (register && !forgot) return "New user registration";
+    if (forgot && !register) return "Enter your login ID";
+    if (!register && !forgot) return "Welcome";
+  };
+
   return (
     <>
       <StatusBar animated={true} backgroundColor="#006bcc" hidden={false} />
       <ScrollView
-        contentContainerStyle={{ backgroundColor: "#006bcc", flex: 1 }}
+        contentContainerStyle={{ backgroundColor: "#006bcc", flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.header}>
           <Image
+            resizeMode={"contain"}
             style={styles.tinyLogo}
             source={require("../Images/logo.png")}
           />
         </View>
         <View style={styles.container}>
           <View style={styles.headerTextLabel}>
-            <Text style={styles.headerTextStyle}>Welcome.</Text>
+            <Text style={styles.headerTextStyle}>{rendereHeaderText()}</Text>
           </View>
-          <Divider
-            style={{
-              width: "80%",
-              height: 1,
-              borderColor: "black",
-              marginTop: 25,
-            }}
-          />
           <View style={styles.textLabel}>
             <Text style={styles.textStyle}>Mobile No/Employee ID</Text>
           </View>
@@ -135,8 +135,7 @@ function login(props, navigation) {
               value={userId}
             />
           </View>
-          <Divider style={{ width: "80%", height: 1, borderColor: "black" }} />
-          {!register && (
+          {!register && !forgot && (
             <>
               <View style={styles.textLabel}>
                 <Text style={styles.textStyle}>Password</Text>
@@ -149,45 +148,62 @@ function login(props, navigation) {
                   value={password}
                 />
               </View>
-              <Divider
-                style={{ width: "80%", height: 1, borderColor: "black" }}
-              />
             </>
           )}
-          {showHelperText && (
-            <View style={{ width: "80%" }}>
-              <Text
-                type="error"
-                visible={showHelperText}
-                style={{
-                  marginTop: 20,
-                  color: "#fa796f",
-                  fontSize: 14,
-                  alignSelf: "flex-start",
-                }}
-              >
-                {errorMsg}
-              </Text>
-            </View>
-          )}
-
+          <View style={{ width: "80%" }}>
+            <Text
+              type="error"
+              visible={showHelperText}
+              style={{
+                marginVertical: 16,
+                color: "#fa796f",
+                fontSize: 14,
+                alignSelf: "flex-start",
+              }}
+            >
+              {showHelperText && errorMsg}
+            </Text>
+          </View>
           <TouchableOpacity
             style={styles.loginBtn}
-            onPress={register ? getUserDetails : verifyLogin}
+            onPress={forgot || register ? getUserDetails : verifyLogin}
           >
-            <Text style={styles.loginText}>
-              {register ? "Register" : "Login"}
-            </Text>
+            <Text style={styles.loginText}>Continue</Text>
           </TouchableOpacity>
+          {(forgot || register) && (
+            <Text
+              style={styles.register}
+              onPress={() => {
+                setForgot(false);
+                setRegister(false);
+                setShowHelperText(false);
+              }}
+            >
+              Login
+            </Text>
+          )}
           {!register && (
             <Text
               style={styles.register}
               onPress={() => {
                 setRegister(true);
+                setForgot(false);
                 setShowHelperText(false);
               }}
             >
-              Register with username
+              First Time Login/Registration
+            </Text>
+          )}
+          {!forgot && (
+            <Text
+              style={styles.register}
+              onPress={() => {
+                setForgot(true);
+                setRegister(false);
+                setShowHelperText(false);
+              }}
+            >
+              Forgot Password
             </Text>
           )}
         </View>
@@ -206,20 +222,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    marginTop: 150,
+    marginTop: 64,
     backgroundColor: "#ffffff",
     alignItems: "center",
     flex: 6,
     borderTopLeftRadius: 30,
   },
   tinyLogo: {
-    resizeMode: "contain",
-    width: 200,
+    height: 48,
+    width: 208,
+    marginTop: 64,
   },
   headerTextLabel: {
     width: "80%",
     height: 25,
-    marginTop: 25,
+    marginTop: 32,
     marginBottom: 15,
     justifyContent: "center",
   },
@@ -229,8 +246,7 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   textStyle: {
-    fontWeight: "bold",
-    fontSize: 12,
+    fontSize: 14,
     color: "#9e9e9e",
   },
   logo: {
@@ -244,6 +260,7 @@ const styles = StyleSheet.create({
     height: 20,
     marginTop: 25,
     justifyContent: "center",
+    marginBottom: 8,
   },
   inputView: {
     width: "80%",
@@ -257,6 +274,11 @@ const styles = StyleSheet.create({
     color: "#170500",
     backgroundColor: "#ffffff",
     fontSize: 12,
+    borderColor: "#006bda",
+    borderWidth: 2,
+    borderRadius: 8,
+    fontSize: 16,
+    paddingHorizontal: 16,
   },
   loginBtn: {
     width: "80%",
@@ -264,7 +286,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     height: 50,
     justifyContent: "center",
-    marginTop: 40,
+    // marginTop: 40,
     marginBottom: 10,
     elevation: 6,
   },
@@ -278,7 +300,7 @@ const styles = StyleSheet.create({
     marginTop: 27,
     textAlign: "center",
     color: "#9e9e9e",
-    fontSize: 12,
+    fontSize: 16,
   },
 });
 
