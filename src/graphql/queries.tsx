@@ -333,7 +333,7 @@ export const GetSurgeryDetails = gql`
   }
 `;
 export const Check_Process_Progress = gql`
-  query($otID: ID!, $date: String, $userId: ID!) {
+  query($otID: ID!, $date: String ) {
     appResources(
       sort: "processOrder:asc"
       where: { resourceType: "OperationTheater" }
@@ -347,7 +347,7 @@ export const Check_Process_Progress = gql`
         processes_data(
           sort: "id:asc"
           where: {
-            app_user: $userId
+            
             operation_theater: { id: $otID }
             Date: $date
           }
@@ -371,6 +371,43 @@ export const Check_Process_Progress = gql`
     }
   }
 `;
+// query($otID: ID!, $date: String, $userId: ID!) {
+//   appResources(
+//     sort: "processOrder:asc"
+//     where: { resourceType: "OperationTheater" }
+//   ) {
+//     name
+//     processOrder
+//     process_details {
+//       id
+//       Number
+//       process_name
+//       processes_data(
+//         sort: "id:asc"
+//         where: {
+//           app_user: $userId
+//           operation_theater: { id: $otID }
+//           Date: $date
+//         }
+//       ) {
+//         Date
+//         id
+//         Answer
+//         operation_theater {
+//           id
+//           name
+//         }
+//         instance
+//         question {
+//           Question
+//         }
+//         check_editable {
+//           id
+//         }
+//       }
+//     }
+//   }
+// }
 // export const GetPreProcessDetails = gql`
 // query($operationTheaterID:ID!){
 
