@@ -205,10 +205,10 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
 
   
 
-  const renderResources = ({item}: {item: any}) => {
+  const renderResources = ({item,index}: {item: any, index:number}) => {
     return (
-    <View style={styles.item}>
-      <Text style={[styles.appButtonText,{flex:1,marginBottom:18 }]}>
+    <View style={[styles.item,index==0&&{marginTop:0}]}>
+      <Text style={[styles.appButtonText,{flex:1,marginBottom:16  }]}>
         {item.Question}
       </Text>
       {item.type == "value_based"?(<>
@@ -254,7 +254,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
        <RadioGroup 
           selectedIndex={override?0:(dict[item.id] == "True"? 0 : (dict[item.id]=="False"?1:null))}
           onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
-          style={{flexDirection:"row",justifyContent: 'space-between'}}
+          style={{flexDirection:"row",justifyContent: 'space-between' }}
           >
           {radioItems.map((item, index) => {
             return (
@@ -266,7 +266,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
                 displayTextActiveColor="#fff"
                 prefixColor="#006bcc"
                 prefixActiveColor="#006bcc"
-                style={{width:150,alignContent: "center",borderWidth:1,borderColor:"#979797"}}
+                style={{width:120,height:40,borderRadius:8,alignContent: "center",borderWidth:1,borderColor:"#979797"}}
                 disabled={disableButtons}
               />
             );
@@ -289,21 +289,25 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
      
     <>
     <Provider>
-      <Portal>
-        <Modal visible={modalVisible} style={{width:"100%",height:100,position:"relative",}} contentContainerStyle={{backgroundColor: 'blue'}}>
-          <View style={{width:"100%",height:142,backgroundColor:"white"}}>
-            <View style={{height:102}}>
-          <Text style={getStyle()}>{_cleared?"Process Completed":"Process Incomplete"}</Text>
-          <Text style={[styles.headerTextStyle,{margin:10,fontSize:14,fontWeight:"normal"}]}>{_cleared?"Continue finishing next tasks":"Contact admin to complete the tasks."}</Text>
-          </View>
-          <Button  mode="contained" color ={"#006bcc"}  
-          style={{width:"100%",height:40,justifyContent:"center",alignItems:"center"}} 
-          onPress={() =>  navigation.goBack()}>
-            Continue
-          </Button> 
-          </View>
-        </Modal>
-      </Portal>
+    {modalVisible&&(
+        <Portal>
+        
+        <View style={{flex:1,justifyContent:'flex-end',backgroundColor:'rgba(0,0,0,0.6)'}}>
+        <View style={{width:"100%",height:142,backgroundColor:"white"}}>
+          <View style={{height:102}}>
+        <Text style={getStyle()}>{_cleared?"Process Completed":"Process Incomplete"}</Text>
+        <Text style={[styles.headerTextStyle,{margin:10,fontSize:14,fontWeight:"normal"}]}>{_cleared?"Continue finishing next tasks":"Contact admin to complete the tasks."}</Text>
+        </View>
+        <Button  mode="contained" color ={"#006bcc"}  
+        style={{width:"100%",height:40,justifyContent:"center",alignItems:"center"}} 
+        onPress={() =>  navigation.goBack()}>
+          Continue
+        </Button> 
+        </View>
+        </View>
+       
+    </Portal>
+      )}
        <StatusBar
         animated={true}
         backgroundColor="#ff8d48"
@@ -317,13 +321,13 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
             />
           </View>
         <View style={{flex:1,backgroundColor:'white',borderTopLeftRadius:30,}}>
-          <View style={{justifyContent:'space-around',height:50,marginLeft:22,marginTop:26}}>  
-            <Text style={styles.headerTextStyle}>{processName}</Text>
+          <View style={{justifyContent:'space-around',height:50,marginLeft:22,marginVertical:36}}>  
+            <Text style={[styles.headerTextStyle,{fontSize:16}]}>{processName}</Text>
           </View>
-        <View style={{flex:1,alignItems:'center',justifyContent:'center',alignSelf:'stretch',marginVertical:10,marginTop:10}}>
+        <View style={{flex:1,alignItems:'center',justifyContent:'center',alignSelf:'stretch' }}>
         {_data && (
           <FlatList
-                  style={{width:"80%",alignSelf: "center"}}
+                  style={{width:"100%",alignSelf: "center",paddingHorizontal:40}}
                   data={questions_data.processDetail.questions}
                   keyExtractor={(item, index) => item.id}
                   renderItem={renderResources}
@@ -373,7 +377,7 @@ const styles = StyleSheet.create({
     height:"100%",
   },
   item: {
-    marginBottom:15,
+    marginVertical:40,
     width:"100%",
   },
   title: {

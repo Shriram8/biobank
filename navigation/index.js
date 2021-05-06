@@ -237,15 +237,19 @@ const MainStackNavigator = (props) => {
             headerTitleAlign: "center",
             headerStyle: {
               backgroundColor: "white",
+             
             },
+            headerTitleStyle:{
+              fontSize:18
+            }
           })}
         />
         <MainStack.Screen
           name="processScreen"
           component={ProcessScreen}
-          initialParams={{ resourceName: "" }}
+          initialParams={{ operationTheaterName: "" }}
           options={({ route }) => ({
-            title: route.params.resourceName,
+            title: route.params.operationTheaterName,
             headerTitleAlign: "center",
             headerStyle: {
               backgroundColor: "white",
@@ -255,9 +259,9 @@ const MainStackNavigator = (props) => {
         <MainStack.Screen
           name="questionsScreen"
           component={QuestionsScreen}
-          initialParams={{ resourceName: "" }}
+          initialParams={{ operationTheaterName: "" }}
           options={({ route }) => ({
-            title: route.params.resourceName,
+            title: route.params.operationTheaterName,
             headerTitleAlign: "center",
             headerStyle: {
               elevation: 0,

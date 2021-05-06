@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import {View,Text, StyleSheet } from 'react-native';
+import { fontSizes } from '../components/UI/Theme';
 
 const MessageComponent = (props)=>{
   
@@ -13,12 +14,12 @@ const MessageComponent = (props)=>{
             width:"100%",
             alignItems:"center",
             paddingLeft:20,
-            margin:0},{flex:1}]}>
-<View style={{width:30,height:30,marginLeft:14}}>
+            margin:0 , marginLeft:25},{flex:1}]}>
+ 
   <MaterialCommunityIcons
-  name={item.icon} size={30} color={item.color}/>
-</View>
-<Text style={[styles.appButtonText,{flex:1, marginRight:14,color:item.color}]} numberOfLines={1}>
+  name={item.icon} size={28} color={item.color}/>
+ 
+<Text style={[styles.appButtonText,{flex:1, marginRight:14,color:"#646464"}]} numberOfLines={1}>
   {item.message}
 </Text>
 <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
@@ -31,9 +32,9 @@ const MessageComponent = (props)=>{
 const styles = StyleSheet.create({
      
     appButtonText: {
-      fontSize: 18,
+      fontSize: fontSizes.sm,
       color: "#000000",
-      fontWeight: "bold",
+      
       textAlign: "left",
       textAlignVertical:"center",
       marginLeft:14,

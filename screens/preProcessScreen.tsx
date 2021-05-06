@@ -307,32 +307,33 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
     <View style={styles.item}>
       <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",height:80}}>
         <View style={{height:"100%", justifyContent:"center",alignItems:"center"}}>
-          <View style={[{width:2,height:40},jewelStyle(item.processOrder)]}>
+          <View style={[{width:0.5,height:40,backgroundColor:'#979797'},jewelStyle(item.processOrder)]}>
           </View>
-          <View style={{width:30,height:30}}>
+          <View style={{width:18,height:18}}>
           <MaterialCommunityIcons
-          name={iconValue[index]} size={30} color={changeColorSet(index)}/>
+          name={iconValue[index]} size={18} color={changeColorSet(index)}/>
           </View>
-          <View style={{width:2,height:40,backgroundColor:"#b6b6b6"}}>
+          <View style={{width:0.5,height:40,backgroundColor:"#b6b6b6"}}>
           </View>
         </View>
       <TouchableOpacity
-      style={[styles.appButtonContainer,{flex:1,zIndex:1}]} disabled={lock[index]} onPress={()=>{
+      style={[styles.appButtonContainer,{flex:1,zIndex:1,height:60,width:300,borderRadius:8,marginVertical:16}]} disabled={lock[index]} onPress={()=>{
         navigation.navigate('processScreen',{
             userId: userId,
             userType:userType,
             resourceID: item.id,
             operationTheaterID: operationTheaterID,
-            resourceName: item.name,
+            operationTheaterName: route.params.operationTheaterName,
+            resourceName:item.name,
             instance: parseInt(index),
           })}}>
-      <Text style={[styles.appButtonText,{flex:1, marginRight:14,},lock[index]?{color: "#959595",}:{}]}>
+      <Text style={[styles.appButtonText,{flex:1, marginRight:14,fontSize: 18, fontWeight:'500'},lock[index]?{color: "#959595",}:{}]}>
         {item.id == 4 ?item.name+"-0"+(index-1):item.name}
       </Text>
 
-      <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
+      <View style={{ width:18,height:18,marginEnd:14, alignContent:'flex-end'}}>
       <MaterialCommunityIcons
-      name='arrow-right' size={30} style={lock[index]?{color: "#959595",}:{}}/>
+      name='arrow-right' size={18} style={lock[index]?{color: "#959595",}:{}}/>
       </View>
       </TouchableOpacity>
       
@@ -343,10 +344,10 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       </View>
 
       {(item.processOrder >= preSurgeryProcessCount)?(
-      <View style={[styles.appFlagContainer,{flex:1}]} >
-      <View style={{width:30,height:30}}>
+      <View style={[styles.appFlagContainer,{flex:1,marginVertical:24}]} >
+      <View style={{width:24,height:24}}>
       <MaterialCommunityIcons
-      name='flag' size={30} color={changeColorSetText(index)}/>
+      name='flag' size={24} color={changeColorSetText(index)}/>
       </View>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,},changeColorStyle(item.processOrder,item.id,index)]}>
         {getText(item.processOrder,item.id,index)}
@@ -357,18 +358,19 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
 
 
   return (  
-       <>
+       <View style={{backgroundColor:'#fff',flex:1}}>
        <StatusBar
         animated={true}
         backgroundColor="#006bcc"
         hidden={false} />
         {message != null ? (<View style={{width:"100%",height:80,
+        marginBottom:24,
         backgroundColor:headerColor,justifyContent:"center",alignItems:"center",}}>  
-          <View style={{
-            flexDirection:"row",}}>
+          <View style={{ 
+            flexDirection:"row" ,justifyContent:'center',alignItems:'center',flex:1}}>
           <MaterialCommunityIcons
           name={headerIcon} size={30} color='#ffffff'/>
-          <Text style={[styles.appButtonText,{flex:1, marginRight:14,color:"#ffffff",width:400,textAlignVertical:"center"}]}>
+          <Text style={[ { marginRight:14,color:"#ffffff",  fontSize: 18, fontWeight:'bold' }]}>
             {message}
           </Text>
           </View>
@@ -385,7 +387,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           />
         </View>
         )}
-      </>
+      </View>
     );
 }
 
@@ -430,13 +432,13 @@ const styles = StyleSheet.create({
     height:60,
     margin:10,
     alignItems: "center",
-    shadowColor: "#000",
+    shadowColor: "#F4F4F4",
     shadowOffset: {
     	width: 0,
     	height: 2,
     },
     shadowOpacity: 1,
-    shadowRadius: 2,
+    shadowRadius:20,
     elevation: 6,
   },
   appFlagContainer: {

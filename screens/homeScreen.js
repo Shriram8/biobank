@@ -26,6 +26,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { connect } from "react-redux";
 import { withNavigation } from "react-navigation";
 import MessageComponent from "./messageComponent";
+import { fontSizes } from "../components/UI/Theme";
 
 const apolloClient = client;
 const date = new Date();
@@ -97,6 +98,7 @@ function homeScreen(props, route) {
   }, [renderFlatlistData]);
 
   React.useEffect(() => {
+    
     const unsubscribe = props.navigation.addListener("focus", () => {
       //console.log("HOME SCREEN")
       apolloClient
@@ -108,6 +110,7 @@ function homeScreen(props, route) {
           _data = Result.data.appResources.concat(
             Result.data.operationTheaters
           );
+          
           setRenderFlatlistData(Result.data);
          
           let global_process_status = [];
@@ -217,12 +220,13 @@ function homeScreen(props, route) {
           setloadingProcessData(true)
         });
     });
+   
     return unsubscribe;
   }, [props.navigation]);
   const getTextForProcessMessage = (index,global_process_status) => {
     let varArra = global_process_status;
-    let message = "Ongoing start of the day";
-    let msgObj = {message:"Ongoing start of the day",
+    let message = "Start process";
+    let msgObj = {message:"Start process",
                   icon: "play-box",
                   color:"black"}
     if (varArra.length > 0) {
@@ -286,7 +290,16 @@ function homeScreen(props, route) {
         msgObj = {message:message,
           icon: alert,
           color:red}
-      } 
+      } else if (
+        varArra[index][0].status === "pending" ||
+        varArra[index][1].status === "pending"
+      ) {
+        message = "Ongoing for start of day";
+        
+        msgObj = {message:message,
+          icon: minusBox,
+          color:orange}
+      }
     }
     console.log("msgOBJ ======",msgObj)
     return msgObj;
@@ -336,6 +349,7 @@ function homeScreen(props, route) {
                 height: 30,
                 marginEnd: 14,
                 alignContent: "flex-end",
+                justifyContent:'center'
               }}
             >
               <MaterialCommunityIcons name="arrow-right" size={30} />
@@ -361,12 +375,12 @@ function homeScreen(props, route) {
         <View style={styles.header}>
           <View style={styles.headerTextLabel}>
             <Text
-              style={{ fontWeight: "bold", fontSize: 30, color: "#ffffff" }}
+              style={{ fontWeight: "bold", fontSize: 30, color: "#ffffff",marginBottom:8 }}
             >
               Hello, John
             </Text>
             <Divider
-              style={{ width: "100%", height: 1, backgroundColor: "white" }}
+              style={{ width: "100%", height: 1, backgroundColor: "#CCE1F4"  }}
             />
           </View>
           <View style={styles.subHeader}>
@@ -418,13 +432,13 @@ function homeScreen(props, route) {
           >
             {renderFlatlistData && loadingProcessData ? (
               <FlatList
-                style={{ width: "90%", alignSelf: "center" }}
+                style={{ width: "100%", alignSelf: "center",paddingHorizontal:24 }}
                 data={_data}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderResources}
               />
             ):(
-              <ActivityIndicator size={24} color={"blue"}/>
+              <ActivityIndicator size={24} color={"#006bcc"}/>
             )}
           </View>
         </View>
@@ -441,8 +455,10 @@ export default connect(mapStateToProps)(withNavigation(homeScreen));
 
 const styles = StyleSheet.create({
   subHeader: {
+    marginTop:16,
     justifyContent: "center",
     width: "90%",
+    paddingBottom:24
   },
   flexContainer: {
     height: 30,
@@ -456,7 +472,7 @@ const styles = StyleSheet.create({
   box2: {
     width: 1,
     height: "100%",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#CCE1F4",
   },
   box3: {
     height: "100%",
@@ -464,20 +480,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   headerTextLabel: {
-    width: "90%",
+    marginBottom:8,
     height: 50,
-    justifyContent: "center",
+     
   },
   headerTextStyle: {
     fontWeight: "bold",
-    fontSize: 22,
+    fontSize: fontSizes.xxl,
     color: "#000000",
   },
   header: {
     backgroundColor: "#006bcc",
-    alignItems: "center",
+     marginHorizontal:24,
+    
     justifyContent: "center",
-    height: 150,
+     
   },
   location: {
     fontSize: 14,
@@ -516,7 +533,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
-      width: 0,
+      width: 2,
       height: 2,
     },
     shadowOpacity: 1,

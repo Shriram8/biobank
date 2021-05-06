@@ -143,6 +143,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
 
     return (
     <View style={styles.item}>
+      
       <TouchableOpacity
       style={[styles.appButtonContainer,{flex:1,zIndex:1}]}onPress={()=>{
         navigation.navigate('questionsScreen',{
@@ -154,11 +155,11 @@ export default function processScreen({route, navigation}: {navigation: any, rou
             instance:instance,
           })}}>
       
-      <View style={{width:30,height:30,marginLeft:14}}>
+      <View style={{width:18,height:18,marginLeft:14}}>
       <MaterialCommunityIcons 
-        name={changeIconSet(item.id) }size={30} color={colorValue[item.id]}/>
+        name={changeIconSet(item.id) }size={18} color={colorValue[item.id]}/>
       </View>
-      <Text style={[styles.appButtonText,{flex:1, marginRight:14,}]}>
+      <Text style={[styles.appButtonText,{flex:1, marginRight:14,fontSize:16,fontWeight:'600'}]}>
         {"P"+item.Number+"-"+item.process_name}
       </Text>
       <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
@@ -169,7 +170,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       </TouchableOpacity>
       <View style={{height:10,marginTop:-11}}>
         <ProgressBar progress={getProgressValue(item.id)} color={colorValue[item.id]} style={{width:'92%',alignSelf:"center",
-        height:4,backgroundColor:"white",alignContent:"center"}} />
+        height:3,backgroundColor:"white",alignContent:"center"}} />
       </View>
       
     </View>
@@ -185,6 +186,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
         hidden={false} />
         {renderFlatlistData && (
         <View style={{width:"100%",height:"100%",backgroundColor:"white"}}>
+          <Text style={[styles.appButtonText,{ margin:18, marginRight:24,marginLeft:32}]}>{route.params.resourceName}</Text>
           <FlatList
             extraData = {refresh}
             style={{width:"90%",alignSelf: "center",}}
@@ -228,6 +230,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width:"100%",
     height:80,
+    marginVertical:10
   },
   title: {
     fontSize: 32,
@@ -239,13 +242,7 @@ const styles = StyleSheet.create({
     height:60,
     margin:10,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-    	width: 0,
-    	height: 2,
-    },
-    shadowOpacity: 1,
-    shadowRadius: 2,
+   
     elevation: 6,
   },
   appButtonText: {
