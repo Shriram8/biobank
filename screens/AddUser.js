@@ -37,7 +37,10 @@ const AddUser = (props) => {
 
   let [usermutate, { data }] = useMutation(addNewUser, {
     onCompleted: (data) => {
-      navigateToUsers(data.createAppUser.appUser.branch.id);
+      navigateToUsers(
+        data.createAppUser.appUser.branch.id,
+        "User successfully added"
+      );
     },
     onError: (err) => {
       if (err.message === "Duplicate entry") {
@@ -49,13 +52,19 @@ const AddUser = (props) => {
 
   let [reset, { data: resetPasswordData }] = useMutation(ResetPassword, {
     onCompleted: (data) => {
-      navigateToUsers(data.updateAppUser.appUser.branch.id);
+      navigateToUsers(
+        data.updateAppUser.appUser.branch.id,
+        "Password reset enabled for the user"
+      );
     },
   });
 
   let [update, { data: updateUserData }] = useMutation(UpdateUser, {
     onCompleted: (data) => {
-      navigateToUsers(data.updateAppUser.appUser.branch.id);
+      navigateToUsers(
+        data.updateAppUser.appUser.branch.id,
+        "User details updated"
+      );
     },
   });
 
@@ -163,10 +172,11 @@ const AddUser = (props) => {
     }
   };
 
-  const navigateToUsers = (id) => {
+  const navigateToUsers = (id, msg) => {
     props.navigation.navigate("users", {
       from: "adduser",
       branch: id,
+      msg: msg,
     });
   };
 
