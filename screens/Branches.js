@@ -29,6 +29,7 @@ const Branches = (props) => {
           icon="plus"
           mode="contained"
           color={"#006bcc"}
+          labelStyle={{ fontSize: 16 }}
           uppercase={false}
           style={{ borderRadius: 7 }}
           onPress={() => props.navigation.navigate("addbranch")}
@@ -54,7 +55,9 @@ const Branches = (props) => {
           });
         }}
       >
-        <Text style={{ fontSize: 18 }}>{data.item.name}</Text>
+        <Text style={{ fontSize: 18, fontWeight: "bold" }}>
+          {data.item.name}
+        </Text>
       </TouchableOpacity>
     );
   };
@@ -75,12 +78,20 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     backgroundColor: "#fff",
     borderRadius: 8,
-    paddingHorizontal: 13,
-    paddingVertical: 18,
+    paddingHorizontal: 16,
     marginBottom: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    height: 60,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 2,
+    elevation: 6,
   },
   topView: {
     marginTop: 28,

@@ -86,11 +86,13 @@ const Profile = (props) => {
         <View style={[styles.textLabel, { marginBottom: 10 }]}>
           <Text style={styles.textStyle}>Role</Text>
         </View>
-        <TextInput
-          editable={false}
-          style={styles.inputText}
-          value={list.slice(2)}
-        />
+        <View style={styles.inputView}>
+          <TextInput
+            editable={false}
+            style={styles.inputText}
+            value={list.slice(2)}
+          />
+        </View>
         <View style={styles.textLabel}>
           <Text style={styles.textStyle}>Change password</Text>
         </View>
@@ -99,6 +101,7 @@ const Profile = (props) => {
           color={"#006bcc"}
           uppercase={false}
           style={styles.submitButton}
+          labelStyle={{ fontSize: 16 }}
           onPress={() => {
             props.navigation.navigate("profilepassword");
           }}
@@ -117,21 +120,21 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps)(Profile);
 
 const styles = StyleSheet.create({
-  textStyle: {
-    fontWeight: "bold",
-    fontSize: 12,
-    color: "#9e9e9e",
-  },
   radioTextStyle: {
     fontWeight: "bold",
-    fontSize: 12,
     color: "#333333",
+    fontSize: 16,
+  },
+  textStyle: {
+    fontSize: 14,
+    color: "#9e9e9e",
   },
   textLabel: {
-    width: "90%",
+    width: "80%",
     height: 20,
     marginTop: 25,
     justifyContent: "center",
+    marginBottom: 8,
   },
   inputView: {
     width: "90%",
@@ -140,10 +143,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputText: {
-    fontWeight: "bold",
     height: 50,
-    color: "#333333",
-    fontSize: 12,
+    color: "#170500",
+    borderColor: "#006bda",
+    borderWidth: 2,
+    borderRadius: 8,
+    fontSize: 16,
+    paddingHorizontal: 16,
   },
   modalHeader: {
     backgroundColor: "#fff",
@@ -174,10 +180,10 @@ const styles = StyleSheet.create({
     marginRight: 32,
   },
   submitButton: {
-    width: "100%",
     height: 40,
     marginTop: 12,
     justifyContent: "center",
+    width: "90%",
   },
   listHead: {
     borderWidth: 1,

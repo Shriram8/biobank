@@ -100,7 +100,7 @@ const Users = (props) => {
         });
       }}
     >
-      <Text style={{ fontSize: 18, paddingVertical: 10 }}>{title.name}</Text>
+      <Text style={{ fontSize: 18, fontWeight: "bold" }}>{title.name}</Text>
       {title.active && (
         <IconButton
           icon="delete-outline"
@@ -125,6 +125,7 @@ const Users = (props) => {
           mode="contained"
           color={"#006bcc"}
           uppercase={false}
+          labelStyle={{ fontSize: 16 }}
           style={{ borderRadius: 7 }}
           onPress={() =>
             props.navigation.navigate("adduser", {
@@ -197,12 +198,20 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     backgroundColor: "#fff",
     borderRadius: 8,
-    paddingHorizontal: 13,
-    paddingVertical: 18,
+    paddingHorizontal: 16,
     marginBottom: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    height: 60,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 2,
+    elevation: 6,
   },
   empty: {
     textAlign: "center",

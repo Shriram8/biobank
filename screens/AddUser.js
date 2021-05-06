@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  StatusBar,
+} from "react-native";
 import {
   Button,
   Divider,
@@ -164,168 +171,189 @@ const AddUser = (props) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.modalHeader}>
-        <IconButton
-          icon="arrow-left"
-          color={"#010101"}
-          size={25}
-          style={{ position: "absolute", left: 2 }}
-          onPress={() => {
-            props.navigation.goBack();
-          }}
-        />
-        <Text style={styles.headerTitle}>
-          {props.route.params?.from ? "Update user" : "Add a New User"}
-        </Text>
-      </View>
-      <ScrollView contentContainerStyle={styles.formView}>
-        <View style={styles.textLabel}>
-          <Text style={styles.textStyle}>First Name Last Name</Text>
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            editable={checkUser()}
-            style={styles.inputText}
-            onChangeText={setName}
-            value={name}
+    <>
+      <StatusBar animated={true} backgroundColor="#fff" hidden={false} />
+      <View style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
+        <View style={styles.modalHeader}>
+          <IconButton
+            icon="arrow-left"
+            color={"#010101"}
+            size={25}
+            style={{ position: "absolute", left: 2 }}
+            onPress={() => {
+              props.navigation.goBack();
+            }}
           />
+          <Text style={styles.headerTitle}>
+            {props.route.params?.from ? "Update user" : "Add a New User"}
+          </Text>
         </View>
-        <Divider style={styles.divider} />
-        <View style={styles.textLabel}>
-          <Text style={styles.textStyle}>Gender</Text>
-        </View>
-        <View style={{ flexDirection: "row" }}>
-          <View style={styles.radioView}>
-            <RadioButton
-              disabled={!props.route.params?.from ? false : !checkUser()}
-              value="Male"
-              color={"#006bcc"}
-              status={checked === "male" ? "checked" : "unchecked"}
-              onPress={() => setChecked("male")}
-            />
-            <Text style={styles.radioTextStyle}>Male</Text>
+        <ScrollView contentContainerStyle={styles.formView}>
+          <View style={styles.textLabel}>
+            <Text style={styles.textStyle}>First Name Last Name</Text>
           </View>
-          <View style={styles.radioView}>
-            <RadioButton
-              disabled={!props.route.params?.from ? false : !checkUser()}
-              value="Female"
-              color={"#006bcc"}
-              status={checked === "female" ? "checked" : "unchecked"}
-              onPress={() => setChecked("female")}
+          <View style={styles.inputView}>
+            <TextInput
+              editable={checkUser()}
+              style={styles.inputText}
+              onChangeText={setName}
+              value={name}
             />
-            <Text style={styles.radioTextStyle}>Female</Text>
           </View>
-          <View style={styles.radioView}>
-            <RadioButton
-              disabled={!props.route.params?.from ? false : !checkUser()}
-              value="Others"
-              color={"#006bcc"}
-              status={checked === "others" ? "checked" : "unchecked"}
-              onPress={() => setChecked("others")}
-            />
-            <Text style={styles.radioTextStyle}>Others</Text>
+          <Divider style={styles.divider} />
+          <View style={styles.textLabel}>
+            <Text style={styles.textStyle}>Gender</Text>
           </View>
-        </View>
-        <View style={styles.textLabel}>
-          <Text style={styles.textStyle}>Mobile Number</Text>
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            editable={checkUser()}
-            style={styles.inputText}
-            onChangeText={setMobile}
-            value={mobile}
-          />
-        </View>
-        <Divider style={styles.divider} />
-        <View style={styles.textLabel}>
-          <Text style={styles.textStyle}>Employee Id</Text>
-        </View>
-        <View style={styles.inputView}>
-          <TextInput
-            editable={checkUser()}
-            style={styles.inputText}
-            onChangeText={setEmpId}
-            value={empId}
-          />
-        </View>
-        <Divider style={styles.divider} />
-        <View style={[styles.textLabel, { marginBottom: 10 }]}>
-          <Text style={styles.textStyle}>Role</Text>
-        </View>
-        <List.Accordion
-          expanded={checkUser()}
-          title={list.slice(2)}
-          style={styles.listHead}
-          titleStyle={styles.listTitle}
-        >
-          <List.Item title="Staff" onPress={() => setList("OTStaff")} />
-          {createUserTypeValidation("OTIncharge") && (
-            <List.Item title="Incharge" onPress={() => setList("OTIncharge")} />
-          )}
-          {createUserTypeValidation("OTAdmin") && (
-            <List.Item title="Admin" onPress={() => setList("OTAdmin")} />
-          )}
-        </List.Accordion>
-        {checkUser() && (
-          <>
-            <View style={styles.textLabel}>
-              <Text style={styles.textStyle}>Set a new password</Text>
+          <View style={{ flexDirection: "row" }}>
+            <View style={styles.radioView}>
+              <RadioButton
+                disabled={!props.route.params?.from ? false : !checkUser()}
+                value="Male"
+                color={"#006bcc"}
+                uncheckedColor={"#959595"}
+                status={checked === "male" ? "checked" : "unchecked"}
+                onPress={() => setChecked("male")}
+              />
+              <Text style={styles.radioTextStyle}>Male</Text>
             </View>
-            <Button
-              mode="contained"
-              color={"#006bcc"}
-              uppercase={false}
-              style={styles.reset}
-              onPress={() => {
-                reset({
-                  variables: {
-                    userId: props.route.params?.userId,
-                    resetpassword: true,
-                  },
-                });
+            <View style={styles.radioView}>
+              <RadioButton
+                disabled={!props.route.params?.from ? false : !checkUser()}
+                value="Female"
+                color={"#006bcc"}
+                uncheckedColor={"#959595"}
+                status={checked === "female" ? "checked" : "unchecked"}
+                onPress={() => setChecked("female")}
+              />
+              <Text style={styles.radioTextStyle}>Female</Text>
+            </View>
+            <View style={styles.radioView}>
+              <RadioButton
+                disabled={!props.route.params?.from ? false : !checkUser()}
+                value="Others"
+                color={"#006bcc"}
+                uncheckedColor={"#959595"}
+                status={checked === "others" ? "checked" : "unchecked"}
+                onPress={() => setChecked("others")}
+              />
+              <Text style={styles.radioTextStyle}>Others</Text>
+            </View>
+          </View>
+          <View style={styles.textLabel}>
+            <Text style={styles.textStyle}>Mobile Number</Text>
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              editable={checkUser()}
+              style={styles.inputText}
+              onChangeText={setMobile}
+              value={mobile}
+            />
+          </View>
+          <Divider style={styles.divider} />
+          <View style={styles.textLabel}>
+            <Text style={styles.textStyle}>Employee Id</Text>
+          </View>
+          <View style={styles.inputView}>
+            <TextInput
+              editable={checkUser()}
+              style={styles.inputText}
+              onChangeText={setEmpId}
+              value={empId}
+            />
+          </View>
+          <Divider style={styles.divider} />
+          <View style={[styles.textLabel, { marginBottom: 10 }]}>
+            <Text style={styles.textStyle}>Role</Text>
+          </View>
+          <List.Accordion
+            expanded={checkUser()}
+            title={list.slice(2)}
+            style={styles.listHead}
+            titleStyle={styles.listTitle}
+          >
+            <List.Item
+              title="Staff"
+              titleStyle={{ color: "#959595" }}
+              onPress={() => setList("OTStaff")}
+            />
+            {createUserTypeValidation("OTIncharge") && (
+              <List.Item
+                title="Incharge"
+                titleStyle={{ color: "#959595" }}
+                onPress={() => setList("OTIncharge")}
+              />
+            )}
+            {createUserTypeValidation("OTAdmin") && (
+              <List.Item
+                title="Admin"
+                titleStyle={{ color: "#959595" }}
+                onPress={() => setList("OTAdmin")}
+              />
+            )}
+          </List.Accordion>
+          {checkUser() && (
+            <>
+              <View style={styles.textLabel}>
+                <Text style={styles.textStyle}>Set a new password</Text>
+              </View>
+              <Button
+                mode="contained"
+                color={"#006bcc"}
+                uppercase={false}
+                style={styles.reset}
+                labelStyle={{ fontSize: 16 }}
+                onPress={() => {
+                  reset({
+                    variables: {
+                      userId: props.route.params?.userId,
+                      resetpassword: true,
+                    },
+                  });
+                }}
+              >
+                Reset Password
+              </Button>
+            </>
+          )}
+          {showError && (
+            <Text
+              style={{
+                marginVertical: 16,
+                color: "#fa796f",
+                fontSize: 14,
+                alignSelf: "flex-start",
               }}
             >
-              Reset Password
-            </Button>
-          </>
-        )}
-        {showError && (
-          <Text
-            style={{
-              color: "#fa796f",
-              textAlign: "center",
-              paddingVertical: 15,
-            }}
+              {errorMsg}
+            </Text>
+          )}
+        </ScrollView>
+        {checkUser() && (
+          <Button
+            mode="contained"
+            color={"#006bcc"}
+            uppercase={false}
+            style={styles.submitButton}
+            onPress={toUpdate}
           >
-            {errorMsg}
-          </Text>
+            Update user
+          </Button>
         )}
-      </ScrollView>
-      {checkUser() && (
-        <Button
-          mode="contained"
-          color={"#006bcc"}
-          uppercase={false}
-          style={styles.submitButton}
-          onPress={toUpdate}
-        >
-          Update user
-        </Button>
-      )}
-      {!props.route.params?.from && (
-        <Button
-          mode="contained"
-          color={"#006bcc"}
-          uppercase={false}
-          style={styles.submitButton}
-          onPress={onSubmit}
-        >
-          Add a New User
-        </Button>
-      )}
-    </View>
+        {!props.route.params?.from && (
+          <Button
+            mode="contained"
+            color={"#006bcc"}
+            uppercase={false}
+            style={styles.submitButton}
+            labelStyle={{ fontSize: 16 }}
+            onPress={onSubmit}
+          >
+            Add a New User
+          </Button>
+        )}
+      </View>
+    </>
   );
 };
 
@@ -337,21 +365,21 @@ const mapStateToProps = (state) => ({
 export default connect(mapStateToProps)(AddUser);
 
 const styles = StyleSheet.create({
-  textStyle: {
-    fontWeight: "bold",
-    fontSize: 12,
-    color: "#9e9e9e",
-  },
   radioTextStyle: {
     fontWeight: "bold",
-    fontSize: 12,
+    fontSize: 16,
     color: "#333333",
   },
+  textStyle: {
+    fontSize: 14,
+    color: "#9e9e9e",
+  },
   textLabel: {
-    width: "90%",
+    width: "80%",
     height: 20,
     marginTop: 25,
     justifyContent: "center",
+    marginBottom: 8,
   },
   inputView: {
     width: "90%",
@@ -360,10 +388,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputText: {
-    fontWeight: "bold",
     height: 50,
-    color: "#333333",
-    fontSize: 12,
+    color: "#170500",
+    fontSize: 16,
+    borderColor: "#006bda",
+    borderWidth: 2,
+    borderRadius: 8,
+    fontSize: 16,
+    paddingHorizontal: 16,
   },
   modalHeader: {
     backgroundColor: "#fff",
@@ -400,14 +432,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   listHead: {
-    borderWidth: 1,
-    borderRadius: 7,
-    borderColor: "#959595",
+    borderColor: "#006bda",
+    borderWidth: 2,
+    borderRadius: 8,
+    fontSize: 16,
     width: "90%",
   },
   listTitle: {
-    color: "#959595",
-    fontSize: 14,
+    color: "#170500",
+    fontSize: 16,
   },
   reset: {
     width: "100%",

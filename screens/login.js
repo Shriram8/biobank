@@ -207,7 +207,7 @@ function login(props, navigation) {
             </Text>
           )}
         </View>
-        <Divider style={{ width: "80%", height: 1, borderColor: "black" }} />
+        {/* <Divider style={{ width: "80%", height: 1, borderColor: "black" }} /> */}
       </ScrollView>
     </>
   );
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    marginTop: 64,
+    marginTop: 75,
     backgroundColor: "#ffffff",
     alignItems: "center",
     flex: 6,
@@ -231,13 +231,12 @@ const styles = StyleSheet.create({
   tinyLogo: {
     height: 48,
     width: 208,
-    marginTop: 64,
+    marginTop: 75,
   },
   headerTextLabel: {
     width: "80%",
     height: 25,
     marginTop: 32,
-    marginBottom: 15,
     justifyContent: "center",
   },
   headerTextStyle: {
@@ -273,7 +272,6 @@ const styles = StyleSheet.create({
     height: 50,
     color: "#170500",
     backgroundColor: "#ffffff",
-    fontSize: 12,
     borderColor: "#006bda",
     borderWidth: 2,
     borderRadius: 8,
@@ -293,7 +291,7 @@ const styles = StyleSheet.create({
   loginText: {
     color: "white",
     fontWeight: "bold",
-    fontSize: 18,
+    fontSize: 16,
     textAlign: "center",
   },
   register: {
