@@ -6,8 +6,7 @@ import {client} from '../src/graphql/ApolloClientProvider';
 import {GetSurgeryDetails,preProcessProgress,GetSurgeryDetails_OTStaff,preProcessProgress_OTStaff} from '../src/graphql/queries';
 import { ProgressBar } from 'react-native-paper';
 import { FlatList } from "react-native";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; 
 const apolloClient = client;
 let _data: any[] = [];
 const preSurgeryProcessCount = 2;
@@ -316,8 +315,9 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           <View style={{width:0.5,height:40,backgroundColor:"#b6b6b6"}}>
           </View>
         </View>
+        
       <TouchableOpacity
-      style={[styles.appButtonContainer,{flex:1,zIndex:1,height:60,width:300,borderRadius:8,marginVertical:16}]} disabled={lock[index]} onPress={()=>{
+      style={[styles.appButtonContainer,{flex:1,zIndex:1,height:60,width:300,borderBottomLeftRadius :2,borderBottomRightRadius:2,marginVertical:12}]} disabled={lock[index]} onPress={()=>{
         navigation.navigate('processScreen',{
             userId: userId,
             userType:userType,
@@ -333,18 +333,18 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
 
       <View style={{ width:18,height:18,marginEnd:14, alignContent:'flex-end'}}>
       <MaterialCommunityIcons
-      name='arrow-right' size={18} style={lock[index]?{color: "#959595",}:{}}/>
+      name='arrow-right' size={18} style={lock[index]?{color: "#959595",}:{color: "#959595"}}/>
       </View>
       </TouchableOpacity>
       
       </View>
-      <View style={{height:10,marginTop:-11,marginLeft:30}}>
-        <ProgressBar progress={netProgress[index]} color={colorValue[index]} style={{width:'92%',alignSelf:"center",
+      <View style={{height:20,marginTop:-11,marginLeft:28,elevation:6, marginHorizontal:10}}>
+        <ProgressBar progress={netProgress[index]} color={colorValue[index]} style={{width:'100%',alignSelf:"center",borderBottomLeftRadius:8,borderBottomRightRadius:8,
         height:4,backgroundColor:"white",alignContent:"center"}} />
       </View>
 
       {(item.processOrder >= preSurgeryProcessCount)?(
-      <View style={[styles.appFlagContainer,{flex:1,marginVertical:24}]} >
+      <View style={[styles.appFlagContainer,{flex:1,marginVertical:12}]} >
       <View style={{width:24,height:24}}>
       <MaterialCommunityIcons
       name='flag' size={24} color={changeColorSetText(index)}/>

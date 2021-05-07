@@ -27,6 +27,7 @@ import { connect } from "react-redux";
 import { withNavigation } from "react-navigation";
 import MessageComponent from "./messageComponent";
 import { fontSizes } from "../components/UI/Theme";
+import OTCard from "../components/UI/OTCard";
 
 const apolloClient = client;
 const date = new Date();
@@ -307,8 +308,8 @@ function homeScreen(props, route) {
   const renderResources = (item) => {
     return (
       <View style={styles.item}>
-        <TouchableOpacity
-          style={[styles.appButtonContainer, { flex: 1 }]}
+        {/* <TouchableOpacity
+          style={[styles.appButtonContainer, { flex: 1, flexDirection:'row' }]}
           onPress={() => {
             item.item.__typename == "AppResource"
               ? props.navigation.navigate("processScreen", {
@@ -329,11 +330,11 @@ function homeScreen(props, route) {
           <View
             style={[
               {
-                flexDirection: "row",
+                
                 //borderRadius:6,
                 height: 60,
                 width: "100%",
-                alignItems: "center",
+                
                 paddingLeft: 20,
                 margin: 0,
               },
@@ -343,27 +344,48 @@ function homeScreen(props, route) {
             <Text style={[styles.appButtonText, { flex: 1, marginRight: 14 }]}>
               {item.item.name}
             </Text>
-            <View
-              style={{
-                width: 30,
-                height: "100%",
-                marginEnd: 14,
-                alignContent: "center",
-                
-                justifyContent:'center',
-                backgroundColor:'red'
-              }}
-            >
-              <MaterialCommunityIcons name="arrow-right" size={30} />
-            </View>
-          </View> 
-          {item.index > 0 && (
+            {item.index > 0 && (
             <MessageComponent
               message={processMessageData[item.index - 1]}
               
             />
           )}
-        </TouchableOpacity>
+          </View> 
+         
+          <View
+              style={{
+                width: 30,
+                height: "100%",
+                
+                alignContent: "center",
+                
+                
+                 
+              }}
+            >
+              <MaterialCommunityIcons name="arrow-right" size={30} />
+            </View>
+        </TouchableOpacity> */}
+        <OTCard
+        title={item.item.name}
+        message={item.index>0? processMessageData[item.index - 1]: null}
+        onPress={() => {
+          item.item.__typename == "AppResource"
+            ? props.navigation.navigate("processScreen", {
+                userId: props.userId,
+                userType: props.userType,
+                resourceID: item.item.id,
+                operationTheaterID: item.item.id,
+                resourceName: item.item.name,
+              })
+            : props.navigation.navigate("preProcessScreen", {
+                userId: props.userId,
+                userType: props.userType,
+                operationTheaterID: item.item.id,
+                operationTheaterName: item.item.name,
+              });
+        }}
+        />
       </View>
     );
   };
@@ -371,6 +393,7 @@ function homeScreen(props, route) {
   return (
     <>
       <StatusBar animated={true} backgroundColor="#006bcc" hidden={false} />
+   
       <View
         style={{ backgroundColor: "#006bcc", width: "100%", height: "100%" }}
       >
@@ -396,7 +419,7 @@ function homeScreen(props, route) {
                 />
                 <Text style={styles.location}>{location}</Text>
               </View>
-              <View style={styles.box2}></View>
+              {/* <View style={styles.box2}></View> */}
               <View style={styles.box3}>
                 <MaterialCommunityIcons
                   name="calendar-text"
@@ -408,7 +431,7 @@ function homeScreen(props, route) {
               </View>
             </View>
           </View>
-        </View>
+        </View> 
         <View
           style={{ flex: 1, backgroundColor: "white", borderTopLeftRadius: 30 }}
         >
@@ -420,7 +443,7 @@ function homeScreen(props, route) {
               marginTop: 26,
             }}
           >
-            <Text style={styles.headerTextStyle}>Todays Progress.</Text>
+            <Text style={styles.headerTextStyle}>Today's Progress.</Text>
           </View>
           <View
             style={{
@@ -434,7 +457,7 @@ function homeScreen(props, route) {
           >
             {renderFlatlistData && loadingProcessData ? (
               <FlatList
-                style={{ width: "100%", alignSelf: "center",paddingHorizontal:24 }}
+                style={{ width: "100%", alignSelf: "center" }}
                 data={_data}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderResources}
@@ -480,6 +503,7 @@ const styles = StyleSheet.create({
     height: "100%",
     flexGrow: 1,
     flexDirection: "row",
+    marginLeft:31
   },
   headerTextLabel: {
     marginBottom:8,
@@ -519,9 +543,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
   },
   item: {
-    backgroundColor: "white",
-    width: "100%",
-    height: 90,
+    padding:2,
+    paddingHorizontal:16,
+    paddingVertical:12
   },
   title: {
     fontSize: 32,
@@ -532,7 +556,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     height: 90,
     margin: 10,
-    alignItems: "center",
+     
     shadowColor: "#000",
     shadowOffset: {
       width: 2,
@@ -549,6 +573,6 @@ const styles = StyleSheet.create({
     textAlign: "left",
     textAlignVertical: "center",
     marginLeft: 14,
-    width: 200,
+     
   },
 });

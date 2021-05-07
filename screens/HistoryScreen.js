@@ -103,7 +103,7 @@ const HistoryScreen = () => {
         setsnackText("Your OT details download is ready.")
   
 }
-const downloadCsv = async () => {
+const downloadCsv = async (index) => {
     
     const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
     
@@ -134,8 +134,7 @@ const downloadCsv = async () => {
             setSelectedOT(item.id);
           }}
         >
-           
-          <Text style={{color:"#fff"}}>{item.name}</Text> 
+          <Text style={{color:"#fff",fontSize:18}}>{item.name}</Text> 
         </TouchableOpacity>
       </View>
     );
@@ -145,9 +144,9 @@ const downloadCsv = async () => {
       <View key={"dates_"+index} style={styles.dateContainer}>
         <Text style={{fontSize:16,fontWeight:'700'}}>{getDate(getPrevSevenDays(selectedDate, item))}</Text>
         <TouchableOpacity
-          onPress={downloadCsv}
+          onPress={()=>downloadCsv(index)}
         >
-          <AntDesign name="download" size={24} color={"#000000"} />
+          <AntDesign name="download" size={18} color={"#000000"} />
         </TouchableOpacity>
       </View>
     );
@@ -241,13 +240,13 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
     margin: 8,
     height:40,
+    width:100,
     alignItems:'center',
     justifyContent:'center',
     borderRadius: 8,
   },
   dateContainer: {
-    margin: 12,
-    marginVertical:24,
+    margin: 12, 
     padding: 12,
     backgroundColor: "#fff",
     alignSelf: "center",
@@ -257,7 +256,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    elevation:2
+    elevation:6
   },
   dateInput: {
     flexDirection: "row",

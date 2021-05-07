@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     height:"100%",
   },
   item: {
-    marginVertical:40,
+    marginVertical:16,
     width:"100%",
   },
   title: {

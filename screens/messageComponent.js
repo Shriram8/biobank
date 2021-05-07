@@ -1,40 +1,25 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import {View,Text, StyleSheet } from 'react-native';
-import { fontSizes } from '../components/UI/Theme';
 
 const MessageComponent = (props)=>{
   
     const item = props.message?props.message:"Process Message"
+ 
     return(
-        <View style={[{
-            flexDirection:"row",
-            //borderRadius:6,
-            height:30,
-            width:"100%",
-            alignItems:"center",
-            paddingLeft:20,
-            margin:0 , marginLeft:25},{flex:1}]}>
- 
-  <MaterialCommunityIcons
-  name={item.icon} size={28} color={item.color}/>
- 
-<Text style={[styles.appButtonText,{flex:1, marginRight:14,color:"#646464"}]} numberOfLines={1}>
-  {item.message}
-</Text>
-<View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
-
-</View>
-</View>
+         <View style={{flexDirection:'row',alignItems:'center'}}>
+           <MaterialCommunityIcons name={item.icon} size={19} color={item.color}/>
+           <Text style={{marginLeft:8,fontSize:16,color:item.color}}>{item.message}</Text>
+         </View>
     )
 }
 
 const styles = StyleSheet.create({
      
     appButtonText: {
-      fontSize: fontSizes.sm,
+      fontSize: 18,
       color: "#000000",
-      
+      fontWeight: "bold",
       textAlign: "left",
       textAlignVertical:"center",
       marginLeft:14,

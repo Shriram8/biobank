@@ -145,7 +145,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
     <View style={styles.item}>
       
       <TouchableOpacity
-      style={[styles.appButtonContainer,{flex:1,zIndex:1}]}onPress={()=>{
+      style={[styles.appButtonContainer,{flex:1,borderBottomLeftRadius :2,borderBottomRightRadius:2,zIndex:1}]}onPress={()=>{
         navigation.navigate('questionsScreen',{
             userId:userId,
             processID: item.id,
@@ -162,15 +162,15 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,fontSize:16,fontWeight:'600'}]}>
         {"P"+item.Number+"-"+item.process_name}
       </Text>
-      <View style={{ width:30,height:30,marginEnd:14, alignContent:'flex-end'}}>
+      <View style={{ width:18,height:18,marginEnd:14, alignContent:'flex-end'}}>
       <MaterialCommunityIcons
-        name='arrow-right' size={30}/>
+        name='arrow-right' size={18}/>
       </View>
       
       </TouchableOpacity>
-      <View style={{height:10,marginTop:-11}}>
-        <ProgressBar progress={getProgressValue(item.id)} color={colorValue[item.id]} style={{width:'92%',alignSelf:"center",
-        height:3,backgroundColor:"white",alignContent:"center"}} />
+      <View style={{height:20,marginTop:-11, elevation:6, marginHorizontal:10}}>
+        <ProgressBar progress={getProgressValue(item.id)} color={colorValue[item.id]} style={{width:'100%',alignSelf:"center",borderBottomLeftRadius:8,borderBottomRightRadius:8,
+        height:4,backgroundColor:"white",alignContent:"center"}} />
       </View>
       
     </View>
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width:"100%",
     height:80,
-    marginVertical:10
+    
   },
   title: {
     fontSize: 32,
@@ -239,7 +239,8 @@ const styles = StyleSheet.create({
     flexDirection:"row",
     backgroundColor:'#ffffff',
     borderRadius:6,
-    height:60,
+    height:80,
+    padding:8,
     margin:10,
     alignItems: "center",
    
