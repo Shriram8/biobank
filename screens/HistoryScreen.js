@@ -92,23 +92,30 @@ const HistoryScreen = () => {
   //Function to dowload file to local storage
   const saveFile = async (fileName, data) => {
     
-    const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
-    if (status === "granted") {
+   
         //await createDirectory()
         let fileUri = FileSystem.documentDirectory + fileName; 
         await FileSystem.writeAsStringAsync(fileUri, data, { encoding: FileSystem.EncodingType.UTF8 }) 
         const asset = await MediaLibrary.createAssetAsync(fileUri)
-        var fi = await FileSystem.getInfoAsync(fileUri);
-        // await MediaLibrary.saveToLibraryAsync(fileUri, asset, false).then((res)=>{
-        //      console.log("[[[[[[[[Response]]]]]]]]]", res)
-        // }).catch((err)=>{
-        //     console.log("[[[[[[[[//////////]]]]]]]]]", err)
-        // })
+        var fi = await FileSystem.getInfoAsync(fileUri); 
         hidePortal();
         setsnackVisible(true)
         setsnackText("Your OT details download is ready.")
-        //Linking.openURL(fileUri)
-    }
+  
+}
+const downloadCsv = async () => {
+    
+    const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+    
+    if (status === "granted") {
+      setModalVisible(true)
+      setFileDownloadControl(true)
+      setDatePrevIndex(index)
+    }else if(status==="denied"){
+      setsnackText("Please grant storage permission to download report.")
+      setsnackVisible(true)
+    } 
+  
 }
   //Component to render Operation theatres in Flatlist
   const renderOts = ({ item, index }) => {
@@ -118,6 +125,7 @@ const HistoryScreen = () => {
         style={[
           styles.headerItem,
           { backgroundColor: selectedOT === item.id ? "#006bcc" : "#959595" },
+          index===0&&{marginLeft:0}
         ]}
       >
         <TouchableOpacity
@@ -135,20 +143,11 @@ const HistoryScreen = () => {
   const renderDates = ({ item, index }) => {
     return (
       <View key={"dates_"+index} style={styles.dateContainer}>
-        <Text>{getDate(getPrevSevenDays(selectedDate, item))}</Text>
+        <Text style={{fontSize:16,fontWeight:'700'}}>{getDate(getPrevSevenDays(selectedDate, item))}</Text>
         <TouchableOpacity
-          onPress={() => {
-            setModalVisible(true)
-            setFileDownloadControl(true)
-            setDatePrevIndex(index)
-            //   saveFile("Text1.txt","Hello, hi , 123")
-            // console.log(
-            //   "download csv file",
-            //   getPrevSevenDays(selectedDate, item)
-            //);
-          }}
+          onPress={downloadCsv}
         >
-          <AntDesign name="download" size={24} color={"#959595"} />
+          <AntDesign name="download" size={24} color={"#000000"} />
         </TouchableOpacity>
       </View>
     );
@@ -161,7 +160,7 @@ const HistoryScreen = () => {
             <>
               <View>
                 <View style={styles.dateInput}>
-                  <Text>{getDate(getPrevSevenDays(selectedDate, 0))}</Text>
+                  <Text style={{fontSize:16,fontWeight:'700'}}>{getDate(getPrevSevenDays(selectedDate, 0))}</Text>
                   <TouchableOpacity
                     onPress={() => {
                       showMode("date");
@@ -171,7 +170,7 @@ const HistoryScreen = () => {
                   </TouchableOpacity>
                 </View>
               </View>
-              <View style={{ marginHorizontal: 12 }}>
+              <View style={{ marginHorizontal: 24 }}>
                 <FlatList
                   horizontal
                   data={data.operationTheaters}
@@ -179,7 +178,13 @@ const HistoryScreen = () => {
                   extraData={selectedOT}
                 />
               </View>
+              
               <View style={{ flex: 1 }}>
+              <Text style={[styles.appButtonText,{ marginTop:28, marginHorizontal:24, fontSize: 18,
+    color: "#000000",
+    fontWeight: "bold",
+    textAlign: "left",
+    textAlignVertical:"center", }]}>Past records</Text>
                 <FlatList
                   data={[0, 1, 2, 3, 4, 5, 6]}
                   renderItem={renderDates}
@@ -219,7 +224,7 @@ const HistoryScreen = () => {
           </Portal>
      )}
      <Snackbar
-     duration={1000}
+     duration={2000}
      onDismiss={hideSnackBar}
      visible={snackVisible}
      >
@@ -236,13 +241,13 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 12,
     margin: 8,
     height:40,
-    paddingHorizontal:18,
     alignItems:'center',
     justifyContent:'center',
     borderRadius: 8,
   },
   dateContainer: {
     margin: 12,
+    marginVertical:24,
     padding: 12,
     backgroundColor: "#fff",
     alignSelf: "center",
@@ -262,7 +267,11 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 12,
     borderRadius: 8,
-    marginTop: 8,
+    marginVertical : 36,
+    paddingHorizontal:36,
+    height:60,
+    alignItems:'center',
+    elevation:2
   },
 });
 export default HistoryScreen;

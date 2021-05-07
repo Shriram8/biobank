@@ -346,10 +346,12 @@ function homeScreen(props, route) {
             <View
               style={{
                 width: 30,
-                height: 30,
+                height: "100%",
                 marginEnd: 14,
-                alignContent: "flex-end",
-                justifyContent:'center'
+                alignContent: "center",
+                
+                justifyContent:'center',
+                backgroundColor:'red'
               }}
             >
               <MaterialCommunityIcons name="arrow-right" size={30} />
