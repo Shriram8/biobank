@@ -38,6 +38,7 @@ const reducer = (state = initialState, action) => {
         isLoggedIn: false,
         userId: "",
         userType: "",
+        branch: "",
       };
     default:
       break;

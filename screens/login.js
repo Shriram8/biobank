@@ -10,6 +10,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  Platform,
 } from "react-native";
 import { useQuery, gql } from "@apollo/client";
 import { client } from "../src/graphql/ApolloClientProvider";
@@ -17,7 +18,7 @@ import {
   GetUserDetails,
   GetDetailsWithEmployeeId,
 } from "../src/graphql/queries";
-import { Divider, HelperText } from "react-native-paper";
+import { Divider, HelperText, Button } from "react-native-paper";
 import { createStackNavigator } from "@react-navigation/stack";
 import { connect } from "react-redux";
 import { changeUserLogin } from "../src/Actions/UserLogin";
@@ -27,6 +28,8 @@ const apolloClient = client;
 const LoginRootStack = createStackNavigator();
 function login(props, navigation) {
   const [userId, setUserId] = useState("");
+  const [EmpIdFocus, setEmpIdFocus] = useState(false);
+  const [passwordFocus, setPasswordFocus] = useState(false);
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [showHelperText, setShowHelperText] = useState(false);
@@ -130,7 +133,13 @@ function login(props, navigation) {
           </View>
           <View style={styles.inputView}>
             <TextInput
-              style={styles.inputText}
+              onFocus={() => setEmpIdFocus(true)}
+              onBlur={() => setEmpIdFocus(false)}
+              style={[
+                styles.inputText,
+                EmpIdFocus ? styles.isFocused : styles.isNotFocused,
+                Platform.OS === "web" && { outlineWidth: 0 },
+              ]}
               onChangeText={(input) => setUserId(input)}
               value={userId}
             />
@@ -143,7 +152,13 @@ function login(props, navigation) {
               <View style={styles.inputView}>
                 <TextInput
                   secureTextEntry
-                  style={styles.inputText}
+                  onFocus={() => setPasswordFocus(true)}
+                  onBlur={() => setPasswordFocus(false)}
+                  style={[
+                    styles.inputText,
+                    passwordFocus ? styles.isFocused : styles.isNotFocused,
+                    Platform.OS === "web" && { outlineWidth: 0 },
+                  ]}
                   onChangeText={(input) => setPassword(input)}
                   value={password}
                 />
@@ -154,22 +169,27 @@ function login(props, navigation) {
             <Text
               type="error"
               visible={showHelperText}
-              style={{
-                marginVertical: 16,
-                color: "#fa796f",
-                fontSize: 14,
-                alignSelf: "flex-start",
-              }}
+              style={styles.errorText}
             >
               {showHelperText && errorMsg}
             </Text>
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.loginBtn}
             onPress={forgot || register ? getUserDetails : verifyLogin}
           >
             <Text style={styles.loginText}>Continue</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          <Button
+            mode="contained"
+            color={"#006bcc"}
+            uppercase={false}
+            style={styles.reset}
+            labelStyle={{ fontSize: 16 }}
+            onPress={forgot || register ? getUserDetails : verifyLogin}
+          >
+            Continue
+          </Button>
           {(forgot || register) && (
             <Text
               style={styles.register}
@@ -272,33 +292,54 @@ const styles = StyleSheet.create({
     height: 50,
     color: "#170500",
     backgroundColor: "#ffffff",
-    borderColor: "#006bda",
-    borderWidth: 2,
+    // borderColor: "#006bda",
+    // borderWidth: 2,
     borderRadius: 8,
     fontSize: 16,
     paddingHorizontal: 16,
   },
-  loginBtn: {
-    width: "80%",
-    backgroundColor: "#0054aa",
-    borderRadius: 6,
-    height: 50,
-    justifyContent: "center",
-    // marginTop: 40,
-    marginBottom: 10,
-    elevation: 6,
-  },
-  loginText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
-    textAlign: "center",
-  },
+  // loginBtn: {
+  //   width: "80%",
+  //   backgroundColor: "#0054aa",
+  //   borderRadius: 6,
+  //   height: 50,
+  //   justifyContent: "center",
+  //   // marginTop: 40,
+  //   marginBottom: 10,
+  //   elevation: 2,
+  // },
+  // loginText: {
+  //   color: "white",
+  //   fontWeight: "bold",
+  //   fontSize: 16,
+  //   textAlign: "center",
+  // },
   register: {
     marginTop: 27,
     textAlign: "center",
     color: "#9e9e9e",
     fontSize: 16,
+  },
+  reset: {
+    width: "80%",
+    height: 40,
+    marginBottom: 20,
+    justifyContent: "center",
+  },
+  errorText: {
+    marginVertical: 16,
+    color: "#fa796f",
+    fontSize: 14,
+    alignSelf: "flex-start",
+  },
+  isFocused: {
+    borderColor: "#006bda",
+    borderWidth: 2,
+  },
+  isNotFocused: {
+    marginBottom: 1,
+    borderColor: "#959595",
+    borderWidth: 1,
   },
 });
 

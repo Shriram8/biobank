@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, ScrollView, TextInput } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  Platform,
+} from "react-native";
 import { Divider, Button } from "react-native-paper";
 import { connect } from "react-redux";
 import { client } from "../src/graphql/ApolloClientProvider";
@@ -14,6 +21,9 @@ const ProfilePassword = (props) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [passFocus, setPassFocus] = useState(false);
+  const [newFocus, setNewFocus] = useState(false);
+  const [confirmFocus, setConfirmFocus] = useState(false);
 
   let [updatePass, { data }] = useMutation(UpdatePassword, {
     onCompleted: () => {
@@ -98,12 +108,17 @@ const ProfilePassword = (props) => {
               <View style={styles.inputView}>
                 <TextInput
                   secureTextEntry={true}
-                  style={styles.inputText}
+                  onFocus={() => setPassFocus(true)}
+                  onBlur={() => setPassFocus(false)}
+                  style={[
+                    styles.inputText,
+                    passFocus ? styles.isFocused : styles.isNotFocused,
+                    Platform.OS === "web" && { outlineWidth: 0 },
+                  ]}
                   onChangeText={setPassword}
                   value={password}
                 />
               </View>
-              <Divider style={styles.divider} />
             </>
           )}
 
@@ -113,24 +128,34 @@ const ProfilePassword = (props) => {
           <View style={styles.inputView}>
             <TextInput
               secureTextEntry={true}
-              style={styles.inputText}
+              onFocus={() => setNewFocus(true)}
+              onBlur={() => setNewFocus(false)}
+              style={[
+                styles.inputText,
+                newFocus ? styles.isFocused : styles.isNotFocused,
+                Platform.OS === "web" && { outlineWidth: 0 },
+              ]}
               onChangeText={setNewPassword}
               value={newpassword}
             />
           </View>
-          <Divider style={styles.divider} />
           <View style={styles.textLabel}>
             <Text style={styles.textStyle}>Confirm new Password</Text>
           </View>
           <View style={styles.inputView}>
             <TextInput
               secureTextEntry={true}
-              style={styles.inputText}
+              onFocus={() => setConfirmFocus(true)}
+              onBlur={() => setConfirmFocus(false)}
+              style={[
+                styles.inputText,
+                confirmFocus ? styles.isFocused : styles.isNotFocused,
+                Platform.OS === "web" && { outlineWidth: 0 },
+              ]}
               onChangeText={setConfirmPassword}
               value={confirmPassword}
             />
           </View>
-          <Divider style={styles.divider} />
         </View>
         {showError && (
           <Text
@@ -187,8 +212,8 @@ const styles = StyleSheet.create({
   inputText: {
     height: 50,
     color: "#170500",
-    borderColor: "#006bda",
-    borderWidth: 2,
+    // borderColor: "#006bda",
+    // borderWidth: 2,
     borderRadius: 8,
     fontSize: 16,
     paddingHorizontal: 16,
@@ -204,5 +229,14 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 40,
     justifyContent: "center",
+  },
+  isFocused: {
+    borderColor: "#006bda",
+    borderWidth: 2,
+  },
+  isNotFocused: {
+    marginBottom: 1,
+    borderColor: "#959595",
+    borderWidth: 1,
   },
 });

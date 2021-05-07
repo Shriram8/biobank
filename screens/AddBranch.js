@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, ScrollView, StyleSheet, TextInput, Text } from "react-native";
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  Text,
+  Platform,
+} from "react-native";
 import { Divider } from "react-native-paper";
 import { Button } from "react-native-paper";
 import { useMutation } from "@apollo/client";
@@ -9,6 +16,7 @@ const AddBranch = (props) => {
   const [name, setName] = useState("");
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [nameFocus, setNameFocus] = useState(false);
 
   let [branchmutate, { data }] = useMutation(addNewBranch, {
     onCompleted: () => {
@@ -45,12 +53,17 @@ const AddBranch = (props) => {
         </View>
         <View style={styles.inputView}>
           <TextInput
-            style={styles.inputText}
+            onFocus={() => setNameFocus(true)}
+            onBlur={() => setNameFocus(false)}
+            style={[
+              styles.inputText,
+              nameFocus ? styles.isFocused : styles.isNotFocused,
+              Platform.OS === "web" && { outlineWidth: 0 },
+            ]}
             onChangeText={setName}
             value={name}
           />
         </View>
-        <Divider style={styles.divider} />
         {showError && (
           <Text
             style={{
@@ -100,8 +113,8 @@ const styles = StyleSheet.create({
   inputText: {
     height: 50,
     color: "#170500",
-    borderColor: "#006bda",
-    borderWidth: 2,
+    // borderColor: "#006bda",
+    // borderWidth: 2,
     borderRadius: 8,
     fontSize: 16,
     paddingHorizontal: 16,
@@ -123,5 +136,14 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 40,
     justifyContent: "center",
+  },
+  isFocused: {
+    borderColor: "#006bda",
+    borderWidth: 2,
+  },
+  isNotFocused: {
+    marginBottom: 1,
+    borderColor: "#959595",
+    borderWidth: 1,
   },
 });

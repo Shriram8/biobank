@@ -38,7 +38,6 @@ const Profile = (props) => {
         <View style={styles.inputView}>
           <TextInput editable={false} style={styles.inputText} value={name} />
         </View>
-        <Divider style={styles.divider} />
         <View style={styles.textLabel}>
           <Text style={styles.textStyle}>Gender</Text>
         </View>
@@ -48,6 +47,7 @@ const Profile = (props) => {
               disabled={true}
               value="Male"
               color={"#006bcc"}
+              uncheckedColor={"#959595"}
               status={checked === "male" ? "checked" : "unchecked"}
             />
             <Text style={styles.radioTextStyle}>Male</Text>
@@ -57,6 +57,7 @@ const Profile = (props) => {
               disabled={true}
               value="Female"
               color={"#006bcc"}
+              uncheckedColor={"#959595"}
               status={checked === "female" ? "checked" : "unchecked"}
             />
             <Text style={styles.radioTextStyle}>Female</Text>
@@ -66,6 +67,7 @@ const Profile = (props) => {
               disabled={true}
               value="Others"
               color={"#006bcc"}
+              uncheckedColor={"#959595"}
               status={checked === "others" ? "checked" : "unchecked"}
             />
             <Text style={styles.radioTextStyle}>Others</Text>
@@ -145,8 +147,8 @@ const styles = StyleSheet.create({
   inputText: {
     height: 50,
     color: "#170500",
-    borderColor: "#006bda",
-    borderWidth: 2,
+    borderColor: "#959595",
+    borderWidth: 1,
     borderRadius: 8,
     fontSize: 16,
     paddingHorizontal: 16,

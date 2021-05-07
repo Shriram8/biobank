@@ -6,6 +6,7 @@ import {
   ScrollView,
   TextInput,
   StatusBar,
+  Platform,
 } from "react-native";
 import {
   Button,
@@ -34,6 +35,10 @@ const AddUser = (props) => {
   const [checked, setChecked] = useState("male");
   const [showError, setShowError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [nameFocus, setNameFocus] = useState(false);
+  const [EmpIdFocus, setEmpIdFocus] = useState(false);
+  const [mobileFocus, setMobileFocus] = useState(false);
+  const [listFocus, setListFocus] = useState(false);
 
   let [usermutate, { data }] = useMutation(addNewUser, {
     onCompleted: (data) => {
@@ -205,12 +210,17 @@ const AddUser = (props) => {
           <View style={styles.inputView}>
             <TextInput
               editable={checkUser()}
-              style={styles.inputText}
+              onFocus={() => setNameFocus(true)}
+              onBlur={() => setNameFocus(false)}
+              style={[
+                styles.inputText,
+                nameFocus ? styles.isFocused : styles.isNotFocused,
+                Platform.OS === "web" && { outlineWidth: 0 },
+              ]}
               onChangeText={setName}
               value={name}
             />
           </View>
-          <Divider style={styles.divider} />
           <View style={styles.textLabel}>
             <Text style={styles.textStyle}>Gender</Text>
           </View>
@@ -255,31 +265,48 @@ const AddUser = (props) => {
           <View style={styles.inputView}>
             <TextInput
               editable={checkUser()}
-              style={styles.inputText}
+              onFocus={() => setMobileFocus(true)}
+              onBlur={() => setMobileFocus(false)}
+              style={[
+                styles.inputText,
+                mobileFocus ? styles.isFocused : styles.isNotFocused,
+                Platform.OS === "web" && { outlineWidth: 0 },
+              ]}
               onChangeText={setMobile}
               value={mobile}
             />
           </View>
-          <Divider style={styles.divider} />
           <View style={styles.textLabel}>
             <Text style={styles.textStyle}>Employee Id</Text>
           </View>
           <View style={styles.inputView}>
             <TextInput
               editable={checkUser()}
-              style={styles.inputText}
+              onFocus={() => setEmpIdFocus(true)}
+              onBlur={() => setEmpIdFocus(false)}
+              style={[
+                styles.inputText,
+                EmpIdFocus ? styles.isFocused : styles.isNotFocused,
+                Platform.OS === "web" && { outlineWidth: 0 },
+              ]}
               onChangeText={setEmpId}
               value={empId}
             />
           </View>
-          <Divider style={styles.divider} />
           <View style={[styles.textLabel, { marginBottom: 10 }]}>
             <Text style={styles.textStyle}>Role</Text>
           </View>
           <List.Accordion
+            onPress={() => setListFocus(!listFocus)}
             expanded={checkUser()}
             title={list.slice(2)}
-            style={styles.listHead}
+            style={[
+              styles.listHead,
+              !props.route.params?.from && listFocus
+                ? styles.isFocused
+                : styles.isNotFocused,
+              Platform.OS === "web" && { outlineWidth: 0 },
+            ]}
             titleStyle={styles.listTitle}
           >
             <List.Item
@@ -401,8 +428,8 @@ const styles = StyleSheet.create({
     height: 50,
     color: "#170500",
     fontSize: 16,
-    borderColor: "#006bda",
-    borderWidth: 2,
+    // borderColor: "#006bda",
+    // borderWidth: 2,
     borderRadius: 8,
     fontSize: 16,
     paddingHorizontal: 16,
@@ -442,8 +469,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   listHead: {
-    borderColor: "#006bda",
-    borderWidth: 2,
+    // borderColor: "#959595",
+    // borderWidth: 1,
     borderRadius: 8,
     fontSize: 16,
     width: "90%",
@@ -458,5 +485,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 20,
     justifyContent: "center",
+  },
+  isFocused: {
+    borderColor: "#006bda",
+    borderWidth: 2,
+  },
+  isNotFocused: {
+    marginBottom: 1,
+    borderColor: "#959595",
+    borderWidth: 1,
   },
 });

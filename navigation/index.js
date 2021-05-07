@@ -50,16 +50,17 @@ import AddBranch from "../screens/AddBranch";
 
 const Drawer = createDrawerNavigator();
 const Navigation = (props) => {
+  const logoutFunction = () => {
+    props.changeLogOut();
+    return null;
+  };
   return (
     <NavigationContainer>
-      {/* <MainStackNavigator isLoggedIn={props.isLoggedIn}  /> */}
       {props.isLoggedIn ? (
         <Drawer.Navigator
           drawerContentOptions={{
             activeBackgroundColor: "#f1f1f1",
             activeTintColor: "#010101",
-            // labelStyle:{ alignSelf:'center'},
-            itemStyle: {},
             headerShown: false,
           }}
           initialRouteName="Home"
@@ -161,7 +162,7 @@ const Navigation = (props) => {
               ),
             }}
             name="Logout"
-            component={Logout}
+            component={logoutFunction}
           />
         </Drawer.Navigator>
       ) : (
@@ -192,7 +193,15 @@ const mapStateToProps = (state) => ({
   isLoggedIn: state.isLoggedIn,
   userType: state.userType,
 });
-export default connect(mapStateToProps)(Navigation);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    changeLogOut: () =>
+      dispatch({
+        type: "CHANGE_LOGOUT",
+      }),
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Navigation);
 
 const MainStack = createStackNavigator();
 const MainStackNavigator = (props) => {
@@ -237,19 +246,15 @@ const MainStackNavigator = (props) => {
             headerTitleAlign: "center",
             headerStyle: {
               backgroundColor: "white",
-             
             },
-            headerTitleStyle:{
-              fontSize:18
-            }
           })}
         />
         <MainStack.Screen
           name="processScreen"
           component={ProcessScreen}
-          initialParams={{ operationTheaterName: "" }}
+          initialParams={{ resourceName: "" }}
           options={({ route }) => ({
-            title: route.params.operationTheaterName,
+            title: route.params.resourceName,
             headerTitleAlign: "center",
             headerStyle: {
               backgroundColor: "white",
@@ -259,9 +264,9 @@ const MainStackNavigator = (props) => {
         <MainStack.Screen
           name="questionsScreen"
           component={QuestionsScreen}
-          initialParams={{ operationTheaterName: "" }}
+          initialParams={{ resourceName: "" }}
           options={({ route }) => ({
-            title: route.params.operationTheaterName,
+            title: route.params.resourceName,
             headerTitleAlign: "center",
             headerStyle: {
               elevation: 0,
