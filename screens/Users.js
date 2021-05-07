@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, SectionList } from "react-native";
-import { Button, IconButton, Title } from "react-native-paper";
+import { Button, IconButton, Portal, Divider } from "react-native-paper";
 import { GetUsers, DeactivateUser } from "../src/graphql/queries";
 import { useQuery, useMutation } from "@apollo/client";
 // import Popover from "react-native-popover-view";
@@ -13,6 +13,8 @@ const apolloClient = client;
 const Users = (props) => {
   // const [showPop, setShowPop] = useState(false);
   const [sectionData, setSectionData] = useState([]);
+  const [alert, setAlert] = useState(false);
+  const [alertMsg, setAlertmsg] = useState("");
   // const [deactivateId, setDeactivateId] = useState("");
 
   const { data, refetch } = useQuery(GetUsers, {
@@ -39,6 +41,8 @@ const Users = (props) => {
   useEffect(() => {
     if (props.route.params?.from === "adduser") {
       refetch();
+      setAlertmsg(props.route.params?.msg);
+      setAlert(true);
     }
   }, [props.route.params]);
 
@@ -100,7 +104,7 @@ const Users = (props) => {
         });
       }}
     >
-      <Text style={{ fontSize: 18, paddingVertical: 10 }}>{title.name}</Text>
+      <Text style={{ fontSize: 18, fontWeight: "bold" }}>{title.name}</Text>
       {title.active && (
         <IconButton
           icon="delete-outline"
@@ -125,6 +129,7 @@ const Users = (props) => {
           mode="contained"
           color={"#006bcc"}
           uppercase={false}
+          labelStyle={{ fontSize: 16 }}
           style={{ borderRadius: 7 }}
           onPress={() =>
             props.navigation.navigate("adduser", {
@@ -179,6 +184,26 @@ const Users = (props) => {
           </Button>
         </View>
       </Popover> */}
+      {alert && (
+        <Portal>
+          <View style={styles.alertView}>
+            <View style={styles.alertContainer}>
+              <Text style={styles.alertHeader}>User Alert</Text>
+              <Text style={styles.alertText}>{alertMsg}</Text>
+              <Button
+                mode="contained"
+                color={"#006bcc"}
+                uppercase={false}
+                labelStyle={{ fontSize: 16 }}
+                style={{ borderRadius: 7, marginTop: 20 }}
+                onPress={() => setAlert(false)}
+              >
+                Okay
+              </Button>
+            </View>
+          </View>
+        </Portal>
+      )}
     </>
   );
 };
@@ -197,12 +222,20 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     backgroundColor: "#fff",
     borderRadius: 8,
-    paddingHorizontal: 13,
-    paddingVertical: 18,
+    paddingHorizontal: 16,
     marginBottom: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    height: 60,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 2,
+    elevation: 6,
   },
   empty: {
     textAlign: "center",
@@ -245,5 +278,31 @@ const styles = StyleSheet.create({
   },
   heading: {
     textAlign: "center",
+  },
+  alertView: {
+    height: "100%",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  alertContainer: {
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+  },
+  alertText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#170500",
+  },
+  alertHeader: {
+    textAlign: "center",
+    fontSize: 18,
+    color: "#170500",
+    fontWeight: "bold",
+    marginBottom: 25,
   },
 });

@@ -54,9 +54,10 @@ const AddBranch = (props) => {
         {showError && (
           <Text
             style={{
+              marginVertical: 16,
               color: "#fa796f",
-              textAlign: "center",
-              paddingVertical: 15,
+              fontSize: 14,
+              alignSelf: "flex-start",
             }}
           >
             {errorMsg}
@@ -68,6 +69,7 @@ const AddBranch = (props) => {
         color={"#006bcc"}
         uppercase={false}
         style={styles.submitButton}
+        labelStyle={{ fontSize: 16 }}
         onPress={onSubmit}
       >
         Add a New Branch
@@ -78,11 +80,16 @@ const AddBranch = (props) => {
 export default AddBranch;
 
 const styles = StyleSheet.create({
+  textStyle: {
+    fontSize: 14,
+    color: "#9e9e9e",
+  },
   textLabel: {
-    width: "90%",
+    width: "80%",
     height: 20,
     marginTop: 25,
     justifyContent: "center",
+    marginBottom: 8,
   },
   inputView: {
     width: "90%",
@@ -91,10 +98,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputText: {
-    fontWeight: "bold",
     height: 50,
-    color: "#333333",
-    fontSize: 12,
+    color: "#170500",
+    borderColor: "#006bda",
+    borderWidth: 2,
+    borderRadius: 8,
+    fontSize: 16,
+    paddingHorizontal: 16,
   },
   formView: {
     backgroundColor: "#f1f1f1",

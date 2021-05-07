@@ -135,8 +135,10 @@ const ProfilePassword = (props) => {
         {showError && (
           <Text
             style={{
+              marginVertical: 16,
               color: "#fa796f",
-              paddingVertical: 15,
+              fontSize: 14,
+              alignSelf: "flex-start",
             }}
           >
             {errorMsg}
@@ -166,15 +168,15 @@ export default connect(mapStateToProps)(ProfilePassword);
 
 const styles = StyleSheet.create({
   textStyle: {
-    fontWeight: "bold",
-    fontSize: 12,
+    fontSize: 14,
     color: "#9e9e9e",
   },
   textLabel: {
-    width: "90%",
+    width: "80%",
     height: 20,
     marginTop: 25,
     justifyContent: "center",
+    marginBottom: 8,
   },
   inputView: {
     width: "90%",
@@ -183,10 +185,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   inputText: {
-    fontWeight: "bold",
     height: 50,
-    color: "#333333",
-    fontSize: 12,
+    color: "#170500",
+    borderColor: "#006bda",
+    borderWidth: 2,
+    borderRadius: 8,
+    fontSize: 16,
+    paddingHorizontal: 16,
   },
   divider: {
     height: 1,
