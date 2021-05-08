@@ -200,6 +200,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         //     processCleared:true,
         //   }
         // });
+        setCleared(true);
         for(var i=0;i<temp.length;i++){
           console.log(dict,processDataId,dictId,temp)
           if(dict[temp[i]]=="False"){
@@ -273,7 +274,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       </Picker>
       </>):(item.type == "toggleNA"?(
        <RadioGroup 
-          selectedIndex={override?0:(dict[item.id] == "True"? 0 : (dict[item.id]=="False"?1:(dict[item.id]=="N/A"?2:null)))}
+          selectedIndex={(dict[item.id] == "True"? 0 : (dict[item.id]=="False"?(override?0:1):(dict[item.id]=="N/A"?2:null)))}
           onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
           style={{flexDirection:"row",justifyContent: 'space-between' }}
           >
