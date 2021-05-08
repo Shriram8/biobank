@@ -22,6 +22,20 @@ const radioItems= [
         label: 'No',
       },
     ];
+const radioItems_NA= [
+      {
+        id: 1,
+        label: 'Yes',
+      },
+      {
+        id: 2,
+        label: 'No',
+      },
+      {
+        id: 3,
+        label: 'N/A',
+      },
+];
 var dict: string[] = [];
 var key;
 var value;
@@ -153,7 +167,14 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
 
   const sendQuery=(index: any,value: any,type:number)=>{
     if(type){
-      value = (value == 0 ? "True": "False")
+      console.log("Value-----",value);
+      if(value == 0){
+        value = "True"
+      }else if(value == 1){
+        value = "False"
+      }else if(value == 2){
+        value = "N/A"
+      }
       if(value == "False"){
         _processCleared = false;
         setCleared(false);
@@ -250,7 +271,28 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         <Picker.Item label="Surgeon 9" value="Surgeon 9" />
         <Picker.Item label="Surgeon 10" value="Surgeon 10" />
       </Picker>
-      </>):(
+      </>):(item.type == "toggleNA"?(
+       <RadioGroup 
+          selectedIndex={override?0:(dict[item.id] == "True"? 0 : (dict[item.id]=="False"?1:(dict[item.id]=="N/A"?2:null)))}
+          onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
+          style={{flexDirection:"row",justifyContent: 'space-between' }}
+          >
+          {radioItems_NA.map((item, index) => {
+            return (
+              <RadioButton
+                key={index}
+                value={item.label}
+                displayText={item.label}
+                displayTextColor="#959595"
+                displayTextActiveColor="#fff"
+                prefixColor="#006bcc"
+                prefixActiveColor="#006bcc"
+                style={{width:120,height:40,borderRadius:8,alignContent: "center",borderWidth:1,borderColor:"#979797"}}
+                disabled={disableButtons}
+              />
+            );
+          })}
+        </RadioGroup>):
        <RadioGroup 
           selectedIndex={override?0:(dict[item.id] == "True"? 0 : (dict[item.id]=="False"?1:null))}
           onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
