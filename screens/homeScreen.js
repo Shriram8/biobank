@@ -167,11 +167,19 @@ function homeScreen(props, route) {
                           }
                           
                         } else if(processData[m].process_details[q].processes_data[i].Answer == "False") {
+                               //Add a condition to check            
+                         if(processData[m].process_details[q].processes_data[i].check_editable){
+                          status_arr[m] = {
+                            instance:processData[m].process_details[q].processes_data[i].instance,
+                            status: "pending",
+                          };
+                         }else{
                           status_arr[m] = {
                             instance:processData[m].process_details[q].processes_data[i].instance,
                             status: "fail",
                           };  
                           break process_details;
+                         }
                         }else if(processData[m].process_details[q].processes_data.length<processData[m].process_details[q].questions.length-1){
                          
                           status_arr[m] = {
