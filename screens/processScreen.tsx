@@ -3,7 +3,7 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetProcessesDetails,GetAnswersProgress} from '../src/graphql/queries';
+import {GetProcessesDetails,GetAnswersProgress,GetGaDetails} from '../src/graphql/queries';
 import { Divider,ProgressBar } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -13,6 +13,7 @@ var progress: any[] = [];
 var questionsCount: any[] = [];
 var colorValue: any [] = [];
 var IconValue: any [] = [];
+var _gaValue:any;
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId,operationTheaterID,resourceID, resourceName,instance,userType } = route.params;
     let [refresh,setRefresh] = useState(true);
@@ -35,7 +36,6 @@ export default function processScreen({route, navigation}: {navigation: any, rou
         })
         .then((Result) => {
            var data = Result.data; 
-           console.log("Instance is----",instance);
            //console.log("--",data)
           setRenderFlatlistData(Result.data);
                 for(var i= 0; i<data.appResource.process_details.length; i++){
@@ -89,8 +89,31 @@ export default function processScreen({route, navigation}: {navigation: any, rou
     }, [navigation]);
 
     useEffect(()=>{
-      //console.log("set state---",val)
-    },[val]);
+      const unsubscribe = navigation.addListener('focus', () => {
+
+        apolloClient
+            .query({
+                    query: GetGaDetails,
+                    variables:{
+                      Date:new Date().toISOString().slice(0, 10),
+                      operation_theater:operationTheaterID,
+                      question: 3
+                    },
+                    fetchPolicy: "network-only"
+                  })
+            .then((Result) => {
+              
+              try{
+               _gaValue = Result.data.processesData[0].Answer;
+              //  console.log("RESULT OF GA DATA--",_gaValue);
+              }catch{
+              _gaValue = null;
+              }
+            })
+
+      });
+      return unsubscribe;
+    },[navigation]);
 
     const checkIfAnswer_No = (data: string | any[])=>{
       for(var i = 0; i<data.length;i++){
@@ -153,6 +176,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
             processName: item.process_name,
             operationTheaterID: operationTheaterID,
             instance:instance,
+            gaValue:_gaValue,
           })}}>
       
       <View style={{width:18,height:18,marginLeft:14}}>
