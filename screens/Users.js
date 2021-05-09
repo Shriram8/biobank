@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, SectionList } from "react-native";
-import { Button, IconButton, Portal, Divider } from "react-native-paper";
+import { Button, IconButton, Portal } from "react-native-paper";
 import { GetUsers, DeactivateUser } from "../src/graphql/queries";
 import { useQuery, useMutation } from "@apollo/client";
-// import Popover from "react-native-popover-view";
 import { TouchableOpacity } from "react-native";
-import { client } from "../src/graphql/ApolloClientProvider";
 import { connect } from "react-redux";
 
-const apolloClient = client;
-
 const Users = (props) => {
-  // const [showPop, setShowPop] = useState(false);
   const [sectionData, setSectionData] = useState([]);
   const [alert, setAlert] = useState(false);
   const [alertMsg, setAlertmsg] = useState("");
-  // const [deactivateId, setDeactivateId] = useState("");
 
   const { data, refetch } = useQuery(GetUsers, {
     fetchPolicy: "network-only",
@@ -76,6 +70,15 @@ const Users = (props) => {
             break;
         }
       }
+      for (let i = 0; i < 3; i++) {
+        if (DATA[i].data.length == 0) {
+          DATA[i].data.push({
+            id: 0,
+            name: "No " + DATA[i].title + " members",
+            userType: "Empty",
+          });
+        }
+      }
       setSectionData(DATA);
     }
   }, [data]);
@@ -93,31 +96,60 @@ const Users = (props) => {
     });
   };
 
+  const checkUser = (val) => {
+    switch (props.userType) {
+      case "OTSuperUser":
+        return true;
+      case "OTStaff":
+        return false;
+      case "OTIncharge":
+        if (val === "OTStaff") {
+          return true;
+        } else {
+          return false;
+        }
+      case "OTAdmin":
+        if (val !== "OTAdmin") {
+          return true;
+        } else {
+          return false;
+        }
+    }
+  };
+
   const Item = ({ title }) => (
-    <TouchableOpacity
-      style={styles.ItemContainer}
-      onPress={() => {
-        props.navigation.navigate("adduser", {
-          from: "admin",
-          userId: title.id,
-          userType: title.userType,
-        });
-      }}
-    >
-      <Text style={{ fontSize: 18, fontWeight: "bold" }}>{title.name}</Text>
-      {title.active && (
-        <IconButton
-          icon="delete-outline"
-          color={"#010101"}
-          size={20}
+    <>
+      {title.userType === "Empty" ? (
+        <Text
+          style={{ textAlign: "center", paddingVertical: 10, fontSize: 14 }}
+        >
+          {title.name}
+        </Text>
+      ) : (
+        <TouchableOpacity
+          style={styles.ItemContainer}
           onPress={() => {
-            // setShowPop(true);
-            // setDeactivateId(title.id);
-            deactivate(title.id);
+            props.navigation.navigate("adduser", {
+              from: "admin",
+              userId: title.id,
+              userType: title.userType,
+            });
           }}
-        />
+        >
+          <Text style={{ fontSize: 18, fontWeight: "bold" }}>{title.name}</Text>
+          {checkUser(title.userType) && (
+            <IconButton
+              icon="delete-outline"
+              color={"#010101"}
+              size={20}
+              onPress={() => {
+                deactivate(title.id);
+              }}
+            />
+          )}
+        </TouchableOpacity>
       )}
-    </TouchableOpacity>
+    </>
   );
 
   const ListHeaderComponent = () => {
@@ -158,32 +190,6 @@ const Users = (props) => {
           <Text style={styles.title}>{title}</Text>
         )}
       />
-      {/* <Popover
-        popoverStyle={styles.popsStyle}
-        isVisible={showPop}
-        onRequestClose={() => setShowPop(false)}
-      >
-        <Title style={styles.heading}>Deactivate user</Title>
-        <Text style={styles.text}>Are you sure to deactivate the user?</Text>
-        <View style={styles.buttonView}>
-          <Button
-            mode="contained"
-            color={"#006bcc"}
-            labelStyle={{ color: "#fff" }}
-            onPress={() => setShowPop(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            mode="contained"
-            labelStyle={{ color: "#fff" }}
-            color={"#A9A9A9"}
-            onPress={() => deactivate()}
-          >
-            Deactivate
-          </Button>
-        </View>
-      </Popover> */}
       {alert && (
         <Portal>
           <View style={styles.alertView}>
@@ -210,6 +216,7 @@ const Users = (props) => {
 
 const mapStateToProps = (state) => ({
   branch: state.branch,
+  userType: state.userType,
 });
 
 export default connect(mapStateToProps)(Users);
