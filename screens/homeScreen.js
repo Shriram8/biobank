@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import {
   StyleSheet,
   ScrollView,
-  Keyboard,
+  Platform,
   Text,
   TouchableWithoutFeedback,
   StatusBar,
@@ -18,6 +18,7 @@ import {
   GetSharedResource_OperationTheaters,
   ENUM_RESOURCE_TYPE,
   GetSurgeryDetails,
+  GetUserDataById,
   Check_Process_Progress,
 } from "../src/graphql/queries";
 import { Divider, Button, ActivityIndicator } from "react-native-paper";
@@ -31,7 +32,6 @@ import OTCard from "../components/UI/OTCard";
 
 const apolloClient = client;
 const date = new Date();
-var location = "Coles Road";
 var _data;
 var _operationTheaterData = [];
 var message = [];
@@ -44,7 +44,9 @@ var minusBox = "minus-box";
 function homeScreen(props, route) {
   const [renderFlatlistData, setRenderFlatlistData] = useState();
   const [processMessageData, setProcessMessageData] = useState([]);
-  const [loadingProcessData,setloadingProcessData] = useState(false);
+  const [loadingProcessData, setloadingProcessData] = useState(false);
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState("");
   // const { loading, error, refetch, data } = useQuery(GetSharedResource_OperationTheaters);
   // if(data){
   //   _data = data.appResources.concat(data.operationTheaters);
@@ -59,6 +61,19 @@ function homeScreen(props, route) {
   // if(loading){
   //     //console.log("loading",loading);
   // }
+
+  const { data, refetch } = useQuery(GetUserDataById, {
+    variables: {
+      userId: props.userId,
+    },
+  });
+
+  useEffect(() => {
+    if (data) {
+      setName(data.appUsers[0].name);
+      setLocation(data.appUsers[0].branch?.name);
+    }
+  }, [data]);
 
   React.useEffect(() => {
     if (renderFlatlistData) {
@@ -99,7 +114,6 @@ function homeScreen(props, route) {
   }, [renderFlatlistData]);
 
   React.useEffect(() => {
-    
     const unsubscribe = props.navigation.addListener("focus", () => {
       //console.log("HOME SCREEN")
       apolloClient
@@ -111,16 +125,16 @@ function homeScreen(props, route) {
           _data = Result.data.appResources.concat(
             Result.data.operationTheaters
           );
-          
+
           setRenderFlatlistData(Result.data);
-         
+
           let global_process_status = [];
           for (var i = 0; i < Result.data.operationTheaters.length; i++) {
             await apolloClient
               .query({
                 query: Check_Process_Progress,
                 variables: {
-                 // userId: parseInt(props.userId),
+                  // userId: parseInt(props.userId),
                   otID: Result.data.operationTheaters[i].id,
                   date: new Date(),
                 },
@@ -133,176 +147,197 @@ function homeScreen(props, route) {
                 for (var t = 0; t <= 4 - 1; t++) {
                   status_arr[t] = 0;
                 }
-                process_details: 
-                for (var m = 0; m < 4; m++) {
+                process_details: for (var m = 0; m < 4; m++) {
                   var start_count = 0;
                   var instance = 0;
-                  for (var q = 0;q < processData[m].process_details.length; q++) {
-                    if (processData[m].process_details[q].processes_data.length >0) {
-                       for (var i in processData[m].process_details[q].processes_data) {
-                        if (processData[m].process_details[q].processes_data[i].Answer != "False") {
-                          if (processData[m].process_details[q].processes_data[i].check_editable) {
-                            instance=  processData[m].process_details[q].processes_data[i].instance
-                            if (m === 2) {status_arr[m] = {
-                                instance:processData[m].process_details[q].processes_data[i].instance,
+                  for (
+                    var q = 0;
+                    q < processData[m].process_details.length;
+                    q++
+                  ) {
+                    if (
+                      processData[m].process_details[q].processes_data.length >
+                      0
+                    ) {
+                      for (var i in processData[m].process_details[q]
+                        .processes_data) {
+                        if (
+                          processData[m].process_details[q].processes_data[i]
+                            .Answer != "False"
+                        ) {
+                          if (
+                            processData[m].process_details[q].processes_data[i]
+                              .check_editable
+                          ) {
+                            instance =
+                              processData[m].process_details[q].processes_data[
+                                i
+                              ].instance;
+                            if (m === 2) {
+                              status_arr[m] = {
+                                instance:
+                                  processData[m].process_details[q]
+                                    .processes_data[i].instance,
                                 status: "success",
-                                surgeries : processData[0].process_details[0].processes_data[4].Answer,
-                              }; 
+                                surgeries:
+                                  processData[0].process_details[0]
+                                    .processes_data[4].Answer,
+                              };
                             } else {
                               status_arr[m] = {
-                                instance:processData[m].process_details[q].processes_data[i].instance,
+                                instance:
+                                  processData[m].process_details[q]
+                                    .processes_data[i].instance,
                                 status: "success",
                               };
                             }
                             try {
-                              var temp =processData[m].process_details[q].processes_data[i].check_editable.id;
+                              var temp =
+                                processData[m].process_details[q]
+                                  .processes_data[i].check_editable.id;
                             } catch (err) {
                               status_arr[m] = {
-                                instance:processData[m].process_details[q].processes_data[i].instance,
+                                instance:
+                                  processData[m].process_details[q]
+                                    .processes_data[i].instance,
                                 status: "pending",
                               };
-                               
+
                               break process_details;
                             }
                           }
-                          
-                        } else if(processData[m].process_details[q].processes_data[i].Answer == "False") {
+                        } else if (
+                          processData[m].process_details[q].processes_data[i]
+                            .Answer == "False"
+                        ) {
                           status_arr[m] = {
-                            instance:processData[m].process_details[q].processes_data[i].instance,
+                            instance:
+                              processData[m].process_details[q].processes_data[
+                                i
+                              ].instance,
                             status: "fail",
-                          };  
+                          };
                           break process_details;
-                        }else if(processData[m].process_details[q].processes_data.length<processData[m].process_details[q].questions.length-1){
-                         
+                        } else if (
+                          processData[m].process_details[q].processes_data
+                            .length <
+                          processData[m].process_details[q].questions.length - 1
+                        ) {
                           status_arr[m] = {
-                            instance:processData[m].process_details[q].processes_data[i].instance,
+                            instance:
+                              processData[m].process_details[q].processes_data[
+                                i
+                              ].instance,
                             status: "pending",
                           };
                           break process_details;
-                        }else{
+                        } else {
                           status_arr[m] = {
-                            instance:processData[m].process_details[q].processes_data[i].instance,
+                            instance:
+                              processData[m].process_details[q].processes_data[
+                                i
+                              ].instance,
                             status: "pending",
                           };
                           break process_details;
                         }
-                      } 
+                      }
                     } else {
-                       start_count ++;
-                       //status_arr[m] === 0
-                       if (start_count===processData[m].process_details.length ) {
-                           
-                            status_arr[m] = { status: "start" };
-                            //break process_details;
-                          } 
-                          else {
-                             
-                                status_arr[m] =  {
-                                  instance: instance,
-                                  status: "pending",
-                                }
-                             
-                            //break process_details;
-                          }
-                        
-                     
+                      start_count++;
+                      //status_arr[m] === 0
+                      if (
+                        start_count === processData[m].process_details.length
+                      ) {
+                        status_arr[m] = { status: "start" };
+                        //break process_details;
+                      } else {
+                        status_arr[m] = {
+                          instance: instance,
+                          status: "pending",
+                        };
+
+                        //break process_details;
+                      }
                     }
                   }
                 }
                 global_process_status = [...global_process_status, status_arr];
               });
-          } 
-          console.log("******************",global_process_status)
-          var msg=[];
-          for(var temp=0;temp<global_process_status.length;temp++){
-             msg=[...msg,getTextForProcessMessage(temp,global_process_status) ]
+          }
+          console.log("******************", global_process_status);
+          var msg = [];
+          for (var temp = 0; temp < global_process_status.length; temp++) {
+            msg = [
+              ...msg,
+              getTextForProcessMessage(temp, global_process_status),
+            ];
           }
           setProcessMessageData(msg);
-          setloadingProcessData(true)
+          setloadingProcessData(true);
         });
     });
-   
+
     return unsubscribe;
   }, [props.navigation]);
-  const getTextForProcessMessage = (index,global_process_status) => {
+  const getTextForProcessMessage = (index, global_process_status) => {
     let varArra = global_process_status;
     let message = "Start process";
-    let msgObj = {message:"Start process",
-                  icon: "play-box",
-                  color:"black"}
+    let msgObj = { message: "Start process", icon: "play-box", color: "black" };
     if (varArra.length > 0) {
-       if (
+      if (
         varArra[index][0].status === "success" &&
         varArra[index][1].status === "success"
       ) {
-        msgObj = {message:"Cleared for start of day",
-                  icon: check,
-                  color:green}
-         message="Cleared for start of day"
+        msgObj = {
+          message: "Cleared for start of day",
+          icon: check,
+          color: green,
+        };
+        message = "Cleared for start of day";
         if (varArra[index][2].status === "success") {
           message = "Cleared for surgery -0" + (varArra[index][2].instance - 1);
 
-          msgObj = {message: message,
-                  icon: check,
-                  color:green}
+          msgObj = { message: message, icon: check, color: green };
 
           if (varArra[index][3].status === "success") {
             message = "Cleared for end of day";
-            msgObj = {message:message,
-                  icon: check,
-                  color:green}
-
+            msgObj = { message: message, icon: check, color: green };
           } else if (varArra[index][3].status === "pending") {
             message = "Ongoing end of day";
 
-            msgObj = {message:message,
-            icon: minusBox,
-            color:orange}
-
+            msgObj = { message: message, icon: minusBox, color: orange };
           } else if (varArra[index][3].status === "fail") {
             message = "Not Cleared for end of day";
-            
-            msgObj = {message:message,
-              icon: alert,
-              color:red}
+
+            msgObj = { message: message, icon: alert, color: red };
           }
         } else if (varArra[index][2].status === "pending") {
           message = "Ongoing for surgery -0" + (varArra[index][2].instance - 1);
 
-          
-          msgObj = {message:message,
-            icon: minusBox,
-            color:orange}
-
+          msgObj = { message: message, icon: minusBox, color: orange };
         } else if (varArra[index][2].status === "fail") {
           message =
             "Not Cleared for surgery -0" + (varArra[index][2].instance - 1);
-            
-            msgObj = {message:message,
-              icon: alert,
-              color:red}
+
+          msgObj = { message: message, icon: alert, color: red };
         }
       } else if (
         varArra[index][0].status === "fail" ||
         varArra[index][1].status === "fail"
       ) {
         message = "Not Cleared for start of day";
-        
-        msgObj = {message:message,
-          icon: alert,
-          color:red}
+
+        msgObj = { message: message, icon: alert, color: red };
       } else if (
         varArra[index][0].status === "pending" ||
         varArra[index][1].status === "pending"
       ) {
         message = "Ongoing for start of day";
-        
-        msgObj = {message:message,
-          icon: minusBox,
-          color:orange}
+
+        msgObj = { message: message, icon: minusBox, color: orange };
       }
     }
-    console.log("msgOBJ ======",msgObj)
+    console.log("msgOBJ ======", msgObj);
     return msgObj;
   };
   const renderResources = (item) => {
@@ -367,24 +402,24 @@ function homeScreen(props, route) {
             </View>
         </TouchableOpacity> */}
         <OTCard
-        title={item.item.name}
-        message={item.index>0? processMessageData[item.index - 1]: null}
-        onPress={() => {
-          item.item.__typename == "AppResource"
-            ? props.navigation.navigate("processScreen", {
-                userId: props.userId,
-                userType: props.userType,
-                resourceID: item.item.id,
-                operationTheaterID: item.item.id,
-                resourceName: item.item.name,
-              })
-            : props.navigation.navigate("preProcessScreen", {
-                userId: props.userId,
-                userType: props.userType,
-                operationTheaterID: item.item.id,
-                operationTheaterName: item.item.name,
-              });
-        }}
+          title={item.item.name}
+          message={item.index > 0 ? processMessageData[item.index - 1] : null}
+          onPress={() => {
+            item.item.__typename == "AppResource"
+              ? props.navigation.navigate("processScreen", {
+                  userId: props.userId,
+                  userType: props.userType,
+                  resourceID: item.item.id,
+                  operationTheaterID: item.item.id,
+                  resourceName: item.item.name,
+                })
+              : props.navigation.navigate("preProcessScreen", {
+                  userId: props.userId,
+                  userType: props.userType,
+                  operationTheaterID: item.item.id,
+                  operationTheaterName: item.item.name,
+                });
+          }}
         />
       </View>
     );
@@ -393,19 +428,37 @@ function homeScreen(props, route) {
   return (
     <>
       <StatusBar animated={true} backgroundColor="#006bcc" hidden={false} />
-   
+
       <View
         style={{ backgroundColor: "#006bcc", width: "100%", height: "100%" }}
       >
         <View style={styles.header}>
           <View style={styles.headerTextLabel}>
-            <Text
-              style={{ fontWeight: "bold", fontSize: 30, color: "#ffffff",marginBottom:8 }}
-            >
-              Hello, John
-            </Text>
+            <View style={{ flexDirection: "row" }}>
+              <Text
+                style={{
+                  fontSize: 30,
+                  color: "#ffffff",
+                  marginVertical: 16,
+                }}
+              >
+                Hello,
+              </Text>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 30,
+                  color: "#ffffff",
+                  marginVertical: 16,
+                }}
+              >
+                {" "}
+                {name}
+              </Text>
+            </View>
+
             <Divider
-              style={{ width: "100%", height: 1, backgroundColor: "#CCE1F4"  }}
+              style={{ width: "100%", height: 1, backgroundColor: "#68A4DB" }}
             />
           </View>
           <View style={styles.subHeader}>
@@ -417,7 +470,14 @@ function homeScreen(props, route) {
                   color="white"
                   size={20}
                 />
-                <Text style={styles.location}>{location}</Text>
+                <Text
+                  style={[
+                    styles.location,
+                    Platform.OS === "web" && { marginTop: 5 },
+                  ]}
+                >
+                  {location}
+                </Text>
               </View>
               {/* <View style={styles.box2}></View> */}
               <View style={styles.box3}>
@@ -427,11 +487,18 @@ function homeScreen(props, route) {
                   color="white"
                   size={20}
                 />
-                <Text style={styles.location}>{date.toDateString()}</Text>
+                <Text
+                  style={[
+                    styles.location,
+                    Platform.OS === "web" && { marginTop: 5 },
+                  ]}
+                >
+                  {date.toDateString()}
+                </Text>
               </View>
             </View>
           </View>
-        </View> 
+        </View>
         <View
           style={{ flex: 1, backgroundColor: "white", borderTopLeftRadius: 30 }}
         >
@@ -462,8 +529,8 @@ function homeScreen(props, route) {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderResources}
               />
-            ):(
-              <ActivityIndicator size={24} color={"#006bcc"}/>
+            ) : (
+              <ActivityIndicator size={24} color={"#006bcc"} />
             )}
           </View>
         </View>
@@ -480,10 +547,10 @@ export default connect(mapStateToProps)(withNavigation(homeScreen));
 
 const styles = StyleSheet.create({
   subHeader: {
-    marginTop:16,
+    marginTop: 32,
     justifyContent: "center",
     width: "90%",
-    paddingBottom:24
+    paddingBottom: 24,
   },
   flexContainer: {
     height: 30,
@@ -503,12 +570,11 @@ const styles = StyleSheet.create({
     height: "100%",
     flexGrow: 1,
     flexDirection: "row",
-    marginLeft:31
+    marginLeft: 31,
   },
   headerTextLabel: {
-    marginBottom:8,
+    marginBottom: 8,
     height: 50,
-     
   },
   headerTextStyle: {
     fontWeight: "bold",
@@ -517,15 +583,14 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: "#006bcc",
-     marginHorizontal:24,
-    
+    marginHorizontal: 24,
+
     justifyContent: "center",
-     
   },
   location: {
     fontSize: 14,
-    color: "white",
-    fontWeight: "bold",
+    color: "#CCE1F4",
+    // fontWeight: "bold",
     textAlignVertical: "center",
     width: "100%",
     height: 30,
@@ -543,9 +608,9 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
   },
   item: {
-    padding:2,
-    paddingHorizontal:16,
-    paddingVertical:12
+    padding: 2,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
   },
   title: {
     fontSize: 32,
@@ -556,7 +621,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     height: 90,
     margin: 10,
-     
+
     shadowColor: "#000",
     shadowOffset: {
       width: 2,
@@ -573,6 +638,5 @@ const styles = StyleSheet.create({
     textAlign: "left",
     textAlignVertical: "center",
     marginLeft: 14,
-     
   },
 });

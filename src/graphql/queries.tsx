@@ -56,6 +56,10 @@ export const GetUserDataById = gql`
       employeeid
       gender
       uid
+      branch {
+        id
+        name
+      }
     }
   }
 `;
@@ -333,7 +337,7 @@ export const GetSurgeryDetails = gql`
   }
 `;
 export const Check_Process_Progress = gql`
-  query($otID: ID!, $date: String ) {
+  query($otID: ID!, $date: String) {
     appResources(
       sort: "processOrder:asc"
       where: { resourceType: "OperationTheater" }
@@ -346,11 +350,7 @@ export const Check_Process_Progress = gql`
         process_name
         processes_data(
           sort: "id:asc"
-          where: {
-            
-            operation_theater: { id: $otID }
-            Date: $date
-          }
+          where: { operation_theater: { id: $otID }, Date: $date }
         ) {
           Date
           id
