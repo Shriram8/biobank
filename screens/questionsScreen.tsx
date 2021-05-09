@@ -22,6 +22,26 @@ const radioItems= [
         label: 'No',
       },
     ];
+const radioItems_NA= [
+      {
+        id: 1,
+        label: 'Yes',
+      },
+      {
+        id: 2,
+        label: 'No',
+      },
+      {
+        id: 3,
+        label: 'N/A',
+      },
+];
+const drugList= [
+      {
+        id: 1,
+        label: 'View',
+      },
+];
 var dict: string[] = [];
 var key;
 var value;
@@ -31,9 +51,10 @@ var temp = new Array();
 var questionCount: number;
 var processDataId: any[];
 var _processCleared: boolean;
+
 export default function questionsScreen({route,navigation}: {route: any,navigation: any}) {
 
-  const { userId,operationTheaterID,processID, processName,instance,userType } = route.params;
+  const { userId,operationTheaterID,processID, processName,instance,userType,gaValue } = route.params;
   const [_data,setfetchData] = React.useState(false);
   const [disbaleCompleted,setDisableCompleted] = React.useState(true);
   const [disableButtons,setDisableButtons] = React.useState(false);
@@ -50,7 +71,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
 
   useEffect(() => {
     if(questions_data){
-       console.log("USER TYPE__",userType) 
+      console.log("USER TYPE__",userType) 
     }
   },[questions_data]);
 
@@ -153,7 +174,13 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
 
   const sendQuery=(index: any,value: any,type:number)=>{
     if(type){
-      value = (value == 0 ? "True": "False")
+      if(value == 0){
+        value = "True"
+      }else if(value == 1){
+        value = "False"
+      }else if(value == 2){
+        value = "N/A"
+      }
       if(value == "False"){
         _processCleared = false;
         setCleared(false);
@@ -173,12 +200,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       setDisableButtons(true);
       setDisableCompleted(true);
       if(userType == "OTIncharge"){
-        // mutateEditableFunction({
-        //   variables: { 
-        //     processes_data: processDataId.map(Number),
-        //     processCleared:true,
-        //   }
-        // });
+        setCleared(true);
         for(var i=0;i<temp.length;i++){
           console.log(dict,processDataId,dictId,temp)
           if(dict[temp[i]]=="False"){
@@ -250,8 +272,49 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         <Picker.Item label="Surgeon 9" value="Surgeon 9" />
         <Picker.Item label="Surgeon 10" value="Surgeon 10" />
       </Picker>
-      </>):(
+      </>):(item.type == "toggleNA"?(
        <RadioGroup 
+          selectedIndex={(dict[item.id] == "True"? 0 : (dict[item.id]=="False"?(override?0:1):(dict[item.id]=="N/A"?2:null)))}
+          onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
+          style={{flexDirection:"row",justifyContent: 'space-between' }}
+          >
+          {radioItems_NA.map((item, index) => {
+            return (
+              <RadioButton
+                key={index}
+                value={item.label}
+                displayText={item.label}
+                displayTextColor="#959595"
+                displayTextActiveColor="#fff"
+                prefixColor="#006bcc"
+                prefixActiveColor="#006bcc"
+                style={{width:120,height:40,borderRadius:8,alignContent: "center",borderWidth:1,borderColor:"#979797"}}
+                disabled={disableButtons}
+              />
+            );
+          })}
+        </RadioGroup>):(item.type == "drugList"?(
+       <RadioGroup 
+          selectedIndex={(dict[item.id] == "True"? 0 :null)}
+          onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
+          style={{flexDirection:"row",justifyContent: 'space-between' }}
+          >
+          {drugList.map((item, index) => {
+            return (
+              <RadioButton
+                key={index}
+                value={item.label}
+                displayText={item.label}
+                displayTextColor="#959595"
+                displayTextActiveColor="#fff"
+                prefixColor="#006bcc"
+                prefixActiveColor="#006bcc"
+                style={{width:120,height:40,borderRadius:8,alignContent: "center",borderWidth:1,borderColor:"#979797"}}
+                disabled={disableButtons}
+              />
+            );
+          })}
+        </RadioGroup>):((item.type == "gaQuestions" && gaValue=="True")?(<RadioGroup 
           selectedIndex={override?0:(dict[item.id] == "True"? 0 : (dict[item.id]=="False"?1:null))}
           onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
           style={{flexDirection:"row",justifyContent: 'space-between' }}
@@ -271,7 +334,28 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
               />
             );
           })}
-        </RadioGroup>))}
+        </RadioGroup>):
+       (<RadioGroup 
+          selectedIndex={override?0:(dict[item.id] == "True"? 0 : (dict[item.id]=="False"?1:null))}
+          onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
+          style={{flexDirection:"row",justifyContent: 'space-between' }}
+          >
+          {radioItems.map((item, index) => {
+            return (
+              <RadioButton
+                key={index}
+                value={item.label}
+                displayText={item.label}
+                displayTextColor="#959595"
+                displayTextActiveColor="#fff"
+                prefixColor="#006bcc"
+                prefixActiveColor="#006bcc"
+                style={{width:120,height:40,borderRadius:8,alignContent: "center",borderWidth:1,borderColor:"#979797"}}
+                disabled={disableButtons}
+              />
+            );
+          })}
+        </RadioGroup>)))))}
     </View>
     );
   };
