@@ -36,6 +36,7 @@ export const GetResourcesDetails = gql`
   }
 `;
 
+
 export const GetUsers = gql`
   query($branch: ID!) {
     appUsers(where: { branch: $branch, active: true }) {
@@ -132,6 +133,26 @@ export const GetProcessesDetails = gql`
     }
   }
 `;
+
+export const GetGaDetails = gql`
+query(
+    $operation_theater: ID!
+    $Date: String
+    $question: ID!
+  ) {
+    processesData(
+      where: {
+        operation_theater: $operation_theater
+        Date: $Date
+        question: $question
+      }
+    ) {
+      id
+      Answer
+    }
+}
+`;
+
 
 export const GetQuestionDetails = gql`
   query(
@@ -418,6 +439,8 @@ export enum ENUM_RESOURCE_TYPE {
   SharedResource,
   OperationTheater,
 }
+
+
 
 export const SubmitAnswerForQuestion = gql`
   mutation(
