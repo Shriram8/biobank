@@ -247,10 +247,10 @@ const MainStackNavigator = (props) => {
             headerStyle: {
               backgroundColor: "white",
             },
-            headerTitleStyle:{
-              fontSize:18,
-              fontWeight:'bold'
-            }
+            headerTitleStyle: {
+              fontSize: 18,
+              fontWeight: "bold",
+            },
           })}
         />
         <MainStack.Screen
@@ -263,10 +263,10 @@ const MainStackNavigator = (props) => {
             headerStyle: {
               backgroundColor: "white",
             },
-            headerTitleStyle:{
-              fontSize:18,
-              fontWeight:'bold'
-            }
+            headerTitleStyle: {
+              fontSize: 18,
+              fontWeight: "bold",
+            },
           })}
         />
         <MainStack.Screen
@@ -280,10 +280,10 @@ const MainStackNavigator = (props) => {
               elevation: 0,
               backgroundColor: "#ff8d48",
             },
-            headerTitleStyle:{
-              fontSize:18,
-              fontWeight:'bold'
-            }
+            headerTitleStyle: {
+              fontSize: 18,
+              fontWeight: "bold",
+            },
           })}
         />
       </>
@@ -293,7 +293,6 @@ const MainStackNavigator = (props) => {
 
 const UserStack = createStackNavigator();
 const UserStackNavigator = (props, type) => {
-  console.log(type);
   return (
     <UserStack.Navigator
       initialRouteName={type === "OTSuperUser" ? "branches" : "users"}
