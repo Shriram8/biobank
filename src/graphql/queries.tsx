@@ -147,16 +147,21 @@ export const GetProcessesDetails = gql`
 `;
 
 export const GetGaDetails = gql`
-  query($Date: String){
-      processDetails (where:{id:[4,5,6],}){
-        id
-        processes_data(where:{Date:$Date}){
-        Date
-          check_editable{
-            processCleared
-          }
-        }
+query(
+    $operation_theater: ID!
+    $Date: String
+    $question: ID!
+  ) {
+    processesData(
+      where: {
+        operation_theater: $operation_theater
+        Date: $Date
+        question: $question
       }
+    ) {
+      id
+      Answer
+    }
 }
 `;
 

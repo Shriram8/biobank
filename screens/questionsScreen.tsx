@@ -270,7 +270,6 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       else if(item.type=="toggleNA")
       return;
     }
-    //console.log("ITEM---",item.type, gaValue);
     return (
     <View style={[styles.item,index==0&&{marginTop:0}]}>
       
@@ -350,12 +349,12 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
           onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
           style={{flexDirection:"row",justifyContent: 'space-between' }}
           >
-          {drugList.map((item, index) => {
+          {radioItems.map((item, index) => {
             return (
               <RadioButton
                 key={index}
                 value={item.label}
-                displayText={item.label}
+                displayText={item.label}x
                 displayTextColor="#959595"
                 displayTextActiveColor="#fff"
                 prefixColor="#006bcc"
@@ -424,14 +423,14 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
      
     <>
     <Provider>
-    {modalVisible&&(
+    {modalVisible && (
         <Portal>
         
         <View style={{flex:1,justifyContent:'flex-end',backgroundColor:'rgba(0,0,0,0.6)'}}>
         <View style={{width:"100%",height:142,backgroundColor:"white"}}>
           <View style={{height:102}}>
         <Text style={getStyle()}>{_cleared?"Process Completed":"Process Incomplete"}</Text>
-        <Text style={[styles.headerTextStyle,{margin:10,fontSize:14,fontWeight:"normal"}]}>{_cleared?"Continue finishing next tasks":"Contact admin to complete the tasks."}</Text>
+        <Text style={[styles.headerTextStyle,{margin:10,fontSize:14,fontWeight:"normal"}]}>{_cleared?"Continue finishing next tasks":"Contact OT-Incharge to complete the tasks."}</Text>
         </View>
         <Button  mode="contained" color ={"#006bcc"}  
         style={{width:"100%",height:40,justifyContent:"center",alignItems:"center"}} 
