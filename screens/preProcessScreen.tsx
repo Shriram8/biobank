@@ -146,7 +146,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         .then((Result) => {
           for(var i=0; i<Result.data.processDetails.length;i++){
             try{
-              if(Result.data.processDetails[i].processData[0].check_editable.processCleared){
+              if(Result.data.processDetails[i].processes_data[0].check_editable.processCleared){
                 temp = temp+1;
               }
             }catch{

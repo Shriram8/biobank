@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useQuery, gql, useLazyQuery } from "@apollo/client";
 import { client } from "../src/graphql/ApolloClientProvider";
-import { GetResourcesDetails, GetSurgeryDetails_OTStaff, preProcessProgress_OTStaff } from "../src/graphql/queries";
+import { GetAutoClaveDetails, GetResourcesDetails, GetSurgeryDetails_OTStaff, preProcessProgress_OTStaff } from "../src/graphql/queries";
 import {
   GetSharedResource_OperationTheaters,
   ENUM_RESOURCE_TYPE,
@@ -28,7 +28,7 @@ import { connect } from "react-redux";
 import { withNavigation } from "react-navigation";
 import MessageComponent from "./messageComponent";
 import { fontSizes } from "../components/UI/Theme";
-import OTCard from "../components/UI/OTCard";
+import OTCard from "../components/UI/OTCard"; 
 
 const apolloClient = client;
 const date = new Date();
@@ -73,12 +73,12 @@ function homeScreen(props, route) {
   const [resultsFetched,setResultsFetched] = useState(0);
 
 
-  const [global_message,setGlobalMessage] = useState([0,0,0,0,0])
+  const [global_message,setGlobalMessage] = useState([])
   const [flatlistrender,setflatlistrender] = useState(false)
   const [message,setMessage]=useState(null);
   const [headerColor,setHeaderColor] = useState("")
     const [headerIcon,setHeaderIcon]= useState("");
-  const [autoClaveCleared,setAutoClaveCleared]= useState(false);
+  const [autoClaveCleared,setAutoClaveCleared]= useState(true);
   
   // const { loading, error, refetch, data } = useQuery(GetSharedResource_OperationTheaters);
   // if(data){
@@ -105,11 +105,14 @@ function homeScreen(props, route) {
     if (data) {
       setName(data.appUsers[0].name);
       setLocation(data.appUsers[0].branch?.name);
+       
     }
   }, [data]);
 
   React.useEffect(() => {
+    
     if (renderFlatlistData) {
+      
       for (var i = 1; i < _data.length; i++) {
         _operationTheaterData = [];
         apolloClient
@@ -146,9 +149,10 @@ function homeScreen(props, route) {
     }
   }, [renderFlatlistData]);
 
-  React.useEffect(async () => {
+  React.useEffect( () => {
     const unsubscribe = props.navigation.addListener("focus", () => {
       //console.log("HOME SCREEN")
+     // setloadingProcessData(false)
       apolloClient
         .query({
           query: GetSharedResource_OperationTheaters,
@@ -276,16 +280,7 @@ function homeScreen(props, route) {
                     
                               
                             }
-                            //console.log("COLOR VALUE___",colorValue);
-                            //console.log("INDEX---",netProgress);
-                            // setHeaderColor(colorValue[netProgress.length-1]);
-                            // setHeaderIcon(iconValue[netProgress.length-1]);
-                            // setHeaderText();
-                           // console.log("lock",setHeaderText());
-                           // global_process_status[i] =setHeaderText()
-                            
-                            
-                          }
+                            }
                         }
                                                 
                       })
@@ -294,7 +289,7 @@ function homeScreen(props, route) {
             })
             global_process_status.push(setHeaderText())
            // setGlobalMessage(global_process_status)
-           
+          
            // global_process_status=[];
               lock  = [];
             moduleLock ;
@@ -304,48 +299,115 @@ function homeScreen(props, route) {
               processCount  = [];
            netProgress  = [];
       }
-      console.log("***************************",global_process_status)
+      
       setGlobalMessage(global_process_status)
+      global_process_status=[]
       setflatlistrender(!flatlistrender)
+      setloadingProcessData(true)
     });
     
    
     return unsubscribe; 
   })
  },[props.navigation]); 
+ React.useEffect( () => {
+  const unsubscribe = props.navigation.addListener('focus',async () => {
+    setAutoClaveCleared(false);
+    var process = 3;
+    var temp = 0
+    await apolloClient
+      .query({
+        query: GetAutoClaveDetails,
+        variables:{
+          Date:new Date().toISOString().slice(0, 10),
+        },
+        fetchPolicy:"network-only"
+      })
+      .then((Result) => { 
+        for(var i=0; i<Result.data.processDetails.length;i++){ 
+          try{
+            if(Result.data.processDetails[i].processes_data[0].check_editable.processCleared){
+              temp = temp+1;
+            }
+          }catch{
+
+          }
+        }
+        
+        if(temp == process){ 
+          setAutoClaveCleared(true);
+        }
+      })
+    });
+    return unsubscribe;
+}, [props.navigation]);
  const setHeaderText = ()=>{
-  //console.log("NET PROGRESS LENGTH--",netProgress.length,)
+  //console.log("NET PROGRESS LENGTH--",netProgress.length,).
+  let icon="play-box"
+  let color="#000"
   let msg = "Start process"
+  let process_Message = {
+    message:msg,
+    icon:icon,
+    color: color
+  }
+  
   switch(colorValue[netProgress.length-1]){
     case red:
       //console.log("RED")
       if(netProgress.length<=preSurgeryProcessCount){
         setMessage("Not Cleared for start of day");
-        msg="Not Cleared for start of day"
+        msg="Not Cleared for start of day";
+        icon=alert
+        color=red
       }else if(netProgress.length == processCount.length){
         setMessage("Not Cleared for end of day");
         msg="Not Cleared for end of day"
+        icon=alert
+        color=red
       }else{
         var temp = "Not Cleared for surgery -0"+(netProgress.length-preSurgeryProcessCount)
-        setMessage(temp);
-        msg= "Not Cleared for surgery -0"+(netProgress.length-preSurgeryProcessCount)
+        msg=temp;
+        icon=alert
+        color=red
+        setMessage(temp); 
       }
-      return msg;
+      process_Message = {
+        message:msg,
+        icon:icon,
+        color:color
+      }
+      return process_Message;
       break;
     case orange:
       //console.log("ORANGE")
       if(netProgress.length<=preSurgeryProcessCount){
         setMessage("Ongoing for start of day");
         msg="Ongoing for start of day"
+        
+        icon=minusBox
+        color=orange
       }else if(netProgress.length == processCount.length){
         setMessage("Ongoing end of day");
         msg="Ongoing end of day"
+        
+        icon=minusBox
+        color=orange
       }else{
         var temp = "Ongoing for surgery -0"+(netProgress.length-preSurgeryProcessCount)
+        msg=temp;
+        icon=minusBox
+        color=red
         setMessage(temp);
-        msg="Ongoing for surgery -0"+(netProgress.length-preSurgeryProcessCount)
+        
       }
-      return msg;
+      process_Message = {
+        message:msg,
+        icon:icon,
+        color:color
+      }
+      
+      return process_Message;
       break;
     case green:
       //console.log("GREEN")
@@ -354,7 +416,15 @@ function homeScreen(props, route) {
         setHeaderIcon(minusBox);
         setMessage("Ongoing for start of day");
         msg="Ongoing for start of day"
-        return msg
+        icon=check
+        color=orange
+        process_Message = {
+          message:msg,
+          icon:icon,
+          color:color
+        }
+        
+        return process_Message;
         break;
       }
       if(netProgress.length == preSurgeryProcessCount){
@@ -364,19 +434,35 @@ function homeScreen(props, route) {
           setHeaderIcon(minusBox);
           setMessage("AutoClave not cleared");
           msg="AutoClave not cleared"
+          icon=alert
+          color=red
           
-        }else
-        setMessage("Cleared for start of day");
-        msg="Cleared for start of day"
+        }else{
+          setMessage("Cleared for start of day");
+          msg="Cleared for start of day"
+          icon=check
+          color=green}
+            
       }else if(netProgress.length == processCount.length){
         setMessage("Cleared for end of day");
         msg="Cleared for end of day"
+        icon=check
+        color=green
       }else{
         var temp = "Cleared for surgery -0"+(netProgress.length-preSurgeryProcessCount)
         msg="Cleared for surgery -0"+(netProgress.length-preSurgeryProcessCount)
+        icon=check
+        color=green
         setMessage(temp);
       }
-      return msg
+     
+        process_Message = {
+          message:msg,
+          icon:icon,
+          color:color
+        }
+        
+        return process_Message;
       break;
   }
   if(netProgress[netProgress.length-1]==1){
@@ -385,7 +471,7 @@ function homeScreen(props, route) {
     }
 
   }
-  
+  return process_Message
 }
   const renderResources = (item) => {
     return (
@@ -443,10 +529,10 @@ function homeScreen(props, route) {
             >
               <MaterialCommunityIcons name="arrow-right" size={30} />
             </View>
-        </TouchableOpacity> */}
+        </TouchableOpacity> */} 
        <OTCard
           title={item.item.name}
-          message={global_message[item.index]  ? global_message[item.index] : "Start process."}
+          message={item.index>0?global_message[item.index-1]:null}
           onPress={() => {
 
             item.item.__typename == "AppResource"
@@ -566,7 +652,7 @@ function homeScreen(props, route) {
               marginTop: 10,
             }}
           >
-            {renderFlatlistData  ? (
+            {renderFlatlistData &&loadingProcessData  ? (
               <FlatList
               extraData={flatlistrender}
                 style={{ width: "100%", alignSelf: "center" }}
