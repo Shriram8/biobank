@@ -15,22 +15,21 @@ import { getDate, getPrevSevenDays } from "../utility/utility";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import GenerateHistoryCSV from "./HistoryComponents/GenerateHistoryCSV";
 
-import * as MediaLibrary from 'expo-media-library';
-import * as FileSystem from 'expo-file-system';
-import * as Permissions from 'expo-permissions';
+import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system";
+import * as Permissions from "expo-permissions";
 import EmptyComponent from "../src/Components/EmptyComponent";
-
 
 //To create a directory in expo
 // const createDirectory =async  ()=>{
 //     try {
 //         let folder = FileSystem.documentDirectory +"testfolder2"
 //         await FileSystem.makeDirectoryAsync(folder)
-        // var fi = await FileSystem.getInfoAsync(folder);
+// var fi = await FileSystem.getInfoAsync(folder);
 
-        // console.log("==================================",JSON.stringify(fi))
-        // var fi = await FileSystem.getInfoAsync(folder);
-  
+// console.log("==================================",JSON.stringify(fi))
+// var fi = await FileSystem.getInfoAsync(folder);
+
 //         alert(JSON.stringify(fi))
 //       } catch(error) {
 //         alert(error)
@@ -40,23 +39,24 @@ const HistoryScreen = () => {
   //ID for current selected operation Theatre
   const [selectedOT, setSelectedOT] = useState("");
   //Date -when selected prev 7 dates are displayed along with this date
-  const [selectedDate, setSelectedDate] = useState(new Date()); 
-  const [datePrevIndex,setDatePrevIndex] = useState(0)
-  const [fileDownloadControl,setFileDownloadControl] = useState(false)
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [datePrevIndex, setDatePrevIndex] = useState(0);
+  const [fileDownloadControl, setFileDownloadControl] = useState(false);
   //Modal to render loader while fetching OT data and converting to csv
-  const [modalVisible,setModalVisible] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false);
   //Snack bar related states
-  const [snackText,setsnackText ] = useState("")
-  const  [snackVisible,setsnackVisible] = useState(false)
+  const [snackText, setsnackText] = useState("");
+  const [snackVisible, setsnackVisible] = useState(false);
   const { data, error, loading } = useQuery(GET_ALL_OTS, {
     fetchPolicy: "network-only",
   });
-  if (data) { 
-    if (selectedOT === "") { 
+  if (data) {
+    if (selectedOT === "") {
       setSelectedOT(data.operationTheaters[0].id);
     }
   }
-  if (error) { }
+  if (error) {
+  }
   //Date TimePicker
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("date");
@@ -82,50 +82,47 @@ const HistoryScreen = () => {
     showMode("time");
   };
   //Function to hide portal after generating csv file
-  const hidePortal=()=>{
-      setModalVisible(false)
-  }
+  const hidePortal = () => {
+    setModalVisible(false);
+  };
 
-  const hideSnackBar = ()=>{
-      setsnackVisible(false)
-  }
+  const hideSnackBar = () => {
+    setsnackVisible(false);
+  };
   //Function to dowload file to local storage
   const saveFile = async (fileName, data) => {
-    
-   
-        //await createDirectory()
-        let fileUri = FileSystem.documentDirectory + fileName; 
-        await FileSystem.writeAsStringAsync(fileUri, data, { encoding: FileSystem.EncodingType.UTF8 }) 
-        const asset = await MediaLibrary.createAssetAsync(fileUri)
-        var fi = await FileSystem.getInfoAsync(fileUri); 
-        hidePortal();
-        setsnackVisible(true)
-        setsnackText("Your OT details download is ready.")
-  
-}
-const downloadCsv = async (index) => {
-    
+    //await createDirectory()
+    let fileUri = FileSystem.documentDirectory + fileName;
+    await FileSystem.writeAsStringAsync(fileUri, data, {
+      encoding: FileSystem.EncodingType.UTF8,
+    });
+    const asset = await MediaLibrary.createAssetAsync(fileUri);
+    var fi = await FileSystem.getInfoAsync(fileUri);
+    hidePortal();
+    setsnackVisible(true);
+    setsnackText("Your OT details download is ready.");
+  };
+  const downloadCsv = async (index) => {
     const { status } = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
-    
+
     if (status === "granted") {
-      setModalVisible(true)
-      setFileDownloadControl(true)
-      setDatePrevIndex(index)
-    }else if(status==="denied"){
-      setsnackText("Please grant storage permission to download report.")
-      setsnackVisible(true)
-    } 
-  
-}
+      setModalVisible(true);
+      setFileDownloadControl(true);
+      setDatePrevIndex(index);
+    } else if (status === "denied") {
+      setsnackText("Please grant storage permission to download report.");
+      setsnackVisible(true);
+    }
+  };
   //Component to render Operation theatres in Flatlist
   const renderOts = ({ item, index }) => {
     return (
       <View
-        key={"OTS_"+index}
+        key={"OTS_" + index}
         style={[
           styles.headerItem,
           { backgroundColor: selectedOT === item.id ? "#006bcc" : "#959595" },
-          index===0&&{marginLeft:0}
+          index === 0 && { marginLeft: 0 },
         ]}
       >
         <TouchableOpacity
@@ -134,18 +131,18 @@ const downloadCsv = async (index) => {
             setSelectedOT(item.id);
           }}
         >
-          <Text style={{color:"#fff",fontSize:18}}>{item.name}</Text> 
+          <Text style={{ color: "#fff", fontSize: 18 }}>{item.name}</Text>
         </TouchableOpacity>
       </View>
     );
   };
   const renderDates = ({ item, index }) => {
     return (
-      <View key={"dates_"+index} style={styles.dateContainer}>
-        <Text style={{fontSize:16,fontWeight:'700'}}>{getDate(getPrevSevenDays(selectedDate, item))}</Text>
-        <TouchableOpacity
-          onPress={()=>downloadCsv(index)}
-        >
+      <View key={"dates_" + index} style={styles.dateContainer}>
+        <Text style={{ fontSize: 16, fontWeight: "700" }}>
+          {getDate(getPrevSevenDays(selectedDate, item))}
+        </Text>
+        <TouchableOpacity onPress={() => downloadCsv(index)}>
           <AntDesign name="download" size={18} color={"#000000"} />
         </TouchableOpacity>
       </View>
@@ -159,7 +156,9 @@ const downloadCsv = async (index) => {
             <>
               <View>
                 <View style={styles.dateInput}>
-                  <Text style={{fontSize:16,fontWeight:'700'}}>{getDate(getPrevSevenDays(selectedDate, 0))}</Text>
+                  <Text style={{ fontSize: 16, fontWeight: "700" }}>
+                    {getDate(getPrevSevenDays(selectedDate, 0))}
+                  </Text>
                   <TouchableOpacity
                     onPress={() => {
                       showMode("date");
@@ -177,13 +176,24 @@ const downloadCsv = async (index) => {
                   extraData={selectedOT}
                 />
               </View>
-              
+
               <View style={{ flex: 1 }}>
-              <Text style={[styles.appButtonText,{ marginTop:28, marginHorizontal:24, fontSize: 18,
-    color: "#000000",
-    fontWeight: "bold",
-    textAlign: "left",
-    textAlignVertical:"center", }]}>Past records</Text>
+                <Text
+                  style={[
+                    styles.appButtonText,
+                    {
+                      marginTop: 28,
+                      marginHorizontal: 24,
+                      fontSize: 18,
+                      color: "#000000",
+                      fontWeight: "bold",
+                      textAlign: "left",
+                      textAlignVertical: "center",
+                    },
+                  ]}
+                >
+                  Past records
+                </Text>
                 <FlatList
                   data={[0, 1, 2, 3, 4, 5, 6]}
                   renderItem={renderDates}
@@ -192,7 +202,7 @@ const downloadCsv = async (index) => {
               </View>
             </>
           ) : (
-            <EmptyComponent title="No Operation Theatres!"/>
+            <EmptyComponent title="No Operation Theatres!" />
           )}
         </>
       )}
@@ -206,47 +216,52 @@ const downloadCsv = async (index) => {
           onChange={onChange}
         />
       )}
-     {modalVisible&&(
-          <Portal >
-         <View style={{flex:1,backgroundColor:"rgba(0,0,0,0.6)",marginTop:26,alignItems:'center',justifyContent:'center'}}>
-         <GenerateHistoryCSV
-         setFileDownloadControl={setFileDownloadControl}
-         fileDownloadControl={fileDownloadControl}
-         setsnackText={setsnackText}
-         setsnackVisible={setsnackVisible}
-         saveFile={saveFile}
-         selectedOT={selectedOT}
-         selectedDate={getPrevSevenDays(selectedDate,datePrevIndex)}
-         hidePortal={hidePortal}
-         />
-         </View>
-          </Portal>
-     )}
-     <Snackbar
-     duration={2000}
-     onDismiss={hideSnackBar}
-     visible={snackVisible}
-     >
-         {snackText}
-     </Snackbar>
+      {modalVisible && (
+        <Portal>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(0,0,0,0.6)",
+              marginTop: 26,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <GenerateHistoryCSV
+              setFileDownloadControl={setFileDownloadControl}
+              fileDownloadControl={fileDownloadControl}
+              setsnackText={setsnackText}
+              setsnackVisible={setsnackVisible}
+              saveFile={saveFile}
+              selectedOT={selectedOT}
+              selectedDate={getPrevSevenDays(selectedDate, datePrevIndex)}
+              hidePortal={hidePortal}
+            />
+          </View>
+        </Portal>
+      )}
+      <Snackbar duration={2000} onDismiss={hideSnackBar} visible={snackVisible}>
+        {snackText}
+      </Snackbar>
     </View>
   );
 };
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
   headerItem: {
     paddingHorizontal: 12,
     margin: 8,
-    height:40,
-    width:100,
-    alignItems:'center',
-    justifyContent:'center',
+    height: 40,
+    width: 100,
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 8,
   },
   dateContainer: {
-    margin: 12, 
+    margin: 12,
     padding: 12,
     backgroundColor: "#fff",
     alignSelf: "center",
@@ -256,7 +271,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    elevation:6
+    elevation: 6,
   },
   dateInput: {
     flexDirection: "row",
@@ -266,11 +281,11 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 12,
     borderRadius: 8,
-    marginVertical : 36,
-    paddingHorizontal:36,
-    height:60,
-    alignItems:'center',
-    elevation:2
+    marginVertical: 36,
+    paddingHorizontal: 36,
+    height: 60,
+    alignItems: "center",
+    elevation: 2,
   },
 });
 export default HistoryScreen;

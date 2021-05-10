@@ -51,6 +51,9 @@ const AddUser = (props) => {
       if (err.message === "Duplicate entry") {
         setShowError(true);
         setErrorMsg("User with this user id already registered");
+      } else {
+        setShowError(true);
+        setErrorMsg("Failed to add user. Please try again later");
       }
     },
   });
@@ -95,7 +98,7 @@ const AddUser = (props) => {
 
   const onSubmit = () => {
     setShowError(false);
-    if (mobile !== "" && name !== "" && empId !== "") {
+    if (mobile.length > 9 && name !== "" && empId !== "") {
       usermutate({
         variables: {
           name: name,
@@ -111,7 +114,7 @@ const AddUser = (props) => {
       });
     } else {
       setShowError(true);
-      setErrorMsg("Please fill all the fields");
+      setErrorMsg("Please fill all the fields correctly");
     }
   };
 
@@ -185,11 +188,27 @@ const AddUser = (props) => {
     });
   };
 
+  const numericValidator = (str) => {
+    const phNumFormat = /^[0-9]*$/g;
+    if (str.match(phNumFormat)) {
+      setMobile(str);
+    }
+  };
+
   return (
     <>
       <StatusBar animated={true} backgroundColor="#fff" hidden={false} />
       <View style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
-        <View style={styles.modalHeader}>
+        <View
+          style={[
+            styles.modalHeader,
+            Platform.OS === "web" && {
+              borderBottomWidth: 1,
+              borderBottomColor: "#E0E0E0",
+              paddingVertical: 20,
+            },
+          ]}
+        >
           <IconButton
             icon="arrow-left"
             color={"#010101"}
@@ -266,6 +285,8 @@ const AddUser = (props) => {
           </View>
           <View style={styles.inputView}>
             <TextInput
+              keyboardType={"number-pad"}
+              maxLength={10}
               editable={checkUser()}
               onFocus={() => setMobileFocus(true)}
               onBlur={() => setMobileFocus(false)}
@@ -276,7 +297,7 @@ const AddUser = (props) => {
                   : styles.isNotFocused,
                 Platform.OS === "web" && { outlineWidth: 0 },
               ]}
-              onChangeText={setMobile}
+              onChangeText={numericValidator}
               value={mobile}
             />
           </View>
@@ -416,6 +437,7 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 14,
     color: "#9e9e9e",
+    fontWeight: "bold",
   },
   textLabel: {
     width: "80%",
@@ -445,14 +467,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 20,
+    paddingVertical: 16,
+    elevation: 4,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: "500",
   },
   formView: {
-    backgroundColor: "#f1f1f1",
+    backgroundColor: "#fff",
     flexGrow: 1,
     paddingHorizontal: 20,
     paddingVertical: 27,
