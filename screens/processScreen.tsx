@@ -16,6 +16,10 @@ var IconValue: any [] = [];
 var _gaValue: any;
 const processNumber_Initial = 1;
 const initialProcessQuestionIndex = 2;
+const processBackgroundColor = ['#00a79d','#27aae2','#f25a29',
+'#f25a29','#00a79d','#f25a29','#27aae2','#f25a29','#00a79d','#27aae2',
+'#f25a29','#019cb2','#27aae2','#f25a29','#00a79d','#27aae2','#f25a29',
+'#019cb2','#27aae2','#f25a29']
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId,operationTheaterID,resourceID, resourceName,instance,userType } = route.params;
     let [refresh,setRefresh] = useState(true);
@@ -186,6 +190,8 @@ export default function processScreen({route, navigation}: {navigation: any, rou
             operationTheaterID: operationTheaterID,
             instance:instance,
             gaValue:_gaValue,
+            processPseudoName:item.Number,
+            backgroundColor:processBackgroundColor[item.Number-1]
           })}}>
       
       <View style={{width:18,height:18,marginLeft:14}}>
