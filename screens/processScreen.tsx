@@ -190,7 +190,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
             operationTheaterID: operationTheaterID,
             instance:instance,
             gaValue:_gaValue,
-            processPseudoName:"P"+item.Number,
+            processPseudoName:item.Number,
             backgroundColor:processBackgroundColor[item.Number-1]
           })}}>
       
