@@ -1,8 +1,12 @@
 import React from "react";
 import { View, StyleSheet, Text, FlatList } from "react-native";
 import { Button, Portal } from "react-native-paper";
+import { useQuery } from "@apollo/client";
+import { GetDrugList } from "../src/graphql/queries";
 
-const DrugListPopover = () => {
+const DrugListPopover = (props) => {
+  const { data, refetch } = useQuery(GetDrugList);
+
   const renderItem = (data) => {
     return (
       <View
@@ -45,7 +49,7 @@ const DrugListPopover = () => {
             <View style={styles.alertContainer}>
               <View style={{ marginBottom: 50 }}>
                 <FlatList
-                  data={props.drugsData}
+                  data={data?.druglists}
                   renderItem={renderItem}
                   keyExtractor={(item) => item.id}
                   ListHeaderComponent={ListHeaderComponent}

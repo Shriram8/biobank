@@ -36,6 +36,17 @@ export const GetResourcesDetails = gql`
   }
 `;
 
+export const GetDrugList = gql`
+  query {
+    druglists {
+      id
+      name
+      quantity
+      type
+    }
+  }
+`;
+
 export const GetUsers = gql`
   query($branch: ID!) {
     appUsers(where: { branch: $branch, active: true }) {
@@ -118,17 +129,17 @@ export const ResetPassword = gql`
   }
 `;
 export const GetAutoClaveDetails = gql`
-query($Date: String){
-      processDetails (where:{id:[4,5,6],}){
-        id
-        processes_data(where:{Date:$Date}){
+  query($Date: String) {
+    processDetails(where: { id: [4, 5, 6] }) {
+      id
+      processes_data(where: { Date: $Date }) {
         Date
-          check_editable{
-            processCleared
-          }
+        check_editable {
+          processCleared
         }
       }
-}
+    }
+  }
 `;
 export const GetProcessesDetails = gql`
   query($resourceID: ID!) {
@@ -146,17 +157,17 @@ export const GetProcessesDetails = gql`
 `;
 
 export const GetGaDetails = gql`
-  query($Date: String){
-      processDetails (where:{id:[4,5,6],}){
-        id
-        processes_data(where:{Date:$Date}){
+  query($Date: String) {
+    processDetails(where: { id: [4, 5, 6] }) {
+      id
+      processes_data(where: { Date: $Date }) {
         Date
-          check_editable{
-            processCleared
-          }
+        check_editable {
+          processCleared
         }
       }
-}
+    }
+  }
 `;
 
 export const GetQuestionDetails = gql`
@@ -168,7 +179,7 @@ export const GetQuestionDetails = gql`
   ) {
     processDetail(id: $processID) {
       id
-      questions (sort:"questionSequenceNumber:asc"){
+      questions(sort: "questionSequenceNumber:asc") {
         id
         Question
         type
@@ -209,7 +220,7 @@ export const GetAnswersProgress = gql`
       id
       Answer
       check_editable {
-        id,
+        id
         processCleared
       }
       process_detail {
@@ -233,7 +244,7 @@ export const GetSharedResource_OperationTheaters = gql`
 `;
 
 export const autoClaveProgress = gql`
-query(
+  query(
     $operation_theater: ID!
     $Date: Date
     $instance: Int
@@ -256,7 +267,7 @@ query(
       }
     }
   }
-`
+`;
 
 export const preProcessProgress_OTStaff = gql`
   query(
