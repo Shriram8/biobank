@@ -343,7 +343,7 @@ function homeScreen(props, route) {
   const renderResources = (item) => {
     return (
       <View style={styles.item}>
-        {/* <TouchableOpacity
+         {/* <TouchableOpacity
           style={[styles.appButtonContainer, { flex: 1, flexDirection:'row' }]}
           onPress={() => {
             item.item.__typename == "AppResource"
@@ -391,17 +391,13 @@ function homeScreen(props, route) {
               style={{
                 width: 30,
                 height: "100%",
-                
                 alignContent: "center",
-                
-                
-                 
               }}
             >
               <MaterialCommunityIcons name="arrow-right" size={30} />
             </View>
         </TouchableOpacity> */}
-        <OTCard
+       <OTCard
           title={item.item.name}
           message={item.index > 0 ? processMessageData[item.index - 1] : null}
           onPress={() => {
