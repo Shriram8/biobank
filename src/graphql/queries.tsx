@@ -36,7 +36,6 @@ export const GetResourcesDetails = gql`
   }
 `;
 
-
 export const GetUsers = gql`
   query($branch: ID!) {
     appUsers(where: { branch: $branch, active: true }) {
@@ -135,11 +134,7 @@ export const GetProcessesDetails = gql`
 `;
 
 export const GetGaDetails = gql`
-query(
-    $operation_theater: ID!
-    $Date: String
-    $question: ID!
-  ) {
+  query($operation_theater: ID!, $Date: String, $question: ID!) {
     processesData(
       where: {
         operation_theater: $operation_theater
@@ -150,9 +145,8 @@ query(
       id
       Answer
     }
-}
+  }
 `;
-
 
 export const GetQuestionDetails = gql`
   query(
@@ -440,8 +434,6 @@ export enum ENUM_RESOURCE_TYPE {
   OperationTheater,
 }
 
-
-
 export const SubmitAnswerForQuestion = gql`
   mutation(
     $operation_theater: ID!
@@ -546,7 +538,7 @@ export const addNewUser = gql`
     $employeeid: String
     $active: Boolean!
     $resetpassword: Boolean!
-    $branch: ID
+    $branch: ID!
   ) {
     createAppUser(
       input: {

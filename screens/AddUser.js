@@ -51,6 +51,9 @@ const AddUser = (props) => {
       if (err.message === "Duplicate entry") {
         setShowError(true);
         setErrorMsg("User with this user id already registered");
+      } else {
+        setShowError(true);
+        setErrorMsg("Failed to add user. Please try again later");
       }
     },
   });
