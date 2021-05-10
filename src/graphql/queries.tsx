@@ -117,7 +117,20 @@ export const ResetPassword = gql`
     }
   }
 `;
-
+export const GetAutoClaveDetails = gql`
+  query($resourceID: ID!) {
+    processDetails(where:{id:[4,5,6]}) {
+      process_details {
+        id
+        Number
+        process_name
+        questions {
+          id
+        }
+      }
+    }
+  }
+`;
 export const GetProcessesDetails = gql`
   query($resourceID: ID!) {
     appResource(id: $resourceID) {
@@ -134,18 +147,17 @@ export const GetProcessesDetails = gql`
 `;
 
 export const GetGaDetails = gql`
-  query($operation_theater: ID!, $Date: String, $question: ID!) {
-    processesData(
-      where: {
-        operation_theater: $operation_theater
-        Date: $Date
-        question: $question
+  query($Date: String){
+      processDetails (where:{id:[4,5,6],}){
+        id
+        processes_data(where:{Date:$Date}){
+        Date
+          check_editable{
+            processCleared
+          }
+        }
       }
-    ) {
-      id
-      Answer
-    }
-  }
+}
 `;
 
 export const GetQuestionDetails = gql`
@@ -220,6 +232,32 @@ export const GetSharedResource_OperationTheaters = gql`
     }
   }
 `;
+
+export const autoClaveProgress = gql`
+query(
+    $operation_theater: ID!
+    $Date: Date
+    $instance: Int
+    $process_detail: ID!
+  ) {
+    processesData(
+      where: {
+        operation_theater: $operation_theater
+        Date: $Date
+        instance: $instance
+        process_detail: $process_detail
+        check_editable_null: false
+      }
+    ) {
+      id
+      Answer
+      check_editable {
+        id
+        processCleared
+      }
+    }
+  }
+`
 
 export const preProcessProgress_OTStaff = gql`
   query(

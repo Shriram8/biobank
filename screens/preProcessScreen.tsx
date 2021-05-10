@@ -205,6 +205,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         setHeaderColor(colorValue[netProgress.length-1]);
         setHeaderIcon(iconValue[netProgress.length-1]);
         setHeaderText();
+        console.log("lock",lock);
       }
     },[resultsFetched]);
 
@@ -244,6 +245,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           }
           if(netProgress.length == preSurgeryProcessCount){
             if(!autoClaveCleared){
+              lock[preSurgeryProcessCount] = true;
               setHeaderColor(red);
               setHeaderIcon(minusBox);
               setMessage("AutoClave not cleared");
