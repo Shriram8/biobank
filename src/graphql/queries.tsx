@@ -386,6 +386,7 @@ export const Check_Process_Progress = gql`
           }
           check_editable {
             id
+            processCleared
           }
         }
       }

@@ -45,6 +45,8 @@ function homeScreen(props, route) {
   const [renderFlatlistData, setRenderFlatlistData] = useState();
   const [processMessageData, setProcessMessageData] = useState([]);
   const [loadingProcessData,setloadingProcessData] = useState(false);
+  const [currDate,setCurrDate] = useState(new Date())
+  console.log("currDate",currDate)
   // const { loading, error, refetch, data } = useQuery(GetSharedResource_OperationTheaters);
   // if(data){
   //   _data = data.appResources.concat(data.operationTheaters);
@@ -122,7 +124,7 @@ function homeScreen(props, route) {
                 variables: {
                  // userId: parseInt(props.userId),
                   otID: Result.data.operationTheaters[i].id,
-                  date: new Date(),
+                  date: currDate,
                 },
                 fetchPolicy: "network-only",
               })
@@ -130,11 +132,11 @@ function homeScreen(props, route) {
                 console.log("response", response);
                 var processData = response.data.appResources;
                 let status_arr = [];
-                for (var t = 0; t <= 4 - 1; t++) {
+                for (var t = 0; t <= 5 - 1; t++) {
                   status_arr[t] = 0;
                 }
                 process_details: 
-                for (var m = 0; m < 4; m++) {
+                for (var m = 0; m < 5; m++) {
                   var start_count = 0;
                   var instance = 0;
                   for (var q = 0;q < processData[m].process_details.length; q++) {
@@ -167,8 +169,9 @@ function homeScreen(props, route) {
                           }
                           
                         } else if(processData[m].process_details[q].processes_data[i].Answer == "False") {
-                               //Add a condition to check            
-                         if(processData[m].process_details[q].processes_data[i].check_editable){
+                               //Add a condition to check   
+                               console.log("===processData[m].process_details[q].processes_data[i].check_editable.processCleared",processData[m].process_details[q].processes_data[i].check_editable)         
+                         if(processData[m].process_details[q].processes_data[i].check_editable.processCleared){
                           status_arr[m] = {
                             instance:processData[m].process_details[q].processes_data[i].instance,
                             status: "pending",
@@ -300,8 +303,15 @@ function homeScreen(props, route) {
           icon: alert,
           color:red}
       } else if (
-        varArra[index][0].status === "pending" ||
-        varArra[index][1].status === "pending"
+        varArra[index][0].status === "pending"  
+      ) {
+        message = "Ongoing for start of day";
+        
+        msgObj = {message:message,
+          icon: minusBox,
+          color:orange}
+      }else if (
+        varArra[index][0].status === "success" &&  varArra[index][1].status==="start"
       ) {
         message = "Ongoing for start of day";
         
