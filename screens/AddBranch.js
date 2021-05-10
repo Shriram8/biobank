@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 14,
     color: "#9e9e9e",
+    fontWeight: "bold",
   },
   textLabel: {
     width: "80%",
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   formView: {
-    backgroundColor: "#f1f1f1",
+    backgroundColor: "#fff",
     flexGrow: 1,
     paddingHorizontal: 20,
     paddingVertical: 27,

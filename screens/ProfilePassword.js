@@ -97,7 +97,11 @@ const ProfilePassword = (props) => {
   return (
     <>
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24 }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingHorizontal: 24,
+          backgroundColor: "#fff",
+        }}
       >
         <View style={{ marginTop: 33 }}>
           {props.route.params?.from !== "login" && (
@@ -195,6 +199,7 @@ const styles = StyleSheet.create({
   textStyle: {
     fontSize: 14,
     color: "#9e9e9e",
+    fontWeight: "bold",
   },
   textLabel: {
     width: "80%",

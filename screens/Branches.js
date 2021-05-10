@@ -66,6 +66,7 @@ const Branches = (props) => {
       data={data?.branches}
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
+      contentContainerStyle={{ backgroundColor: "#fff" }}
       ListHeaderComponent={ListHeaderComponent}
       ListEmptyComponent={emptyComponent}
     />

@@ -179,7 +179,7 @@ const Users = (props) => {
   };
 
   return (
-    <>
+    <View style={{ backgroundColor: "#fff", flex: 1 }}>
       <SectionList
         sections={sectionData}
         keyExtractor={(item, index) => item + index}
@@ -210,7 +210,7 @@ const Users = (props) => {
           </View>
         </Portal>
       )}
-    </>
+    </View>
   );
 };
 

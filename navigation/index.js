@@ -62,6 +62,17 @@ const Navigation = (props) => {
             activeBackgroundColor: "#f1f1f1",
             activeTintColor: "#010101",
             headerShown: false,
+            labelStyle: {
+              fontSize: 16,
+              fontWeight: "bold",
+            },
+            itemStyle: {
+              flex: 1,
+              justifyContent: "center",
+            },
+          }}
+          drawerStyle={{
+            paddingTop: 75,
           }}
           initialRouteName="Home"
         >
@@ -91,35 +102,39 @@ const Navigation = (props) => {
             name="Home"
             component={MainStackNavigator}
           />
-          <Drawer.Screen
-            headerShown={true}
-            options={{
-              headerShown: true,
-              drawerIcon: () => (
-                <MaterialCommunityIcons
-                  name={"alert-box"}
-                  size={30}
-                  color="#010101"
-                />
-              ),
-            }}
-            name="Alerts"
-            component={Alerts}
-          />
-          <Drawer.Screen
-            headerShown={true}
-            options={{
-              headerShown: true,
-              drawerIcon: () => (
-                <Image
-                  style={{ height: 30, width: 30 }}
-                  source={require("./../assets/screenIcons/history.svg")}
-                />
-              ),
-            }}
-            name="History"
-            component={HistoryScreen}
-          />
+          {props.userType !== "OTStaff" && (
+            <Drawer.Screen
+              headerShown={true}
+              options={{
+                headerShown: true,
+                drawerIcon: () => (
+                  <MaterialCommunityIcons
+                    name={"alert-box"}
+                    size={30}
+                    color="#010101"
+                  />
+                ),
+              }}
+              name="Alerts"
+              component={Alerts}
+            />
+          )}
+          {props.userType !== "OTStaff" && props.userType !== "OTIncharge" && (
+            <Drawer.Screen
+              headerShown={true}
+              options={{
+                headerShown: true,
+                drawerIcon: () => (
+                  <Image
+                    style={{ height: 30, width: 30 }}
+                    source={require("./../assets/screenIcons/history.svg")}
+                  />
+                ),
+              }}
+              name="History"
+              component={HistoryScreen}
+            />
+          )}
           <Drawer.Screen
             headerShown={true}
             options={{
@@ -134,7 +149,7 @@ const Navigation = (props) => {
             name="Profile"
             component={ProfileStackNavigator}
           />
-          {props.userType !== "OTStaff" && (
+          {props.userType !== "OTStaff" && props.userType !== "OTIncharge" && (
             <Drawer.Screen
               headerShown={true}
               options={{
@@ -302,19 +317,19 @@ const UserStackNavigator = (props, type) => {
         component={Users}
         options={({ route }) => ({
           title: "Users",
-          headerTitleAlign: "center",
+          headerTitleAlign: type === "OTSuperUser" ? "center" : "left",
           headerLeft: () => (
             <Button
               onPress={() => {
                 if (type === "OTSuperUser") {
                   props.navigation.navigate("branches");
                 } else {
-                  props.navigation.goBack();
+                  props.navigation.openDrawer();
                 }
               }}
               icon={() => (
                 <MaterialCommunityIcons
-                  name="arrow-left"
+                  name={type === "OTSuperUser" ? "arrow-left" : "menu"}
                   size={25}
                   color="black"
                   style={{ marginLeft: 2 }}
@@ -329,15 +344,14 @@ const UserStackNavigator = (props, type) => {
         component={Branches}
         options={({ route }) => ({
           title: "User Management",
-          headerTitleAlign: "center",
           headerLeft: () => (
             <Button
               onPress={() => {
-                props.navigation.goBack();
+                props.navigation.openDrawer();
               }}
               icon={() => (
                 <MaterialCommunityIcons
-                  name="arrow-left"
+                  name="menu"
                   size={25}
                   color="black"
                   style={{ marginLeft: 2 }}
@@ -377,15 +391,14 @@ const ProfileStackNavigator = (props) => {
         component={Profile}
         options={({ route }) => ({
           title: "Profile",
-          headerTitleAlign: "center",
           headerLeft: () => (
             <Button
               onPress={() => {
-                props.navigation.goBack();
+                props.navigation.openDrawer();
               }}
               icon={() => (
                 <MaterialCommunityIcons
-                  name="arrow-left"
+                  name="menu"
                   size={25}
                   color="black"
                   style={{ marginLeft: 2 }}

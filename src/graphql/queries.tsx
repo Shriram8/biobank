@@ -36,6 +36,16 @@ export const GetResourcesDetails = gql`
   }
 `;
 
+export const GetDrugList = gql`
+  query {
+    druglists {
+      id
+      name
+      quantity
+      type
+    }
+  }
+`;
 
 export const GetUsers = gql`
   query($branch: ID!) {
@@ -57,6 +67,10 @@ export const GetUserDataById = gql`
       employeeid
       gender
       uid
+      branch {
+        id
+        name
+      }
     }
   }
 `;
@@ -114,7 +128,19 @@ export const ResetPassword = gql`
     }
   }
 `;
-
+export const GetAutoClaveDetails = gql`
+  query($Date: String) {
+    processDetails(where: { id: [4, 5, 6] }) {
+      id
+      processes_data(where: { Date: $Date }) {
+        Date
+        check_editable {
+          processCleared
+        }
+      }
+    }
+  }
+`;
 export const GetProcessesDetails = gql`
   query($resourceID: ID!) {
     appResource(id: $resourceID) {
@@ -131,24 +157,18 @@ export const GetProcessesDetails = gql`
 `;
 
 export const GetGaDetails = gql`
-query(
-    $operation_theater: ID!
-    $Date: String
-    $question: ID!
-  ) {
-    processesData(
-      where: {
-        operation_theater: $operation_theater
-        Date: $Date
-        question: $question
-      }
-    ) {
+  query($Date: String) {
+    processDetails(where: { id: [4, 5, 6] }) {
       id
-      Answer
+      processes_data(where: { Date: $Date }) {
+        Date
+        check_editable {
+          processCleared
+        }
+      }
     }
-}
+  }
 `;
-
 
 export const GetQuestionDetails = gql`
   query(
@@ -159,7 +179,7 @@ export const GetQuestionDetails = gql`
   ) {
     processDetail(id: $processID) {
       id
-      questions {
+      questions(sort: "questionSequenceNumber:asc") {
         id
         Question
         type
@@ -201,6 +221,7 @@ export const GetAnswersProgress = gql`
       Answer
       check_editable {
         id
+        processCleared
       }
       process_detail {
         id
@@ -218,6 +239,32 @@ export const GetSharedResource_OperationTheaters = gql`
     operationTheaters {
       id
       name
+    }
+  }
+`;
+
+export const autoClaveProgress = gql`
+  query(
+    $operation_theater: ID!
+    $Date: Date
+    $instance: Int
+    $process_detail: ID!
+  ) {
+    processesData(
+      where: {
+        operation_theater: $operation_theater
+        Date: $Date
+        instance: $instance
+        process_detail: $process_detail
+        check_editable_null: false
+      }
+    ) {
+      id
+      Answer
+      check_editable {
+        id
+        processCleared
+      }
     }
   }
 `;
@@ -354,7 +401,7 @@ export const GetSurgeryDetails = gql`
   }
 `;
 export const Check_Process_Progress = gql`
-  query($otID: ID!, $date: String ) {
+  query($otID: ID!, $date: String) {
     appResources(
       sort: "processOrder:asc"
       where: { resourceType: "OperationTheater" }
@@ -367,11 +414,7 @@ export const Check_Process_Progress = gql`
         process_name
         processes_data(
           sort: "id:asc"
-          where: {
-            
-            operation_theater: { id: $otID }
-            Date: $date
-          }
+          where: { operation_theater: { id: $otID }, Date: $date }
         ) {
           Date
           id
@@ -440,8 +483,6 @@ export enum ENUM_RESOURCE_TYPE {
   SharedResource,
   OperationTheater,
 }
-
-
 
 export const SubmitAnswerForQuestion = gql`
   mutation(
@@ -547,7 +588,7 @@ export const addNewUser = gql`
     $employeeid: String
     $active: Boolean!
     $resetpassword: Boolean!
-    $branch: ID
+    $branch: ID!
   ) {
     createAppUser(
       input: {
