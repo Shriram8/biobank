@@ -413,6 +413,7 @@ export default function questionsScreen({
         <DrugListPopover
           alert={showDrugList}
           onContinue={() => setShowDrugList(false)}
+          close={() => setShowDrugList(false)}
         />
         <Text style={[styles.appButtonText, { flex: 1, marginBottom: 16 }]}>
           {item.Question}

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, Text, FlatList } from "react-native";
-import { Button, Portal } from "react-native-paper";
+import { Button, Portal, IconButton } from "react-native-paper";
 import { useQuery } from "@apollo/client";
 import { GetDrugList } from "../src/graphql/queries";
 
@@ -27,7 +27,16 @@ const DrugListPopover = (props) => {
     return (
       <>
         <View style={styles.mainHeaderView}>
-          <Text style={styles.mainHeader}>Drugs List</Text>
+          <View style={styles.headerView}>
+            <Text style={styles.mainHeader}>Drugs List</Text>
+            <IconButton
+              icon="close"
+              color={"black"}
+              size={20}
+              onPress={props.close}
+            />
+          </View>
+
           <Text style={styles.subHeader}>
             Confirm all the drugs in the list are availbale.
           </Text>
@@ -95,7 +104,6 @@ const styles = StyleSheet.create({
   mainHeader: {
     fontWeight: "bold",
     fontSize: 18,
-    marginBottom: 8,
   },
   subHeader: {
     fontWeight: "500",
@@ -139,5 +147,11 @@ const styles = StyleSheet.create({
   mainHeaderView: {
     marginVertical: 26,
     marginHorizontal: 16,
+  },
+  headerView: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
   },
 });
