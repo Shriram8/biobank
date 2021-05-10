@@ -51,7 +51,10 @@ var temp = new Array();
 var questionCount: number;
 var processDataId: any[];
 var _processCleared: boolean;
-
+const processNumber_Initial = 1;
+const initialProcessQuestionIndex = 2;
+var _isInitialProcess:boolean;
+var ignoreQuestionsCount:number;
 export default function questionsScreen({route,navigation}: {route: any,navigation: any}) {
 
   const { userId,operationTheaterID,processID, processName,instance,userType,gaValue } = route.params;
@@ -70,8 +73,9 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
+    //console.log("GAAA VALUEEEE",gaValue)
     if(questions_data){
-      console.log("USER TYPE__",userType) 
+      //console.log("USER TYPE__",userType) 
     }
   },[questions_data]);
 
@@ -80,7 +84,9 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         setDisableCompleted(true);
         setOverride(false);
         _processCleared = true;
+        _isInitialProcess = false;
         setCleared(true);
+        ignoreQuestionsCount = 0;
         apolloClient
         .query({
           query: GetQuestionDetails,
@@ -94,12 +100,30 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         })
         .then((Result) => {
             questions_data = Result.data;
+            //console.log("Questions Data",questions_data);
+            
+            if(questions_data.processDetail.id == processNumber_Initial){
+              _isInitialProcess = true;
+            }
             dict = []
             dictId = []
             temp=[];
             processDataId=[];
             editableId = [];
             questionCount = questions_data.processDetail.questions.length;
+            
+            if(gaValue == "False"){
+                for(var i = 0; i<questionCount;i++){
+                  try{
+                    if(questions_data.processDetail.questions[i].type == "gaQuestions" ||questions_data.processDetail.questions[i].type == "toggleNA"){
+                      ignoreQuestionsCount = ignoreQuestionsCount+1
+                    }
+                  }catch{
+
+                  }
+                }
+              questionCount = questionCount-ignoreQuestionsCount;
+            }
             if(questions_data.processesData.length == questionCount){
               setDisableCompleted(false);
             }
@@ -110,11 +134,19 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
             }
             
             for(var i =0; i< questions_data.processesData.length;i++){
+              //console.log(questions_data)
               key =  questions_data.processesData[i].question.id;
               value = questions_data.processesData[i].Answer;
+              
               if(value == "False"){
-                setCleared(false);
+                if(questions_data.processDetail.id != processNumber_Initial){
+                  setCleared(false);
+                }else if(_isInitialProcess && key == initialProcessQuestionIndex){
+                  setCleared(false);
+                  //console.log("Initial Processs,",_isInitialProcess);
+                }
               }
+              //console.log("Initial Processs,",_isInitialProcess,key);
               dict[key] = value;
               try{
               editableId[key] = questions_data.processesData[0].check_editable.id;
@@ -182,8 +214,17 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         value = "N/A"
       }
       if(value == "False"){
-        _processCleared = false;
-        setCleared(false);
+        if(!_isInitialProcess)
+        {
+          _processCleared = false;
+          setCleared(false);
+        }else{
+          if(index == initialProcessQuestionIndex){
+            _processCleared = false;
+            setCleared(false);
+          }
+        }
+       
       }
     }
     if(temp.indexOf(index)!=-1){ 
@@ -196,13 +237,13 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   const [updateEditableFunction, {data:UpdateEditableData }] = useMutation(UpdateSubmitCompleted);
 
   const submitEditable = ()=>{
-    
+      //console.log("Process Cleared---",_processCleared)
       setDisableButtons(true);
       setDisableCompleted(true);
       if(userType == "OTIncharge"){
         setCleared(true);
         for(var i=0;i<temp.length;i++){
-          console.log(dict,processDataId,dictId,temp)
+          //console.log(dict,processDataId,dictId,temp)
           if(dict[temp[i]]=="False"){
             updateQuery(dictId[temp[i]],"True");
             updateEditableFunction({
@@ -212,8 +253,6 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
           }
           setOverride(true);
         }
-
-
       }else{
         mutateEditableFunction({
           variables: { 
@@ -228,8 +267,16 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
   
 
   const renderResources = ({item,index}: {item: any, index:number}) => {
+    if(gaValue == "False"){
+      if(item.type=="gaQuestions")
+      return;
+      else if(item.type=="toggleNA")
+      return;
+    }
+    //console.log("ITEM---",item.type, gaValue);
     return (
     <View style={[styles.item,index==0&&{marginTop:0}]}>
+      
       <Text style={[styles.appButtonText,{flex:1,marginBottom:16  }]}>
         {item.Question}
       </Text>
@@ -261,6 +308,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
           borderColor:"#959595",borderWidth:1,fontSize: 16,color: '#959595',fontWeight:"bold"}}
           onValueChange={(itemValue, itemIndex) => sendQuery(item.id,itemValue,0)}
         >
+        <Picker.Item label="Select Surgeon" value="Not Selected" />
         <Picker.Item label="Surgeon 1" value="Surgeon 1" />
         <Picker.Item label="Surgeon 2" value="Surgeon 2" />
         <Picker.Item label="Surgeon 3" value="Surgeon 3" />
@@ -272,7 +320,8 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         <Picker.Item label="Surgeon 9" value="Surgeon 9" />
         <Picker.Item label="Surgeon 10" value="Surgeon 10" />
       </Picker>
-      </>):(item.type == "toggleNA"?(
+      </>):((item.type == "toggleNA")?(
+        
        <RadioGroup 
           selectedIndex={(dict[item.id] == "True"? 0 : (dict[item.id]=="False"?(override?0:1):(dict[item.id]=="N/A"?2:null)))}
           onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
@@ -314,7 +363,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
               />
             );
           })}
-        </RadioGroup>):((item.type == "gaQuestions" && gaValue=="True")?(<RadioGroup 
+        </RadioGroup>):((item.type == "gaQuestions" )?(<RadioGroup 
           selectedIndex={override?0:(dict[item.id] == "True"? 0 : (dict[item.id]=="False"?1:null))}
           onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
           style={{flexDirection:"row",justifyContent: 'space-between' }}
@@ -334,7 +383,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
               />
             );
           })}
-        </RadioGroup>):
+        </RadioGroup>):(item.type == "toggle" || item.type == "ga" || item.type == "value")?
        (<RadioGroup 
           selectedIndex={override?0:(dict[item.id] == "True"? 0 : (dict[item.id]=="False"?1:null))}
           onSelect={(index: any, value: any) => sendQuery(item.id,index,1)}
@@ -355,7 +404,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
               />
             );
           })}
-        </RadioGroup>)))))}
+        </RadioGroup>):(<></> )))))}
     </View>
     );
   };

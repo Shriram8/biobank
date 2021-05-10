@@ -159,7 +159,7 @@ export const GetQuestionDetails = gql`
   ) {
     processDetail(id: $processID) {
       id
-      questions {
+      questions (sort:"questionSequenceNumber:asc"){
         id
         Question
         type
@@ -200,7 +200,8 @@ export const GetAnswersProgress = gql`
       id
       Answer
       check_editable {
-        id
+        id,
+        processCleared
       }
       process_detail {
         id

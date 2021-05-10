@@ -13,7 +13,9 @@ var progress: any[] = [];
 var questionsCount: any[] = [];
 var colorValue: any [] = [];
 var IconValue: any [] = [];
-var _gaValue:any;
+var _gaValue: any;
+const processNumber_Initial = 1;
+const initialProcessQuestionIndex = 2;
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId,operationTheaterID,resourceID, resourceName,instance,userType } = route.params;
     let [refresh,setRefresh] = useState(true);
@@ -90,7 +92,6 @@ export default function processScreen({route, navigation}: {navigation: any, rou
 
     useEffect(()=>{
       const unsubscribe = navigation.addListener('focus', () => {
-
         apolloClient
             .query({
                     query: GetGaDetails,
@@ -116,6 +117,14 @@ export default function processScreen({route, navigation}: {navigation: any, rou
     },[navigation]);
 
     const checkIfAnswer_No = (data: string | any[])=>{
+      //console.log("DATTTAAA",data);
+      try{
+        if(data[0].check_editable.processCleared){
+          return false;
+        }
+      }catch{
+
+      }
       for(var i = 0; i<data.length;i++){
         if(data[i].Answer == "False"){
           return true

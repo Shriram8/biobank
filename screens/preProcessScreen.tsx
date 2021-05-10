@@ -11,6 +11,7 @@ const apolloClient = client;
 let _data: any[] = [];
 const preSurgeryProcessCount = 2;
 const preSurgeryProcessID = 3; //id from order.
+const inBetweenSurgeryProcessID = 4;
 let lock: boolean[] = [];
 let moduleLock: boolean;
 var progress: any[] = [];
@@ -67,7 +68,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           fetchPolicy:"network-only"
         })
         .then((Result) => {
-          console.log("-----Result",Result);
+          //console.log("-----Result",Result);
             for(var i = 0;i<2;i++){
                 _data.push(Result.data.appResources[i]);
                 
@@ -79,8 +80,12 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
                 }
             }
             try{
+              
               for(var i =0; i< Result.data.questions[0].processes_data[0].Answer;i++){
-                _data.push(Result.data.appResources[preSurgeryProcessID-1]);
+                if(i == 0){
+                  _data.push(Result.data.appResources[preSurgeryProcessID-1]);
+                }else
+                _data.push(Result.data.appResources[inBetweenSurgeryProcessID-1]);
                 lock.push(true);
               }
             }catch{
@@ -126,36 +131,15 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
 
     
     React.useEffect(()=>{
-      console.log("GOT TATA")
       if(_Result.length == _length){
-        console.log("GOT DATATA")
+        //console.log("GOT DATATA")
         for(var k = 0;k<_Result.length;k++){
                     try{
                           if(_Result[k].processesData[0].check_editable){
-                            console.log("instance-----",_Result[k].processesData[0]);
+                            //console.log("instance-----",_Result[k].processesData[0]);
                             var p = _Result[k].processesData[0].instance;
                             progress[p] = progress[p]+1;
                             netProgress[p] = progress[p]/processCount[p];
-                            // if(netProgress[p] == 1 ){
-                              
-                            //   if(p<preSurgeryProcessCount && !_Result[k].processesData[0].check_editable.processCleared){
-                            //     moduleLock = true;
-                            //   }
-                            //   try{
-                            //     if(moduleLock == true && p == preSurgeryProcessCount-1){
-                            //       console.log("MMMMMMM",)
-                            //       lock[preSurgeryProcessCount] = true;
-                            //       //setRefresh(prevCount => prevCount + 1);
-                            //     }
-                            //     else lock[p+1] = false;
-                            //   }catch{
-
-                            //   }
-                            // }else{
-                            //   //console.log(netProgress[p]);
-                            // }
-                            
-
                             if(netProgress[p]==1 && _Result[k].processesData[0].check_editable.processCleared){
                               if(colorValue[p] != red ){
                                 colorValue[p] = green 
@@ -185,8 +169,8 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
 
           
         }
-        console.log("COLOR VALUE___",colorValue);
-        console.log("INDEX---",netProgress);
+        //console.log("COLOR VALUE___",colorValue);
+        //console.log("INDEX---",netProgress);
         setHeaderColor(colorValue[netProgress.length-1]);
         setHeaderIcon(iconValue[netProgress.length-1]);
         setHeaderText();
@@ -194,11 +178,11 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
     },[resultsFetched]);
 
     const setHeaderText = ()=>{
-      console.log("NET PROGRESS LENGTH--",netProgress.length,)
+      //console.log("NET PROGRESS LENGTH--",netProgress.length,)
 
       switch(colorValue[netProgress.length-1]){
         case red:
-          console.log("RED")
+          //console.log("RED")
           if(netProgress.length<=preSurgeryProcessCount){
             
             setMessage("Not Cleared for start of day");
@@ -210,7 +194,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           }
           break;
         case orange:
-          console.log("ORANGE")
+          //console.log("ORANGE")
           if(netProgress.length<=preSurgeryProcessCount){
             setMessage("Ongoing for start of day");
           }else if(netProgress.length == processCount.length){
@@ -221,7 +205,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           }
           break;
         case green:
-          console.log("GREEN")
+          //console.log("GREEN")
           if(netProgress.length<preSurgeryProcessCount){
             setHeaderColor(orange);
             setHeaderIcon(minusBox);
@@ -260,8 +244,9 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
     }
 
     const getText = (processOrder: number,id: number,index: number)=>{ 
+      //console.log("processOrder:",processOrder,id,index)
     return (processOrder == preSurgeryProcessCount)?"Cleared for start of day":
-    ((processOrder == 3)?("Cleared for Surgery"+(id == 4 ?"-0"+(index-1):"")):("Cleared for end of the day"))
+    ((processOrder == 3 || processOrder == 4)?("Cleared for Surgery"+(id == 4 ?"-0"+(index-1):(id == 6 ?"-0"+(index-1):""))):("Cleared for end of the day"))
     }
 
     const changeColorSetText=(id: number)=>{
@@ -328,7 +313,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             instance: parseInt(index),
           })}}>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,fontSize: 18, fontWeight:'500'},lock[index]?{color: "#959595",}:{}]}>
-        {item.id == 4 ?item.name+"-0"+(index-1):item.name}
+      {item.id == 4 ?item.name+"-0"+(index-1):(item.id == 6 ?item.name+"-0"+(index-1):item.name)}
       </Text>
 
       <View style={{ width:18,height:18,marginEnd:14, alignContent:'flex-end'}}>
