@@ -129,14 +129,13 @@ export const ResetPassword = gql`
   }
 `;
 export const GetAutoClaveDetails = gql`
-  query($resourceID: ID!) {
+  query($Date: String) {
     processDetails(where: { id: [4, 5, 6] }) {
-      process_details {
-        id
-        Number
-        process_name
-        questions {
-          id
+      id
+      processes_data(where: { Date: $Date }) {
+        Date
+        check_editable {
+          processCleared
         }
       }
     }
@@ -158,16 +157,15 @@ export const GetProcessesDetails = gql`
 `;
 
 export const GetGaDetails = gql`
-  query($operation_theater: ID!, $Date: String, $question: ID!) {
-    processesData(
-      where: {
-        operation_theater: $operation_theater
-        Date: $Date
-        question: $question
-      }
-    ) {
+  query($Date: String) {
+    processDetails(where: { id: [4, 5, 6] }) {
       id
-      Answer
+      processes_data(where: { Date: $Date }) {
+        Date
+        check_editable {
+          processCleared
+        }
+      }
     }
   }
 `;
