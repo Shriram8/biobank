@@ -36,6 +36,17 @@ export const GetResourcesDetails = gql`
   }
 `;
 
+export const GetDrugList = gql`
+  query {
+    druglists {
+      id
+      name
+      quantity
+      type
+    }
+  }
+`;
+
 export const GetUsers = gql`
   query($branch: ID!) {
     appUsers(where: { branch: $branch, active: true }) {
@@ -119,7 +130,7 @@ export const ResetPassword = gql`
 `;
 export const GetAutoClaveDetails = gql`
   query($resourceID: ID!) {
-    processDetails(where:{id:[4,5,6]}) {
+    processDetails(where: { id: [4, 5, 6] }) {
       process_details {
         id
         Number
@@ -147,11 +158,7 @@ export const GetProcessesDetails = gql`
 `;
 
 export const GetGaDetails = gql`
-query(
-    $operation_theater: ID!
-    $Date: String
-    $question: ID!
-  ) {
+  query($operation_theater: ID!, $Date: String, $question: ID!) {
     processesData(
       where: {
         operation_theater: $operation_theater
@@ -162,7 +169,7 @@ query(
       id
       Answer
     }
-}
+  }
 `;
 
 export const GetQuestionDetails = gql`
@@ -174,7 +181,7 @@ export const GetQuestionDetails = gql`
   ) {
     processDetail(id: $processID) {
       id
-      questions (sort:"questionSequenceNumber:asc"){
+      questions(sort: "questionSequenceNumber:asc") {
         id
         Question
         type
@@ -215,7 +222,7 @@ export const GetAnswersProgress = gql`
       id
       Answer
       check_editable {
-        id,
+        id
         processCleared
       }
       process_detail {
@@ -239,7 +246,7 @@ export const GetSharedResource_OperationTheaters = gql`
 `;
 
 export const autoClaveProgress = gql`
-query(
+  query(
     $operation_theater: ID!
     $Date: Date
     $instance: Int
@@ -262,7 +269,7 @@ query(
       }
     }
   }
-`
+`;
 
 export const preProcessProgress_OTStaff = gql`
   query(
