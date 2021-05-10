@@ -82,6 +82,89 @@ const processNumber_Initial = 1;
 const initialProcessQuestionIndex = 2;
 var _isInitialProcess: boolean;
 var ignoreQuestionsCount: number;
+var imageAddress = ["../Images/P1.jpg","../Images/P2.jpg"];
+const contentButtons = [
+    {
+        title: "P1",
+        image: require("../Images/P1.jpg")
+    },
+    {
+        title: "P2",
+        image: require("../Images/P2.jpg")
+    },
+    {
+        title: "P3",
+        image: require("../Images/P3.jpg")
+    },
+    {
+        title: "P4",
+        image: require("../Images/P4.jpg")
+    },
+    {
+        title: "P5",
+        image: require("../Images/P5.jpg")
+    },
+    {
+        title: "P6",
+        image: require("../Images/P6.jpg")
+    },
+    {
+        title: "P7",
+        image: require("../Images/P7.jpg")
+    },
+    {
+        title: "P8",
+        image: require("../Images/P8.jpg")
+    },
+    {
+        title: "P9",
+        image: require("../Images/P9.jpg")
+    },
+    {
+        title: "P10",
+        image: require("../Images/P10.jpg")
+    },
+    {
+        title: "P11",
+        image: require("../Images/P11.jpg")
+    },
+    {
+        title: "P12",
+        image: require("../Images/P12.jpg")
+    },
+    {
+        title: "P13",
+        image: require("../Images/P13.jpg")
+    },
+    {
+        title: "P14",
+        image: require("../Images/P14.jpg")
+    },
+    {
+        title: "P15",
+        image: require("../Images/P15.jpg")
+    },
+    {
+        title: "P16",
+        image: require("../Images/P16.jpg")
+    },
+    {
+        title: "P17",
+        image: require("../Images/P17.jpg")
+    },
+    {
+        title: "P18",
+        image: require("../Images/P18.jpg")
+    },
+    {
+        title: "P19",
+        image: require("../Images/P19.jpg")
+    },
+    {
+        title: "P20",
+        image: require("../Images/P20.jpg")
+    },
+]
 export default function questionsScreen({
   route,
   navigation,
@@ -97,6 +180,9 @@ export default function questionsScreen({
     instance,
     userType,
     gaValue,
+    backgroundColor,
+    processPseudoName,
+    //imageAddress
   } = route.params;
   const [_data, setfetchData] = React.useState(false);
   const [disbaleCompleted, setDisableCompleted] = React.useState(true);
@@ -127,6 +213,7 @@ export default function questionsScreen({
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
+      //imageAddress = "../Images/"+processPseudoName+".jpg";
       setDisableCompleted(true);
       setOverride(false);
       _processCleared = true;
@@ -326,6 +413,7 @@ export default function questionsScreen({
         <DrugListPopover
           alert={showDrugList}
           onContinue={() => setShowDrugList(false)}
+          close={() => setShowDrugList(false)}
         />
         <Text style={[styles.appButtonText, { flex: 1, marginBottom: 16 }]}>
           {item.Question}
@@ -617,12 +705,12 @@ export default function questionsScreen({
         <StatusBar animated={true} backgroundColor="#ff8d48" hidden={false} />
 
         <View
-          style={{ backgroundColor: "#ff8d48", width: "100%", height: "100%" }}
+          style={{ backgroundColor: backgroundColor, width: "100%", height: "100%" }}
         >
-          <View style={styles.header}>
+          <View style={[styles.header,{backgroundColor: backgroundColor}]}>
             <Image
               style={{ width: "100%", height: "100%", resizeMode: "cover" }}
-              source={require("../Images/S-2-Autoclave.png")}
+              source={contentButtons[processPseudoName-1].image}
             />
           </View>
           <View
@@ -661,7 +749,7 @@ export default function questionsScreen({
                   }}
                   data={questions_data.processDetail.questions}
                   keyExtractor={(item, index) => item.id}
-                  renderItem={renderResources}
+                  renderItem = {renderResources}
                 />
               )}
             </View>
@@ -702,10 +790,10 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   header: {
-    backgroundColor: "#ff8d48",
-    alignItems: "center",
-    justifyContent: "center",
-    height: 150,
+    //backgroundColor: '#ff8d48',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height:150
   },
   container: {
     marginTop: 150,
