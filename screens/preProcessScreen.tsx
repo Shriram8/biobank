@@ -3,7 +3,7 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetSurgeryDetails,GetGaDetails,GetSurgeryDetails_OTStaff,preProcessProgress_OTStaff} from '../src/graphql/queries';
+import {GetSurgeryDetails,GetAutoClaveDetails,GetSurgeryDetails_OTStaff,preProcessProgress_OTStaff} from '../src/graphql/queries';
 import { ProgressBar } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; 
@@ -128,7 +128,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
            
       });
       return unsubscribe;
-    }, [navigation]);
+  }, [navigation]);
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -137,7 +137,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       var temp = 0
       apolloClient
         .query({
-          query: GetGaDetails,
+          query: GetAutoClaveDetails,
           variables:{
             Date:new Date().toISOString().slice(0, 10),
           },
@@ -159,10 +159,10 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         })
       });
       return unsubscribe;
-    }, [navigation]);
+  }, [navigation]);
 
 
-    React.useEffect(()=>{
+  React.useEffect(()=>{
       if(_Result.length == _length){
         for(var k = 0;k<_Result.length;k++){
                     try{
