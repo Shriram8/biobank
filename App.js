@@ -23,7 +23,6 @@ const initialState = {
   userType: "",
 };
 const reducer = (state = initialState, action) => {
-  //console.log("Action type__",action.type);
   switch (action.type) {
     case "CHANGE_LOGIN":
       console.log("Trying to change login", action.payload);

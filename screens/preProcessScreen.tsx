@@ -3,7 +3,7 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetSurgeryDetails,preProcessProgress,GetSurgeryDetails_OTStaff,preProcessProgress_OTStaff} from '../src/graphql/queries';
+import {GetSurgeryDetails,GetGaDetails,GetSurgeryDetails_OTStaff,preProcessProgress_OTStaff} from '../src/graphql/queries';
 import { ProgressBar } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; 
@@ -29,7 +29,6 @@ var minusBox = "minus-box";
 var _Result: any [] = [];
 var _length: number;
 var _headerColor;
-
 export default function preProcessScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId, operationTheaterID, operationTheaterName, userType} = route.params;
     const [renderFlatlistData,setRenderFlatlistData] = useState();
@@ -38,6 +37,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
     const [updateMessage,setUpdateMessage] = useState(0);
     const [headerColor,setHeaderColor] = useState("")
     const [headerIcon,setHeaderIcon]= useState("");
+    const [autoClaveCleared,setAutoClaveCleared]= useState(false);
     const [resultsFetched,setResultsFetched] = useState(0);
     const jewelStyle = (item: number | undefined)=>{
       return (item == 1)?{backgroundColor:"white"}:{backgroundColor:"#b6b6b6"}
@@ -57,6 +57,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         colorValue = [];
         iconValue = [];
         moduleLock = false;
+        
         apolloClient
         .query({
           query: GetSurgeryDetails_OTStaff,
@@ -129,10 +130,40 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       return unsubscribe;
     }, [navigation]);
 
-    
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setAutoClaveCleared(false);
+      var process = 3;
+      var temp = 0
+      apolloClient
+        .query({
+          query: GetGaDetails,
+          variables:{
+            Date:new Date().toISOString().slice(0, 10),
+          },
+          fetchPolicy:"network-only"
+        })
+        .then((Result) => {
+          for(var i=0; i<Result.data.processDetails.length;i++){
+            try{
+              if(Result.data.processDetails[i].processData[0].check_editable.processCleared){
+                temp = temp+1;
+              }
+            }catch{
+
+            }
+          }
+          if(temp == process){
+            setAutoClaveCleared(true);
+          }
+        })
+      });
+      return unsubscribe;
+    }, [navigation]);
+
+
     React.useEffect(()=>{
       if(_Result.length == _length){
-        //console.log("GOT DATATA")
         for(var k = 0;k<_Result.length;k++){
                     try{
                           if(_Result[k].processesData[0].check_editable){
@@ -184,7 +215,6 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         case red:
           //console.log("RED")
           if(netProgress.length<=preSurgeryProcessCount){
-            
             setMessage("Not Cleared for start of day");
           }else if(netProgress.length == processCount.length){
             setMessage("Not Cleared for end of day");
@@ -213,6 +243,11 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             break;
           }
           if(netProgress.length == preSurgeryProcessCount){
+            if(!autoClaveCleared){
+              setHeaderColor(red);
+              setHeaderIcon(minusBox);
+              setMessage("AutoClave not cleared");
+            }else
             setMessage("Cleared for start of day");
           }else if(netProgress.length == processCount.length){
             setMessage("Cleared for end of day");
@@ -252,6 +287,9 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
     const changeColorSetText=(id: number)=>{
       try{
         if(progress[id]){
+          if(!autoClaveCleared){
+              return red;
+            }
           if(netProgress[id]==1){
             if(colorValue[id] == green){
               return colorValue[id];
@@ -269,6 +307,9 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
     const changeColorStyle=(processOrder: number,id: number,index: number)=>{
       try{
         if(progress[index]){
+            if(!autoClaveCleared){
+              return {color:red};
+            }
             if(colorValue[index] == green){
               return {color:colorValue[index]};
             }

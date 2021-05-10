@@ -10,7 +10,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { RadioGroup, RadioButton } from 'react-native-radio-btn';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Picker} from '@react-native-picker/picker';
-
 const apolloClient = client;
 const radioItems= [
       {
@@ -100,8 +99,6 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         })
         .then((Result) => {
             questions_data = Result.data;
-            //console.log("Questions Data",questions_data);
-            
             if(questions_data.processDetail.id == processNumber_Initial){
               _isInitialProcess = true;
             }
@@ -280,6 +277,11 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
       <Text style={[styles.appButtonText,{flex:1,marginBottom:16  }]}>
         {item.Question}
       </Text>
+      {item.type == "drugList"?(
+      <Button mode="text" onPress={() => console.log('Pressed')} 
+      style={{alignItems:"flex-start"}}>
+        Drugs List
+      </Button>):(null)}
       {item.type == "value_based"?(<>
         <Picker
           selectedValue={dict[item.id]}
