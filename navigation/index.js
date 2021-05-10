@@ -289,11 +289,12 @@ const MainStackNavigator = (props) => {
           component={QuestionsScreen}
           initialParams={{ resourceName: "" }}
           options={({ route }) => ({
+            headerShown: true,
             title: route.params.resourceName,
             headerTitleAlign: "center",
             headerStyle: {
               elevation: 0,
-              backgroundColor: "#ff8d48",
+              backgroundColor: route.params.backgroundColor,
             },
             headerTitleStyle: {
               fontSize: 18,

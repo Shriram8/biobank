@@ -56,7 +56,7 @@ var _isInitialProcess:boolean;
 var ignoreQuestionsCount:number;
 export default function questionsScreen({route,navigation}: {route: any,navigation: any}) {
 
-  const { userId,operationTheaterID,processID, processName,instance,userType,gaValue } = route.params;
+  const { userId,operationTheaterID,processID, processName,instance,userType,gaValue, processPseudoName,backgroundColor} = route.params;
   const [_data,setfetchData] = React.useState(false);
   const [disbaleCompleted,setDisableCompleted] = React.useState(true);
   const [disableButtons,setDisableButtons] = React.useState(false);
@@ -73,6 +73,7 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
 
   useEffect(() => {
     //console.log("GAAA VALUEEEE",gaValue)
+    console.log("Process name:-",processName);
     if(questions_data){
       //console.log("USER TYPE__",userType) 
     }
@@ -447,11 +448,11 @@ export default function questionsScreen({route,navigation}: {route: any,navigati
         backgroundColor="#ff8d48"
         hidden={false} />
         
-         <View style={{backgroundColor:"#ff8d48",width:"100%",height:"100%"}}>
-          <View style={styles.header}>
+         <View style={{width:"100%",height:"100%",backgroundColor:backgroundColor}}>
+          <View style={[styles.header,{backgroundColor:backgroundColor}]}>
             <Image
                 style={{width:"100%",height:"100%",resizeMode: 'cover'}}
-               source={require('../Images/S-2-Autoclave.png')}
+               source={require('../Images/'+processPseudoName+".jpg")}
             />
           </View>
         <View style={{flex:1,backgroundColor:'white',borderTopLeftRadius:30,}}>
@@ -498,7 +499,7 @@ const styles = StyleSheet.create({
     color:'#000000'
   },
   header: {
-    backgroundColor: '#ff8d48',
+    //backgroundColor: '#ff8d48',
     alignItems: 'center',
     justifyContent: 'center',
     height:150
