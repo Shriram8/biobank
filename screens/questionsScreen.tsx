@@ -38,6 +38,7 @@ import { RadioGroup, RadioButton } from "react-native-radio-btn";
 import DrugListPopover from "./DrugListPopover";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Picker } from "@react-native-picker/picker";
+
 const apolloClient = client;
 const radioItems = [
   {
@@ -82,6 +83,8 @@ const processNumber_Initial = 1;
 const initialProcessQuestionIndex = 2;
 var _isInitialProcess: boolean;
 var ignoreQuestionsCount: number;
+var networkError:Boolean;
+
 var imageAddress = ["../Images/P1.jpg","../Images/P2.jpg"];
 const contentButtons = [
     {
@@ -300,22 +303,24 @@ export default function questionsScreen({
     return unsubscribe;
   }, [navigation]);
 
-  const [mutateFunction, { data }] = useMutation(SubmitAnswerForQuestion);
+  const [mutateFunction, { data:mutationData,error:mutationError, }] = useMutation(SubmitAnswerForQuestion);
+
   useEffect(() => {
-    if (data) {
-      dictId[data.createProcessesDatum.processesDatum.question.id] =
-        data.createProcessesDatum.processesDatum.id;
-      processDataId.push(data.createProcessesDatum.processesDatum.id);
-      console.log("LOG__",dictId,dictId.length,questionCount);
-      if (Object.keys(dictId).length == questionCount) {
+    if (mutationData) {
+      dictId[mutationData.createProcessesDatum.processesDatum.question.id] =
+        mutationData.createProcessesDatum.processesDatum.id;
+      processDataId.push(mutationData.createProcessesDatum.processesDatum.id);
+      //console.log("LOG__",dictId,dictId.length,questionCount,processDataId);
+      if (temp.length == questionCount) {
         setDisableCompleted(false);
       }
     }
-  }, [data]);
+  }, [mutationData]);
 
   const callQuery = (index: any, value: any) => {
     temp.push(index);
-    dictId[index];
+    dictId[index]; 
+
     mutateFunction({
       variables: {
         operation_theater: parseInt(operationTheaterID),
