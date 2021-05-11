@@ -63,6 +63,7 @@ var minusBox = "minus-box";
 var _Result  = [];
 var _length ;
 var _headerColor;
+let autoClavemsg = {};
 function homeScreen(props, route) {
   const [renderFlatlistData, setRenderFlatlistData] = useState();
   const [processMessageData, setProcessMessageData] = useState([]);
@@ -79,7 +80,7 @@ function homeScreen(props, route) {
   const [headerColor,setHeaderColor] = useState("")
     const [headerIcon,setHeaderIcon]= useState("");
   const [autoClaveCleared,setAutoClaveCleared]= useState(true);
-  
+ 
   // const { loading, error, refetch, data } = useQuery(GetSharedResource_OperationTheaters);
   // if(data){
   //   _data = data.appResources.concat(data.operationTheaters);
@@ -96,6 +97,7 @@ function homeScreen(props, route) {
   // }
 
   const { data, refetch } = useQuery(GetUserDataById, {
+    fetchPolicy:'network-only',
     variables: {
       userId: props.userId,
     },
@@ -152,7 +154,7 @@ function homeScreen(props, route) {
   React.useEffect( () => {
     const unsubscribe = props.navigation.addListener("focus", () => {
       //console.log("HOME SCREEN")
-     // setloadingProcessData(false)
+      setloadingProcessData(false)
       apolloClient
         .query({
           query: GetSharedResource_OperationTheaters,
@@ -314,7 +316,12 @@ function homeScreen(props, route) {
   const unsubscribe = props.navigation.addListener('focus',async () => {
     setAutoClaveCleared(false);
     var process = 3;
-    var temp = 0
+    var temp = 0;
+    autoClavemsg = {
+      message:"AutoClave not cleared",
+      color:red,
+      icon:minusBox
+    }
     await apolloClient
       .query({
         query: GetAutoClaveDetails,
@@ -336,6 +343,11 @@ function homeScreen(props, route) {
         
         if(temp == process){ 
           setAutoClaveCleared(true);
+          autoClavemsg = {
+            message:"AutoClave cleared",
+            color:green,
+            icon:check
+          }
         }
       })
     });
@@ -416,7 +428,7 @@ function homeScreen(props, route) {
         setHeaderIcon(minusBox);
         setMessage("Ongoing for start of day");
         msg="Ongoing for start of day"
-        icon=check
+        icon=minusBox
         color=orange
         process_Message = {
           message:msg,
@@ -436,12 +448,17 @@ function homeScreen(props, route) {
           msg="AutoClave not cleared"
           icon=alert
           color=red
-          
+         
         }else{
           setMessage("Cleared for start of day");
           msg="Cleared for start of day"
           icon=check
           color=green}
+          autoClavemsg={
+            message:"Autoclave cleared",
+            icon:check,
+            color:green
+          }
             
       }else if(netProgress.length == processCount.length){
         setMessage("Cleared for end of day");
@@ -532,7 +549,7 @@ function homeScreen(props, route) {
         </TouchableOpacity> */} 
        <OTCard
           title={item.item.name}
-          message={item.index>0?global_message[item.index-1]:null}
+          message={item.index>0?global_message[item.index-1]:autoClavemsg}
           onPress={() => {
 
             item.item.__typename == "AppResource"
