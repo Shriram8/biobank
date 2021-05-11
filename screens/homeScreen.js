@@ -227,7 +227,7 @@ function homeScreen(props, route) {
                 iconValue[i] = minusBox;
                 processCount[i]=_data[i].process_details.length;
                 progress[i] = 0;
-                _length = _length + processCount[i];
+                _length = _length + processCount[i]; 
                     for(var k=0;k<processCount[i];k++){
                       await apolloClient
                       .query({
@@ -239,7 +239,7 @@ function homeScreen(props, route) {
                           instance: i,
                           process_detail: _data[i].process_details[k].id
                         },
-                        fetchPolicy:"network-only"
+                        fetchPolicy:"cache-only"
                       })
                       .then((Result) => {
                         _Result.push(Result.data);
