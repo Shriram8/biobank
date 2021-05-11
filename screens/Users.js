@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, SectionList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SectionList,
+  StatusBar,
+  Platform,
+} from "react-native";
 import { Button, IconButton, Portal } from "react-native-paper";
 import { GetUsers, DeactivateUser } from "../src/graphql/queries";
 import { useQuery, useMutation } from "@apollo/client";
@@ -179,38 +186,80 @@ const Users = (props) => {
   };
 
   return (
-    <View style={{ backgroundColor: "#fff", flex: 1 }}>
-      <SectionList
-        sections={sectionData}
-        keyExtractor={(item, index) => item + index}
-        ListHeaderComponent={ListHeaderComponent}
-        renderItem={({ item }) => <Item title={item} />}
-        ListEmptyComponent={emptyComponent}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.title}>{title}</Text>
-        )}
-      />
-      {alert && (
-        <Portal>
-          <View style={styles.alertView}>
-            <View style={styles.alertContainer}>
-              <Text style={styles.alertHeader}>User Alert</Text>
-              <Text style={styles.alertText}>{alertMsg}</Text>
-              <Button
-                mode="contained"
-                color={"#006bcc"}
-                uppercase={false}
-                labelStyle={{ fontSize: 16 }}
-                style={{ borderRadius: 7, marginTop: 20 }}
-                onPress={() => setAlert(false)}
-              >
-                Okay
-              </Button>
+    <>
+      <StatusBar animated={true} backgroundColor="#fff" hidden={false} />
+      <View
+        style={{
+          backgroundColor: "#fff",
+          flex: 1,
+          marginTop: StatusBar.currentHeight,
+        }}
+      >
+        <View
+          style={[
+            styles.modalHeader,
+            Platform.OS === "web" && {
+              borderBottomWidth: 1,
+              borderBottomColor: "#E0E0E0",
+              paddingVertical: 20,
+            },
+            props.userType === "OTSuperUser" && { justifyContent: "center" },
+          ]}
+        >
+          <IconButton
+            icon={props.userType === "OTSuperUser" ? "arrow-left" : "menu"}
+            color={"#010101"}
+            size={25}
+            style={{ position: "absolute", left: 2 }}
+            onPress={() => {
+              if (props.userType === "OTSuperUser") {
+                props.navigation.goBack();
+              } else {
+                props.navigation.openDrawer();
+              }
+            }}
+          />
+          <Text
+            style={[
+              styles.headerTitle,
+              props.userType !== "OTSuperUser" && { marginLeft: 73 },
+            ]}
+          >
+            Users
+          </Text>
+        </View>
+        <SectionList
+          sections={sectionData}
+          keyExtractor={(item, index) => item + index}
+          ListHeaderComponent={ListHeaderComponent}
+          renderItem={({ item }) => <Item title={item} />}
+          ListEmptyComponent={emptyComponent}
+          renderSectionHeader={({ section: { title } }) => (
+            <Text style={styles.title}>{title}</Text>
+          )}
+        />
+        {alert && (
+          <Portal>
+            <View style={styles.alertView}>
+              <View style={styles.alertContainer}>
+                <Text style={styles.alertHeader}>User Alert</Text>
+                <Text style={styles.alertText}>{alertMsg}</Text>
+                <Button
+                  mode="contained"
+                  color={"#006bcc"}
+                  uppercase={false}
+                  labelStyle={{ fontSize: 16 }}
+                  style={{ borderRadius: 7, marginTop: 20 }}
+                  onPress={() => setAlert(false)}
+                >
+                  Okay
+                </Button>
+              </View>
             </View>
-          </View>
-        </Portal>
-      )}
-    </View>
+          </Portal>
+        )}
+      </View>
+    </>
   );
 };
 
@@ -311,5 +360,16 @@ const styles = StyleSheet.create({
     color: "#170500",
     fontWeight: "bold",
     marginBottom: 25,
+  },
+  modalHeader: {
+    backgroundColor: "#fff",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 16,
+    elevation: 4,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "500",
   },
 });

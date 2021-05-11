@@ -102,7 +102,7 @@ const Navigation = (props) => {
             name="Home"
             component={MainStackNavigator}
           />
-          {props.userType !== "OTStaff" && (
+          {props.userType !== "OTStaff" && props.userType !== "OTSuperUser" && (
             <Drawer.Screen
               headerShown={true}
               options={{
@@ -119,7 +119,7 @@ const Navigation = (props) => {
               component={Alerts}
             />
           )}
-          {props.userType !== "OTStaff" && props.userType !== "OTIncharge" && (
+          {props.userType === "OTAdmin" && (
             <Drawer.Screen
               headerShown={true}
               options={{
@@ -149,7 +149,7 @@ const Navigation = (props) => {
             name="Profile"
             component={ProfileStackNavigator}
           />
-          {props.userType !== "OTStaff" && props.userType !== "OTIncharge" && (
+          {props.userType === "OTAdmin" && (
             <Drawer.Screen
               headerShown={true}
               options={{
@@ -162,7 +162,7 @@ const Navigation = (props) => {
                 ),
               }}
               name="Users"
-              component={(params) => UserStackNavigator(params, props.userType)}
+              component={UserStackNavigator}
             />
           )}
           <Drawer.Screen
@@ -302,65 +302,78 @@ const MainStackNavigator = (props) => {
             },
           })}
         />
+        <MainStack.Screen
+          name="userManagement"
+          component={UserStackNavigator}
+          options={({ route }) => ({
+            headerShown: false,
+          })}
+        />
       </>
     </MainStack.Navigator>
   );
 };
 
 const UserStack = createStackNavigator();
-const UserStackNavigator = (props, type) => {
+const UserStackNavigator = (props) => {
   return (
     <UserStack.Navigator
-      initialRouteName={type === "OTSuperUser" ? "branches" : "users"}
+    // initialRouteName={type === "OTSuperUser" ? "branches" : "users"}
     >
       <UserStack.Screen
         name="users"
         component={Users}
         options={({ route }) => ({
-          title: "Users",
-          headerTitleAlign: type === "OTSuperUser" ? "center" : "left",
-          headerLeft: () => (
-            <Button
-              onPress={() => {
-                if (type === "OTSuperUser") {
-                  props.navigation.navigate("branches");
-                } else {
-                  props.navigation.openDrawer();
-                }
-              }}
-              icon={() => (
-                <MaterialCommunityIcons
-                  name={type === "OTSuperUser" ? "arrow-left" : "menu"}
-                  size={25}
-                  color="black"
-                  style={{ marginLeft: 2 }}
-                />
-              )}
-            ></Button>
-          ),
+          headerShown: false,
         })}
+        // options={({ route }) => ({
+        //   title: "Users",
+        //   headerTitleAlign: type === "OTSuperUser" ? "center" : "left",
+        //   headerLeft: () => (
+        //     <Button
+        //       onPress={() => {
+        //         if (type === "OTSuperUser") {
+        //           props.navigation.goBack();
+        //         } else {
+        //           props.navigation.openDrawer();
+        //         }
+        //       }}
+        //       icon={() => (
+        //         <MaterialCommunityIcons
+        //           name={type === "OTSuperUser" ? "arrow-left" : "menu"}
+        //           size={25}
+        //           color="black"
+        //           style={{ marginLeft: 2 }}
+        //         />
+        //       )}
+        //     ></Button>
+        //   ),
+        // })}
       />
       <UserStack.Screen
         name="branches"
         component={Branches}
         options={({ route }) => ({
-          title: "User Management",
-          headerLeft: () => (
-            <Button
-              onPress={() => {
-                props.navigation.openDrawer();
-              }}
-              icon={() => (
-                <MaterialCommunityIcons
-                  name="menu"
-                  size={25}
-                  color="black"
-                  style={{ marginLeft: 2 }}
-                />
-              )}
-            ></Button>
-          ),
+          headerShown: false,
         })}
+        // options={({ route }) => ({
+        //   title: "User Management",
+        //   headerLeft: () => (
+        //     <Button
+        //       onPress={() => {
+        //         props.navigation.openDrawer();
+        //       }}
+        //       icon={() => (
+        //         <MaterialCommunityIcons
+        //           name="menu"
+        //           size={25}
+        //           color="black"
+        //           style={{ marginLeft: 2 }}
+        //         />
+        //       )}
+        //     ></Button>
+        //   ),
+        // })}
       />
       <UserStack.Screen
         name="adduser"
