@@ -20,6 +20,7 @@ import {
   SubmitAnswerForQuestion,
   UpdateSubmittedAnswerForQuestion,
   SubmitCompleted,
+  GetProcessDataDetails
 } from "../src/graphql/queries";
 import {
   Avatar,
@@ -38,6 +39,7 @@ import { RadioGroup, RadioButton } from "react-native-radio-btn";
 import DrugListPopover from "./DrugListPopover";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Picker } from "@react-native-picker/picker";
+import NetworkComponent from "../src/Components/NetworlComponent";
 
 const apolloClient = client;
 const radioItems = [
@@ -311,26 +313,46 @@ export default function questionsScreen({
         mutationData.createProcessesDatum.processesDatum.id;
       processDataId.push(mutationData.createProcessesDatum.processesDatum.id);
       //console.log("LOG__",dictId,dictId.length,questionCount,processDataId);
+      // console.log("LOG__",temp);
       if (temp.length == questionCount) {
-        setDisableCompleted(false);
+
+        apolloClient
+        .query({
+          query: GetProcessDataDetails,
+          variables: {
+            processID: processID,
+            Date: new Date().toISOString().slice(0, 10),
+            operation_theater: operationTheaterID,
+            instance: instance,
+          },
+          fetchPolicy: "network-only",
+        })
+        .then((Result) => {
+            processDataId = [];
+            for(var i=0; i<questionCount;i++)
+            {
+              processDataId.push(Result.data.processesData[i].id);
+            }
+            setDisableCompleted(false);
+        })
       }
     }
   }, [mutationData]);
 
-  const callQuery = (index: any, value: any) => {
+  const callQuery =  (index: any, value: any) => {
     temp.push(index);
     dictId[index]; 
-
+    
     mutateFunction({
-      variables: {
-        operation_theater: parseInt(operationTheaterID),
-        question: parseInt(index),
-        app_user: parseInt(userId),
-        process_detail: parseInt(processID),
-        Date: new Date().toISOString().slice(0, 10),
-        Answer: value,
-        instance: instance,
-      },
+        variables: {
+          operation_theater: parseInt(operationTheaterID),
+          question: parseInt(index),
+          app_user: parseInt(userId),
+          process_detail: parseInt(processID),
+          Date: new Date().toISOString().slice(0, 10),
+          Answer: value,
+          instance: instance,
+        },
     });
   };
 

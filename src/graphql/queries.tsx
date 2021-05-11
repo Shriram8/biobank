@@ -169,6 +169,26 @@ export const GetGaDetails = gql`
     }
   }
 `;
+export const GetProcessDataDetails = gql`
+ query(
+    $processID: ID!
+    $operation_theater: ID!
+    $instance: Int
+    $Date: String
+  ) {
+processesData(
+      where: {
+        process_detail: $processID
+        operation_theater: $operation_theater
+        instance: $instance
+        Date: $Date
+      }
+    ) {
+      id
+    }
+  }
+`;
+
 
 export const GetQuestionDetails = gql`
   query(
