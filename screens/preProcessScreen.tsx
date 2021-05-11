@@ -12,6 +12,7 @@ let _data: any[] = [];
 const preSurgeryProcessCount = 2;
 const preSurgeryProcessID = 3; //id from order.
 const inBetweenSurgeryProcessID = 4;
+const endOfDayProcessID = 5;
 let lock: boolean[] = [];
 let moduleLock: boolean;
 var progress: any[] = [];
@@ -29,6 +30,7 @@ var minusBox = "minus-box";
 var _Result: any [] = [];
 var _length: number;
 var _headerColor;
+var checkPoint: any [] = [];
 export default function preProcessScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId, operationTheaterID, operationTheaterName, userType} = route.params;
     const [renderFlatlistData,setRenderFlatlistData] = useState();
@@ -56,6 +58,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         _length = 0;
         colorValue = [];
         iconValue = [];
+        checkPoint = [];
         moduleLock = false;
         
         apolloClient
@@ -80,19 +83,28 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
                   lock.push(true);
                 }
             }
+            checkPoint.push(2);
             try{
               
-              for(var i =0; i< Result.data.questions[0].processes_data[0].Answer;i++){
-                if(i == 0){
-                  _data.push(Result.data.appResources[preSurgeryProcessID-1]);
-                }else
-                _data.push(Result.data.appResources[inBetweenSurgeryProcessID-1]);
+              for(var i = 0; i< Result.data.questions[0].processes_data[0].Answer;i++){
+                _data.push(Result.data.appResources[preSurgeryProcessID-1]);
+                if(i == 0)
+                checkPoint.push(3)
+                else{
+                  checkPoint.push(checkPoint[checkPoint.length-1]+2)
+                }
                 lock.push(true);
+                if(i != Result.data.questions[0].processes_data[0].Answer-1){
+                  _data.push(Result.data.appResources[inBetweenSurgeryProcessID-1]);
+                  lock.push(true);
+                }
               }
+              
             }catch{
 
             }
             _data.push(Result.data.appResources[Result.data.appResources.length-1]);
+            checkPoint.push(checkPoint[checkPoint.length-1]+1)
             lock.push(true);
             //console.log("Data---",_data);
             setRenderFlatlistData(Result.data);
@@ -202,15 +214,16 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         }
         //console.log("COLOR VALUE___",colorValue);
         //console.log("INDEX---",netProgress);
+
         setHeaderColor(colorValue[netProgress.length-1]);
         setHeaderIcon(iconValue[netProgress.length-1]);
         setHeaderText();
-        console.log("lock",lock);
+        
       }
     },[resultsFetched]);
 
     const setHeaderText = ()=>{
-      //console.log("NET PROGRESS LENGTH--",netProgress.length,)
+      
 
       switch(colorValue[netProgress.length-1]){
         case red:
@@ -221,18 +234,32 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             setMessage("Not Cleared for end of day");
           }else{
             var temp = "Not Cleared for surgery -0"+(netProgress.length-preSurgeryProcessCount)
-            setMessage(temp);
+            for(var i = 0; i<checkPoint.length;i++){
+                
+                if(netProgress.length<=checkPoint[i]){
+                  setMessage("Not Cleared for surgery -0"+(checkPoint[i]-1)/2);
+                  return;
+                }
+            }
           }
           break;
         case orange:
           //console.log("ORANGE")
+          
           if(netProgress.length<=preSurgeryProcessCount){
             setMessage("Ongoing for start of day");
           }else if(netProgress.length == processCount.length){
             setMessage("Ongoing end of day");
           }else{
-            var temp = "Ongoing for surgery -0"+(netProgress.length-preSurgeryProcessCount)
-            setMessage(temp);
+            //var temp = "Ongoing for surgery -0"+(netProgress.length-preSurgeryProcessCount)
+            for(var i = 0; i<checkPoint.length;i++){
+                
+                if(netProgress.length<=checkPoint[i]){
+                  setMessage("Ongoing for surgery -0"+(checkPoint[i]-1)/2);
+                  return;
+                }
+            }
+            //setMessage(temp);
           }
           break;
         case green:
@@ -243,6 +270,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             setMessage("Ongoing for start of day");
             break;
           }
+          
           if(netProgress.length == preSurgeryProcessCount){
             if(!autoClaveCleared){
               lock[preSurgeryProcessCount] = true;
@@ -254,8 +282,19 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           }else if(netProgress.length == processCount.length){
             setMessage("Cleared for end of day");
           }else{
-            var temp = "Cleared for surgery -0"+(netProgress.length-preSurgeryProcessCount)
-            setMessage(temp);
+            for(var i = 0; i<checkPoint.length;i++){
+              
+              if(netProgress.length<checkPoint[i]){
+                setHeaderColor(orange);
+                setHeaderIcon(minusBox);
+                setMessage("Ongoing for surgery -0"+(checkPoint[i]-1)/2);
+                return;
+              }
+              if(netProgress.length==checkPoint[i]){
+                setMessage("Cleared for surgery -0"+(checkPoint[i]-1)/2);
+                return;
+              }
+            }
           }
           break;
       }
@@ -283,7 +322,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
     const getText = (processOrder: number,id: number,index: number)=>{ 
       //console.log("processOrder:",processOrder,id,index)
     return (processOrder == preSurgeryProcessCount)?"Cleared for start of day":
-    ((processOrder == 3 || processOrder == 4)?("Cleared for Surgery"+(id == 4 ?"-0"+(index-1):(id == 6 ?"-0"+(index-1):""))):("Cleared for end of the day"))
+    ((processOrder == 3 || processOrder == 4)?("Cleared for Surgery"+(id == 4 ?"-0"+(index/2):(id == 6 ?"-0"+((index-1)/2):""))):("Cleared for end of the day"))
     }
 
     const changeColorSetText=(id: number)=>{
@@ -356,7 +395,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             instance: parseInt(index),
           })}}>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,fontSize: 18, fontWeight:'500'},lock[index]?{color: "#959595",}:{}]}>
-      {item.id == 4 ?item.name+"-0"+(index-1):(item.id == 6 ?item.name+"-0"+(index-1):item.name)}
+      {item.id == 4 ?item.name+"-0"+(index/2):(item.id == 6 ?item.name+"-0"+((index-1)/2):item.name)}
       </Text>
 
       <View style={{ width:18,height:18,marginEnd:14, alignContent:'flex-end'}}>
@@ -371,7 +410,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
         height:4,backgroundColor:"white",alignContent:"center"}} />
       </View>
 
-      {(item.processOrder >= preSurgeryProcessCount)?(
+      {(item.processOrder == preSurgeryProcessCount || item.processOrder == preSurgeryProcessID || item.processOrder == endOfDayProcessID)?(
       <View style={[styles.appFlagContainer,{flex:1,marginVertical:12}]} >
       <View style={{width:24,height:24}}>
       <MaterialCommunityIcons
