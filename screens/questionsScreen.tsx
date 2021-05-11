@@ -195,6 +195,7 @@ export default function questionsScreen({
   const [override, setOverride] = React.useState(false);
   const [_cleared, setCleared] = React.useState(false);
   const [showDrugList, setShowDrugList] = useState(false);
+  const [loadingCompletedButton, setLoadingCompletedButton] = useState(false);
   let { loading, error, data: questions_data, refetch } = useQuery(
     GetQuestionDetails,
     {
@@ -315,7 +316,7 @@ export default function questionsScreen({
       //console.log("LOG__",dictId,dictId.length,questionCount,processDataId);
       // console.log("LOG__",temp);
       if (temp.length == questionCount) {
-
+        setLoadingCompletedButton(true);
         apolloClient
         .query({
           query: GetProcessDataDetails,
@@ -328,6 +329,7 @@ export default function questionsScreen({
           fetchPolicy: "network-only",
         })
         .then((Result) => {
+            setLoadingCompletedButton(false);
             processDataId = [];
             for(var i=0; i<questionCount;i++)
             {
@@ -356,7 +358,7 @@ export default function questionsScreen({
     });
   };
 
-  let [updateFunction, { data: updateFunctiondata }] = useMutation(
+  let [updateFunction, { data: updateFunctiondata, }] = useMutation(
     UpdateSubmittedAnswerForQuestion
   );
 
@@ -784,18 +786,22 @@ export default function questionsScreen({
             <View style={{ justifyContent: "space-around" }}>
               <Button
                 mode="contained"
-                color={"#006bcc"}
-                disabled={disbaleCompleted}
+                color={disbaleCompleted?"#959595":"#006bcc"}
+                dark
+                //disabled={disbaleCompleted}
+                loading={loadingCompletedButton}
                 style={{
                   width: "100%",
                   height: 40,
                   justifyContent: "center",
                   alignSelf: "center",
+                  
                 }}
-                onPress={() => submitEditable()}
+                onPress={() => {if(!disbaleCompleted){submitEditable();}}}
               >
                 {userType == "OTIncharge" ? "Override" : "Completed"}
-              </Button>
+              </Button> 
+
             </View>
           </View>
         </View>
