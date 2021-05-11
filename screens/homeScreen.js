@@ -434,7 +434,7 @@ function homeScreen(props, route) {
       >
         <View style={styles.header}>
           <View style={styles.headerTextLabel}>
-            <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row", width: "100%" }}>
               <Text
                 style={{
                   fontSize: 30,
@@ -442,9 +442,10 @@ function homeScreen(props, route) {
                   marginVertical: 16,
                 }}
               >
-                Hello,
+                Hello,{" "}
               </Text>
               <Text
+                numberOfLines={1}
                 style={{
                   fontWeight: "bold",
                   fontSize: 30,
@@ -452,7 +453,6 @@ function homeScreen(props, route) {
                   marginVertical: 16,
                 }}
               >
-                {" "}
                 {name}
               </Text>
             </View>
@@ -470,14 +470,7 @@ function homeScreen(props, route) {
                   color="white"
                   size={20}
                 />
-                <Text
-                  style={[
-                    styles.location,
-                    Platform.OS === "web" && { marginTop: 5 },
-                  ]}
-                >
-                  {location}
-                </Text>
+                <Text style={styles.location}>{location}</Text>
               </View>
               {/* <View style={styles.box2}></View> */}
               <View style={styles.box3}>
@@ -487,14 +480,7 @@ function homeScreen(props, route) {
                   color="white"
                   size={20}
                 />
-                <Text
-                  style={[
-                    styles.location,
-                    Platform.OS === "web" && { marginTop: 5 },
-                  ]}
-                >
-                  {date.toDateString()}
-                </Text>
+                <Text style={styles.location}>{date.toDateString()}</Text>
               </View>
             </View>
           </View>
@@ -553,7 +539,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   flexContainer: {
-    height: 30,
+    // height: 30,
     flexDirection: "row",
   },
   box1: {
@@ -593,7 +579,7 @@ const styles = StyleSheet.create({
     // fontWeight: "bold",
     textAlignVertical: "center",
     width: "100%",
-    height: 30,
+    // height: 30,
   },
   verticleLine: {
     height: "100%",
