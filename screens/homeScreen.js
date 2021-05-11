@@ -34,6 +34,7 @@ import { withNavigation } from "react-navigation";
 import MessageComponent from "./messageComponent";
 import { fontSizes } from "../components/UI/Theme";
 import OTCard from "../components/UI/OTCard";
+import Branches from "./Branches";
 
 const apolloClient = client;
 const date = new Date();
@@ -629,19 +630,27 @@ function homeScreen(props, route) {
           </View>
           <View style={styles.subHeader}>
             <View style={styles.flexContainer}>
-              <View
-                style={[styles.box1, Platform.OS !== "web" && { width: 120 }]}
-              >
-                <MaterialCommunityIcons
-                  name="map-marker-outline"
-                  style={{ alignSelf: "center", marginHorizontal: 5 }}
-                  color="white"
-                  size={20}
-                />
-                <Text style={styles.location}>{location}</Text>
-              </View>
+              {props.userType !== "OTSuperUser" && (
+                <View
+                  style={[styles.box1, Platform.OS !== "web" && { width: 120 }]}
+                >
+                  <MaterialCommunityIcons
+                    name="map-marker-outline"
+                    style={{ alignSelf: "center", marginHorizontal: 5 }}
+                    color="white"
+                    size={20}
+                  />
+                  <Text style={styles.location}>{location}</Text>
+                </View>
+              )}
+
               {/* <View style={styles.box2}></View> */}
-              <View style={styles.box3}>
+              <View
+                style={[
+                  styles.box3,
+                  props.userType !== "OTSuperUser" && { marginLeft: 31 },
+                ]}
+              >
                 <MaterialCommunityIcons
                   name="calendar-text"
                   style={{ alignSelf: "center", marginHorizontal: 5 }}
@@ -664,30 +673,38 @@ function homeScreen(props, route) {
               marginTop: 26,
             }}
           >
-            <Text style={styles.headerTextStyle}>Today's Progress.</Text>
+            <Text style={styles.headerTextStyle}>
+              {props.userType === "OTSuperUser"
+                ? "User management"
+                : "Today's Progress."}
+            </Text>
           </View>
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              alignSelf: "stretch",
-              marginVertical: 10,
-              marginTop: 10,
-            }}
-          >
-            {renderFlatlistData && loadingProcessData ? (
-              <FlatList
-                extraData={flatlistrender}
-                style={{ width: "100%", alignSelf: "center" }}
-                data={ot_data}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={renderResources}
-              />
-            ) : (
-              <ActivityIndicator size={24} color={"#006bcc"} />
-            )}
-          </View>
+          {props.userType === "OTSuperUser" ? (
+            <Branches navigation={props.navigation} />
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                alignSelf: "stretch",
+                marginVertical: 10,
+                marginTop: 10,
+              }}
+            >
+              {renderFlatlistData && loadingProcessData ? (
+                <FlatList
+                  extraData={flatlistrender}
+                  style={{ width: "100%", alignSelf: "center" }}
+                  data={ot_data}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={renderResources}
+                />
+              ) : (
+                <ActivityIndicator size={24} color={"#006bcc"} />
+              )}
+            </View>
+          )}
         </View>
       </View>
     </>
@@ -724,7 +741,6 @@ const styles = StyleSheet.create({
     height: "100%",
     flexGrow: 1,
     flexDirection: "row",
-    marginLeft: 31,
   },
   headerTextLabel: {
     marginBottom: 8,
