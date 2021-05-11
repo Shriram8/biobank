@@ -306,6 +306,7 @@ export default function questionsScreen({
       dictId[data.createProcessesDatum.processesDatum.question.id] =
         data.createProcessesDatum.processesDatum.id;
       processDataId.push(data.createProcessesDatum.processesDatum.id);
+      console.log("LOG__",dictId,dictId.length,questionCount);
       if (Object.keys(dictId).length == questionCount) {
         setDisableCompleted(false);
       }
@@ -517,7 +518,7 @@ export default function questionsScreen({
                   prefixColor="#006bcc"
                   prefixActiveColor="#006bcc"
                   style={{
-                    width: 120,
+                    width: 60,
                     height: 40,
                     borderRadius: 8,
                     alignContent: "center",
