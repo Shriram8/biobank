@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useQuery, gql, useLazyQuery } from "@apollo/client";
 import { client } from "../src/graphql/ApolloClientProvider";
-import { GetResourcesDetails } from "../src/graphql/queries";
+import { GetAutoClaveDetails, GetResourcesDetails, GetSurgeryDetails_OTStaff, preProcessProgress_OTStaff } from "../src/graphql/queries";
 import {
   GetSharedResource_OperationTheaters,
   ENUM_RESOURCE_TYPE,
@@ -28,11 +28,11 @@ import { connect } from "react-redux";
 import { withNavigation } from "react-navigation";
 import MessageComponent from "./messageComponent";
 import { fontSizes } from "../components/UI/Theme";
-import OTCard from "../components/UI/OTCard";
+import OTCard from "../components/UI/OTCard"; 
 
 const apolloClient = client;
 const date = new Date();
-var _data;
+let global_process_status = [];
 var _operationTheaterData = [];
 var message = [];
 var red = "#f40000";
@@ -40,13 +40,47 @@ var green = "#0fbb5b";
 var orange = "#ff8d48";
 var alert = "alert-box";
 var check = "checkbox-marked";
+var minusBox = "minus-box"; 
+let _data  = [];
+let ot_data= [];
+const preSurgeryProcessCount = 2;
+const preSurgeryProcessID = 3; //id from order.
+const inBetweenSurgeryProcessID = 4;
+let lock  = [];
+let moduleLock ;
+var progress  = [];
+var colorValue  = [];
+var iconValue  = [];
+var processCount  = [];
+var netProgress  = [];
+var _text;
+var red = "#f40000";
+var green = "#0fbb5b";
+var orange = "#ff8d48";
+var alert = "alert-box";
+var check = "checkbox-marked";
 var minusBox = "minus-box";
+var _Result  = [];
+var _length ;
+var _headerColor;
+let autoClavemsg = {};
 function homeScreen(props, route) {
   const [renderFlatlistData, setRenderFlatlistData] = useState();
   const [processMessageData, setProcessMessageData] = useState([]);
-  const [loadingProcessData, setloadingProcessData] = useState(false);
+  const [loadingProcessData,setloadingProcessData] = useState(false);
+  const [currDate,setCurrDate] = useState(new Date())
   const [name, setName] = useState("");
   const [location, setLocation] = useState("");
+  const [resultsFetched,setResultsFetched] = useState(0);
+
+
+  const [global_message,setGlobalMessage] = useState([])
+  const [flatlistrender,setflatlistrender] = useState(false)
+  const [message,setMessage]=useState(null);
+  const [headerColor,setHeaderColor] = useState("")
+    const [headerIcon,setHeaderIcon]= useState("");
+  const [autoClaveCleared,setAutoClaveCleared]= useState(true);
+ 
   // const { loading, error, refetch, data } = useQuery(GetSharedResource_OperationTheaters);
   // if(data){
   //   _data = data.appResources.concat(data.operationTheaters);
@@ -63,6 +97,7 @@ function homeScreen(props, route) {
   // }
 
   const { data, refetch } = useQuery(GetUserDataById, {
+    fetchPolicy:'network-only',
     variables: {
       userId: props.userId,
     },
@@ -72,11 +107,14 @@ function homeScreen(props, route) {
     if (data) {
       setName(data.appUsers[0].name);
       setLocation(data.appUsers[0].branch?.name);
+       
     }
   }, [data]);
 
   React.useEffect(() => {
+    
     if (renderFlatlistData) {
+      
       for (var i = 1; i < _data.length; i++) {
         _operationTheaterData = [];
         apolloClient
@@ -113,237 +151,349 @@ function homeScreen(props, route) {
     }
   }, [renderFlatlistData]);
 
-  React.useEffect(() => {
+  React.useEffect( () => {
     const unsubscribe = props.navigation.addListener("focus", () => {
       //console.log("HOME SCREEN")
+      setloadingProcessData(false)
       apolloClient
         .query({
           query: GetSharedResource_OperationTheaters,
           fetchPolicy: "network-only",
         })
         .then(async (Result) => {
-          _data = Result.data.appResources.concat(
+          ot_data = Result.data.appResources.concat(
             Result.data.operationTheaters
           );
 
           setRenderFlatlistData(Result.data);
 
-          let global_process_status = [];
+         
+         // console.log("************Result.data.operationTheaters[i]",Result.data.operationTheaters[0].id)
           for (var i = 0; i < Result.data.operationTheaters.length; i++) {
-            await apolloClient
-              .query({
-                query: Check_Process_Progress,
-                variables: {
-                  // userId: parseInt(props.userId),
-                  otID: Result.data.operationTheaters[i].id,
-                  date: new Date(),
-                },
-                fetchPolicy: "network-only",
-              })
-              .then((response) => {
-                console.log("response", response);
-                var processData = response.data.appResources;
-                let status_arr = [];
-                for (var t = 0; t <= 4 - 1; t++) {
-                  status_arr[t] = 0;
-                }
-                process_details: for (var m = 0; m < 4; m++) {
-                  var start_count = 0;
-                  var instance = 0;
-                  for (
-                    var q = 0;
-                    q < processData[m].process_details.length;
-                    q++
-                  ) {
-                    if (
-                      processData[m].process_details[q].processes_data.length >
-                      0
-                    ) {
-                      for (var i in processData[m].process_details[q]
-                        .processes_data) {
-                        if (
-                          processData[m].process_details[q].processes_data[i]
-                            .Answer != "False"
-                        ) {
-                          if (
-                            processData[m].process_details[q].processes_data[i]
-                              .check_editable
-                          ) {
-                            instance =
-                              processData[m].process_details[q].processes_data[
-                                i
-                              ].instance;
-                            if (m === 2) {
-                              status_arr[m] = {
-                                instance:
-                                  processData[m].process_details[q]
-                                    .processes_data[i].instance,
-                                status: "success",
-                                surgeries:
-                                  processData[0].process_details[0]
-                                    .processes_data[4].Answer,
-                              };
-                            } else {
-                              status_arr[m] = {
-                                instance:
-                                  processData[m].process_details[q]
-                                    .processes_data[i].instance,
-                                status: "success",
-                              };
-                            }
-                            try {
-                              var temp =
-                                processData[m].process_details[q]
-                                  .processes_data[i].check_editable.id;
-                            } catch (err) {
-                              status_arr[m] = {
-                                instance:
-                                  processData[m].process_details[q]
-                                    .processes_data[i].instance,
-                                status: "pending",
-                              };
+           // console.log("************Result.data.operationTheaters[i]",Result.data.operationTheaters[i].id)
+            let otId = Result.data.operationTheaters[i].id
+            processCount =[];
+            progress = [];
+            netProgress = [];
+            _text = "Ongoing start of the day";
+            _data = [];
+            lock =[];
+            _Result = [];
+            _length = 0;
+            colorValue = [];
+            iconValue = [];
+            moduleLock = false;
 
-                              break process_details;
+           await apolloClient
+        .query({
+          query: GetSurgeryDetails_OTStaff,
+          variables:{
+            operation_theater:parseInt(otId),
+            Date:new Date().toISOString().slice(0, 10),
+            // app_user:parseInt(userId),
+          },
+          fetchPolicy:"network-only"
+        })
+        .then(async (Result) => {
+          //console.log("-----Result",Result);
+            for(var i = 0;i<2;i++){
+                _data.push(Result.data.appResources[i]);
+                
+                if(i==0){
+                  lock.push(false);
+                }
+                else{
+                  lock.push(true);
+                }
+            }
+            try{
+              
+              for(var i =0; i< Result.data.questions[0].processes_data[0].Answer;i++){
+                if(i == 0){
+                  _data.push(Result.data.appResources[preSurgeryProcessID-1]);
+                }else
+                _data.push(Result.data.appResources[inBetweenSurgeryProcessID-1]);
+                lock.push(true);
+              }
+            }catch{
+
+            }
+            _data.push(Result.data.appResources[Result.data.appResources.length-1]);
+            lock.push(true);
+            //console.log("Data---",_data);
+            setRenderFlatlistData(Result.data);
+              for(var i= 0;i<_data.length;i++){
+                colorValue[i] = orange;
+                iconValue[i] = minusBox;
+                processCount[i]=_data[i].process_details.length;
+                progress[i] = 0;
+                _length = _length + processCount[i];
+                    for(var k=0;k<processCount[i];k++){
+                      await apolloClient
+                      .query({
+                        query: preProcessProgress_OTStaff,
+                        variables:{
+                          operation_theater:parseInt(otId),
+                          Date:new Date().toISOString().slice(0, 10),
+                          //app_user:parseInt(userId),
+                          instance: i,
+                          process_detail: _data[i].process_details[k].id
+                        },
+                        fetchPolicy:"network-only"
+                      })
+                      .then((Result) => {
+                        _Result.push(Result.data);
+                        if(_Result.length == _length){
+                          setResultsFetched(prevCount => prevCount + 1);
+                          if(_Result.length == _length){
+                            for(var k = 0;k<_Result.length;k++){
+                                        try{
+                                              if(_Result[k].processesData[0].check_editable){
+                                                //console.log("instance-----",_Result[k].processesData[0]);
+                                                var p = _Result[k].processesData[0].instance;
+                                                progress[p] = progress[p]+1;
+                                                netProgress[p] = progress[p]/processCount[p];
+                                                if(netProgress[p]==1 && _Result[k].processesData[0].check_editable.processCleared){
+                                                  if(colorValue[p] != red ){
+                                                    colorValue[p] = green 
+                                                    iconValue[p] = check;
+                                                    lock[p+1] = false;
+                                                    setUpdateMessage(prevCount => prevCount + 1);
+                                                  }   
+                                                }
+                                                if(netProgress[p]>0 && netProgress[p]<1){
+                                                  if(colorValue[p] != red ){
+                                                    colorValue[p] = orange;
+                                                    iconValue[p] = minusBox;
+                                                  }
+                                                }
+                                                if(!_Result[k].processesData[0].check_editable.processCleared){
+                                                  colorValue[p] = red 
+                                                  iconValue[p] = alert
+                                                  lock[p+1] = true;
+                                                }
+                                                
+                                              }
+                                              setRefresh(prevCount => prevCount + 1);
+                                            }
+                                            catch{
+                    
+                                            }
+                    
+                              
                             }
-                          }
-                        } else if (
-                          processData[m].process_details[q].processes_data[i]
-                            .Answer == "False"
-                        ) {
-                          status_arr[m] = {
-                            instance:
-                              processData[m].process_details[q].processes_data[
-                                i
-                              ].instance,
-                            status: "fail",
-                          };
-                          break process_details;
-                        } else if (
-                          processData[m].process_details[q].processes_data
-                            .length <
-                          processData[m].process_details[q].questions.length - 1
-                        ) {
-                          status_arr[m] = {
-                            instance:
-                              processData[m].process_details[q].processes_data[
-                                i
-                              ].instance,
-                            status: "pending",
-                          };
-                          break process_details;
-                        } else {
-                          status_arr[m] = {
-                            instance:
-                              processData[m].process_details[q].processes_data[
-                                i
-                              ].instance,
-                            status: "pending",
-                          };
-                          break process_details;
+                            }
                         }
-                      }
-                    } else {
-                      start_count++;
-                      //status_arr[m] === 0
-                      if (
-                        start_count === processData[m].process_details.length
-                      ) {
-                        status_arr[m] = { status: "start" };
-                        //break process_details;
-                      } else {
-                        status_arr[m] = {
-                          instance: instance,
-                          status: "pending",
-                        };
-
-                        //break process_details;
-                      }
-                    }
-                  }
-                }
-                global_process_status = [...global_process_status, status_arr];
-              });
-          }
-          console.log("******************", global_process_status);
-          var msg = [];
-          for (var temp = 0; temp < global_process_status.length; temp++) {
-            msg = [
-              ...msg,
-              getTextForProcessMessage(temp, global_process_status),
-            ];
-          }
-          setProcessMessageData(msg);
-          setloadingProcessData(true);
-        });
-    });
-
-    return unsubscribe;
-  }, [props.navigation]);
-  const getTextForProcessMessage = (index, global_process_status) => {
-    let varArra = global_process_status;
-    let message = "Start process";
-    let msgObj = { message: "Start process", icon: "play-box", color: "black" };
-    if (varArra.length > 0) {
-      if (
-        varArra[index][0].status === "success" &&
-        varArra[index][1].status === "success"
-      ) {
-        msgObj = {
-          message: "Cleared for start of day",
-          icon: check,
-          color: green,
-        };
-        message = "Cleared for start of day";
-        if (varArra[index][2].status === "success") {
-          message = "Cleared for surgery -0" + (varArra[index][2].instance - 1);
-
-          msgObj = { message: message, icon: check, color: green };
-
-          if (varArra[index][3].status === "success") {
-            message = "Cleared for end of day";
-            msgObj = { message: message, icon: check, color: green };
-          } else if (varArra[index][3].status === "pending") {
-            message = "Ongoing end of day";
-
-            msgObj = { message: message, icon: minusBox, color: orange };
-          } else if (varArra[index][3].status === "fail") {
-            message = "Not Cleared for end of day";
-
-            msgObj = { message: message, icon: alert, color: red };
-          }
-        } else if (varArra[index][2].status === "pending") {
-          message = "Ongoing for surgery -0" + (varArra[index][2].instance - 1);
-
-          msgObj = { message: message, icon: minusBox, color: orange };
-        } else if (varArra[index][2].status === "fail") {
-          message =
-            "Not Cleared for surgery -0" + (varArra[index][2].instance - 1);
-
-          msgObj = { message: message, icon: alert, color: red };
-        }
-      } else if (
-        varArra[index][0].status === "fail" ||
-        varArra[index][1].status === "fail"
-      ) {
-        message = "Not Cleared for start of day";
-
-        msgObj = { message: message, icon: alert, color: red };
-      } else if (
-        varArra[index][0].status === "pending" ||
-        varArra[index][1].status === "pending"
-      ) {
-        message = "Ongoing for start of day";
-
-        msgObj = { message: message, icon: minusBox, color: orange };
+                                                
+                      })
+                    }  
+              }
+            })
+            global_process_status.push(setHeaderText())
+           // setGlobalMessage(global_process_status)
+          
+           // global_process_status=[];
+              lock  = [];
+            moduleLock ;
+              progress  = [];
+             colorValue  = [];
+             iconValue  = [];
+              processCount  = [];
+           netProgress  = [];
       }
+      
+      setGlobalMessage(global_process_status)
+      global_process_status=[]
+      setflatlistrender(!flatlistrender)
+      setloadingProcessData(true)
+    });
+    
+   
+    return unsubscribe; 
+  })
+ },[props.navigation]); 
+ React.useEffect( () => {
+  const unsubscribe = props.navigation.addListener('focus',async () => {
+    setAutoClaveCleared(false);
+    var process = 3;
+    var temp = 0;
+    autoClavemsg = {
+      message:"AutoClave not cleared",
+      color:red,
+      icon:minusBox
     }
-    console.log("msgOBJ ======", msgObj);
-    return msgObj;
-  };
+    await apolloClient
+      .query({
+        query: GetAutoClaveDetails,
+        variables:{
+          Date:new Date().toISOString().slice(0, 10),
+        },
+        fetchPolicy:"network-only"
+      })
+      .then((Result) => { 
+        for(var i=0; i<Result.data.processDetails.length;i++){ 
+          try{
+            if(Result.data.processDetails[i].processes_data[0].check_editable.processCleared){
+              temp = temp+1;
+            }
+          }catch{
+
+          }
+        }
+        
+        if(temp == process){ 
+          setAutoClaveCleared(true);
+          autoClavemsg = {
+            message:"AutoClave cleared",
+            color:green,
+            icon:check
+          }
+        }
+      })
+    });
+    return unsubscribe;
+}, [props.navigation]);
+ const setHeaderText = ()=>{
+  //console.log("NET PROGRESS LENGTH--",netProgress.length,).
+  let icon="play-box"
+  let color="#000"
+  let msg = "Start process"
+  let process_Message = {
+    message:msg,
+    icon:icon,
+    color: color
+  }
+  
+  switch(colorValue[netProgress.length-1]){
+    case red:
+      //console.log("RED")
+      if(netProgress.length<=preSurgeryProcessCount){
+        setMessage("Not Cleared for start of day");
+        msg="Not Cleared for start of day";
+        icon=alert
+        color=red
+      }else if(netProgress.length == processCount.length){
+        setMessage("Not Cleared for end of day");
+        msg="Not Cleared for end of day"
+        icon=alert
+        color=red
+      }else{
+        var temp = "Not Cleared for surgery -0"+(netProgress.length-preSurgeryProcessCount)
+        msg=temp;
+        icon=alert
+        color=red
+        setMessage(temp); 
+      }
+      process_Message = {
+        message:msg,
+        icon:icon,
+        color:color
+      }
+      return process_Message;
+      break;
+    case orange:
+      //console.log("ORANGE")
+      if(netProgress.length<=preSurgeryProcessCount){
+        setMessage("Ongoing for start of day");
+        msg="Ongoing for start of day"
+        
+        icon=minusBox
+        color=orange
+      }else if(netProgress.length == processCount.length){
+        setMessage("Ongoing end of day");
+        msg="Ongoing end of day"
+        
+        icon=minusBox
+        color=orange
+      }else{
+        var temp = "Ongoing for surgery -0"+(netProgress.length-preSurgeryProcessCount)
+        msg=temp;
+        icon=minusBox
+        color=red
+        setMessage(temp);
+        
+      }
+      process_Message = {
+        message:msg,
+        icon:icon,
+        color:color
+      }
+      
+      return process_Message;
+      break;
+    case green:
+      //console.log("GREEN")
+      if(netProgress.length<preSurgeryProcessCount){
+        setHeaderColor(orange);
+        setHeaderIcon(minusBox);
+        setMessage("Ongoing for start of day");
+        msg="Ongoing for start of day"
+        icon=minusBox
+        color=orange
+        process_Message = {
+          message:msg,
+          icon:icon,
+          color:color
+        }
+        
+        return process_Message;
+        break;
+      }
+      if(netProgress.length == preSurgeryProcessCount){
+        if(!autoClaveCleared){
+          lock[preSurgeryProcessCount] = true;
+          setHeaderColor(red);
+          setHeaderIcon(minusBox);
+          setMessage("AutoClave not cleared");
+          msg="AutoClave not cleared"
+          icon=alert
+          color=red
+         
+        }else{
+          setMessage("Cleared for start of day");
+          msg="Cleared for start of day"
+          icon=check
+          color=green}
+          autoClavemsg={
+            message:"Autoclave cleared",
+            icon:check,
+            color:green
+          }
+            
+      }else if(netProgress.length == processCount.length){
+        setMessage("Cleared for end of day");
+        msg="Cleared for end of day"
+        icon=check
+        color=green
+      }else{
+        var temp = "Cleared for surgery -0"+(netProgress.length-preSurgeryProcessCount)
+        msg="Cleared for surgery -0"+(netProgress.length-preSurgeryProcessCount)
+        icon=check
+        color=green
+        setMessage(temp);
+      }
+     
+        process_Message = {
+          message:msg,
+          icon:icon,
+          color:color
+        }
+        
+        return process_Message;
+      break;
+  }
+  if(netProgress[netProgress.length-1]==1){
+    if(colorValue[netProgress.length-1] == green){
+
+    }
+
+  }
+  return process_Message
+}
   const renderResources = (item) => {
     return (
       <View style={styles.item}>
-        {/* <TouchableOpacity
+         {/* <TouchableOpacity
           style={[styles.appButtonContainer, { flex: 1, flexDirection:'row' }]}
           onPress={() => {
             item.item.__typename == "AppResource"
@@ -391,20 +541,17 @@ function homeScreen(props, route) {
               style={{
                 width: 30,
                 height: "100%",
-                
                 alignContent: "center",
-                
-                
-                 
               }}
             >
               <MaterialCommunityIcons name="arrow-right" size={30} />
             </View>
-        </TouchableOpacity> */}
-        <OTCard
+        </TouchableOpacity> */} 
+       <OTCard
           title={item.item.name}
-          message={item.index > 0 ? processMessageData[item.index - 1] : null}
+          message={item.index>0?global_message[item.index-1]:autoClavemsg}
           onPress={() => {
+
             item.item.__typename == "AppResource"
               ? props.navigation.navigate("processScreen", {
                   userId: props.userId,
@@ -508,10 +655,11 @@ function homeScreen(props, route) {
               marginTop: 10,
             }}
           >
-            {renderFlatlistData && loadingProcessData ? (
+            {renderFlatlistData &&loadingProcessData  ? (
               <FlatList
+              extraData={flatlistrender}
                 style={{ width: "100%", alignSelf: "center" }}
-                data={_data}
+                data={ot_data}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderResources}
               />

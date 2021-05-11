@@ -4,7 +4,7 @@ import {View,Text, StyleSheet } from 'react-native';
 
 const MessageComponent = (props)=>{
   
-    const item = props.message?props.message:"Process Message"
+    const item = props.message
  
     return(
          <View style={{flexDirection:'row',alignItems:'center'}}>
