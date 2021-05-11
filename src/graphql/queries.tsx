@@ -353,7 +353,7 @@ export const GetSurgeryDetails_OTStaff = gql`
       process_details {
         id
       }
-    }
+    }  
     questions(where: { id: 6 }) {
       processes_data(
         where: { operation_theater: $operation_theater, Date: $Date }
@@ -364,6 +364,29 @@ export const GetSurgeryDetails_OTStaff = gql`
         operation_theater {
           id
         }
+      }
+    }
+    processesData(
+      where: {
+        operation_theater: $operation_theater
+        Date: $Date
+        check_editable_null: false
+      }
+    ) {
+      id
+      Answer
+      Date
+      process_detail {
+        id
+      }
+      check_editable {
+        id
+        processCleared
+      }
+      instance
+      operation_theater {
+        id
+        name
       }
     }
   }

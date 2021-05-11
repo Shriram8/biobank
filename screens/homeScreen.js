@@ -245,7 +245,7 @@ function homeScreen(props, route) {
                           instance: i,
                           process_detail: _data[i].process_details[k].id,
                         },
-                        fetchPolicy: "network-only",
+                        fetchPolicy: "cache-only",
                       })
                       .then((Result) => {
                         _Result.push(Result.data);
