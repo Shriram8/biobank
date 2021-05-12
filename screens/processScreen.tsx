@@ -21,7 +21,7 @@ const processBackgroundColor = ['#00a79d','#27aae2','#f25a29',
 '#f25a29','#019cb2','#27aae2','#f25a29','#00a79d','#27aae2','#f25a29',
 '#019cb2','#27aae2','#f25a29']
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
-    const { userId,operationTheaterID,resourceID, resourceName,instance,userType } = route.params;
+    const { userId,operationTheaterID,resourceID, resourceName,instance,userType,branch } = route.params;
     let [refresh,setRefresh] = useState(true);
     const [renderFlatlistData,setRenderFlatlistData] = useState();
     let [val,setval]=useState([]);
@@ -56,7 +56,8 @@ export default function processScreen({route, navigation}: {navigation: any, rou
                       Date:new Date().toISOString().slice(0, 10),
                       //app_user:userId,
                       operation_theater:operationTheaterID,
-                      instance:instance
+                      instance:instance,
+                      branch:branch,
                     },
                     fetchPolicy: "network-only"
                   })
@@ -102,7 +103,8 @@ export default function processScreen({route, navigation}: {navigation: any, rou
                     variables:{
                       Date:new Date().toISOString().slice(0, 10),
                       operation_theater:operationTheaterID,
-                      question: 3
+                      question: 3,
+                      branch:branch,
                     },
                     fetchPolicy: "network-only"
                   })
@@ -191,7 +193,8 @@ export default function processScreen({route, navigation}: {navigation: any, rou
             instance:instance,
             gaValue:_gaValue,
             processPseudoName:item.Number,
-            backgroundColor:processBackgroundColor[item.Number-1]
+            backgroundColor:processBackgroundColor[item.Number-1],
+            branch:branch,
           })}}>
       
       <View style={{width:18,height:18,marginLeft:14}}>

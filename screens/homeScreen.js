@@ -192,6 +192,7 @@ function homeScreen(props, route) {
                   operation_theater: parseInt(otId),
                   Date: new Date().toISOString().slice(0, 10),
                   // app_user:parseInt(userId),
+                  branch:props.branch,
                 },
                 fetchPolicy: "network-only",
               })
@@ -245,6 +246,7 @@ function homeScreen(props, route) {
                           //app_user:parseInt(userId),
                           instance: i,
                           process_detail: _data[i].process_details[k].id,
+                          branch:props.branch,
                         },
                         fetchPolicy: "cache-only",
                       })
@@ -341,6 +343,7 @@ function homeScreen(props, route) {
           query: GetAutoClaveDetails,
           variables: {
             Date: new Date().toISOString().slice(0, 10),
+            branch:props.branch,
           },
           fetchPolicy: "network-only",
         })
@@ -579,12 +582,14 @@ function homeScreen(props, route) {
                   resourceID: item.item.id,
                   operationTheaterID: item.item.id,
                   resourceName: item.item.name,
+                  branch: props.branch,
                 })
               : props.navigation.navigate("preProcessScreen", {
                   userId: props.userId,
                   userType: props.userType,
                   operationTheaterID: item.item.id,
                   operationTheaterName: item.item.name,
+                  branch: props.branch,
                 });
           }}
         />
@@ -714,6 +719,7 @@ function homeScreen(props, route) {
 const mapStateToProps = (state) => ({
   userId: state.userId,
   userType: state.userType,
+  branch: state.branch,
 });
 export default connect(mapStateToProps)(withNavigation(homeScreen));
 
