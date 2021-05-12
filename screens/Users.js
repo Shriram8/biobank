@@ -114,6 +114,21 @@ const Users = (props) => {
     }
   };
 
+  const setFocus = (type) => {
+    switch (type) {
+      case "OTStaff":
+        return true;
+      case "OTIncharge":
+        return true;
+      case "OTAdmin":
+        if (props.userType !== "OTAdmin") {
+          return true;
+        } else {
+          return false;
+        }
+    }
+  };
+
   const Item = ({ title }) => (
     <>
       {title.userType === "Empty" ? (
@@ -131,6 +146,7 @@ const Users = (props) => {
               userId: title.id,
               userType: title.userType,
               userName: title.name,
+              focus: setFocus(title.userType),
             });
           }}
         >
@@ -170,6 +186,7 @@ const Users = (props) => {
           style={{ borderRadius: 7 }}
           onPress={() =>
             props.navigation.navigate("adduser", {
+              focus: true,
               branch:
                 props.route.params?.from === "branches"
                   ? props.route.params?.branch

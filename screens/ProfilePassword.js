@@ -53,7 +53,7 @@ const ProfilePassword = (props) => {
         }
       } else {
         setShowError(true);
-        setErrorMsg("Passwords too short.");
+        setErrorMsg("Passwords should be greater than 7 digits.");
       }
     }
   };
@@ -90,7 +90,7 @@ const ProfilePassword = (props) => {
       }
     } else {
       setShowError(true);
-      setErrorMsg("Passwords too short.");
+      setErrorMsg("Passwords should be greater than 7 digits.");
     }
   };
 

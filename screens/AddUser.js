@@ -271,7 +271,7 @@ const AddUser = (props) => {
               onBlur={() => setNameFocus(false)}
               style={[
                 styles.inputText,
-                nameFocus && props.route.params?.branch
+                nameFocus && props.route.params?.focus
                   ? styles.isFocused
                   : styles.isNotFocused,
                 Platform.OS === "web" && { outlineWidth: 0 },
@@ -330,7 +330,7 @@ const AddUser = (props) => {
               onBlur={() => setMobileFocus(false)}
               style={[
                 styles.inputText,
-                mobileFocus && props.route.params?.branch
+                mobileFocus && props.route.params?.focus
                   ? styles.isFocused
                   : styles.isNotFocused,
                 Platform.OS === "web" && { outlineWidth: 0 },
@@ -349,7 +349,7 @@ const AddUser = (props) => {
               onBlur={() => setEmpIdFocus(false)}
               style={[
                 styles.inputText,
-                EmpIdFocus && props.route.params?.branch
+                EmpIdFocus && props.route.params?.focus
                   ? styles.isFocused
                   : styles.isNotFocused,
                 Platform.OS === "web" && { outlineWidth: 0 },
