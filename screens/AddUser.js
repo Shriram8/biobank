@@ -24,6 +24,7 @@ import {
 import { useMutation } from "@apollo/client";
 import { client } from "../src/graphql/ApolloClientProvider";
 import { connect } from "react-redux";
+import DeletePopup from "./DeletePopup";
 
 const apolloClient = client;
 
@@ -39,6 +40,7 @@ const AddUser = (props) => {
   const [EmpIdFocus, setEmpIdFocus] = useState(false);
   const [mobileFocus, setMobileFocus] = useState(false);
   const [listFocus, setListFocus] = useState(false);
+  const [deleteAlert, setDeleteAlert] = useState(false);
 
   let [usermutate, { data }] = useMutation(addNewUser, {
     onCompleted: (data) => {
@@ -195,9 +197,22 @@ const AddUser = (props) => {
     }
   };
 
+  const closeOnSuccess = (id) => {
+    setDeleteAlert(false);
+    navigateToUsers(id, "User deleted successfully");
+  };
+
   return (
     <>
       <StatusBar animated={true} backgroundColor="#fff" hidden={false} />
+      <DeletePopup
+        alert={deleteAlert}
+        setAlert={setDeleteAlert}
+        type={props.route.params?.userType?.slice(2)}
+        name={props.route.params?.userName}
+        id={props.route.params?.userId}
+        closeOnSuccess={closeOnSuccess}
+      />
       <View style={{ flex: 1, marginTop: StatusBar.currentHeight }}>
         <View
           style={[
@@ -219,10 +234,33 @@ const AddUser = (props) => {
             }}
           />
           <Text style={styles.headerTitle}>
-            {props.route.params?.from ? "Update user" : "Add a New User"}
+            {props.route.params?.from
+              ? props.route.params?.userName
+              : "Add a New User"}
           </Text>
         </View>
         <ScrollView contentContainerStyle={styles.formView}>
+          {props.route.params?.from && (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                Personal Details
+              </Text>
+              <IconButton
+                icon="delete-outline"
+                color={"#010101"}
+                size={25}
+                onPress={() => {
+                  setDeleteAlert(true);
+                }}
+              />
+            </View>
+          )}
           <View style={styles.textLabel}>
             <Text style={styles.textStyle}>First Name Last Name</Text>
           </View>

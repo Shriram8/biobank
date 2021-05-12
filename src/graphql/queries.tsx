@@ -109,6 +109,10 @@ export const DeactivateUser = gql`
       appUser {
         id
         name
+        branch {
+          id
+          name
+        }
       }
     }
   }
@@ -130,10 +134,10 @@ export const ResetPassword = gql`
   }
 `;
 export const GetAutoClaveDetails = gql`
-  query($Date: String,$branch:ID!) {
-    processDetails(where: { id: [4, 5, 6]}) {
+  query($Date: String, $branch: ID!) {
+    processDetails(where: { id: [4, 5, 6] }) {
       id
-      processes_data(where: { Date: $Date ,branch:$branch }) {
+      processes_data(where: { Date: $Date, branch: $branch }) {
         Date
         check_editable {
           processCleared
@@ -158,10 +162,10 @@ export const GetProcessesDetails = gql`
 `;
 
 export const GetGaDetails = gql`
-  query($Date: String,$branch:ID!) {
+  query($Date: String, $branch: ID!) {
     processDetails(where: { id: [4, 5, 6] }) {
       id
-      processes_data(where: { Date: $Date,branch:$branch}) {
+      processes_data(where: { Date: $Date, branch: $branch }) {
         Date
         check_editable {
           processCleared
@@ -176,7 +180,7 @@ export const GetProcessDataDetails = gql`
     $operation_theater: ID!
     $instance: Int
     $Date: String
-    $branch:ID!
+    $branch: ID!
   ) {
     processesData(
       where: {
@@ -219,7 +223,7 @@ export const GetQuestionDetails = gql`
     ) {
       id
       check_editable {
-        id,
+        id
         processCleared
       }
       question {
@@ -233,7 +237,13 @@ export const GetQuestionDetails = gql`
 `;
 
 export const GetAnswersProgress = gql`
-  query($operation_theater: ID!, $processID: ID!, $instance: Int, $Date: Date, $branch:ID!) {
+  query(
+    $operation_theater: ID!
+    $processID: ID!
+    $instance: Int
+    $Date: Date
+    $branch: ID!
+  ) {
     processesData(
       where: {
         process_detail: $processID
@@ -301,7 +311,7 @@ export const preProcessProgress_OTStaff = gql`
     $Date: Date
     $instance: Int
     $process_detail: ID!
-    $branch:ID!
+    $branch: ID!
   ) {
     processesData(
       where: {
@@ -310,7 +320,7 @@ export const preProcessProgress_OTStaff = gql`
         instance: $instance
         process_detail: $process_detail
         check_editable_null: false
-        branch:$branch
+        branch: $branch
       }
     ) {
       id
@@ -370,7 +380,7 @@ export const preProcessProgress = gql`
 `;
 
 export const GetSurgeryDetails_OTStaff = gql`
-  query($operation_theater: ID!, $Date: Date, $branch:ID!) {
+  query($operation_theater: ID!, $Date: Date, $branch: ID!) {
     appResources(
       sort: "processOrder:asc"
       where: { resourceType: "OperationTheater" }
@@ -384,7 +394,11 @@ export const GetSurgeryDetails_OTStaff = gql`
     }
     questions(where: { id: 6 }) {
       processes_data(
-        where: { operation_theater: $operation_theater, Date: $Date,branch:$branch }
+        where: {
+          operation_theater: $operation_theater
+          Date: $Date
+          branch: $branch
+        }
       ) {
         id
         Answer
@@ -544,7 +558,7 @@ export const SubmitAnswerForQuestion = gql`
     $Date: Date
     $Answer: String
     $instance: Int
-    $branch:ID!
+    $branch: ID!
   ) {
     createProcessesDatum(
       input: {
@@ -582,7 +596,7 @@ export const SubmitAnswerForQuestion = gql`
 `;
 
 export const SubmitCompleted = gql`
-  mutation($processes_data: [ID], $processCleared: Boolean,  $branch: ID!) {
+  mutation($processes_data: [ID], $processCleared: Boolean, $branch: ID!) {
     createCheckEditable(
       input: {
         data: {

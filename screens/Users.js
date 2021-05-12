@@ -8,16 +8,19 @@ import {
   Platform,
 } from "react-native";
 import { Button, IconButton, Portal } from "react-native-paper";
-import { GetUsers, DeactivateUser } from "../src/graphql/queries";
-import { useQuery, useMutation } from "@apollo/client";
+import { GetUsers } from "../src/graphql/queries";
+import { useQuery } from "@apollo/client";
 import { TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
+import DeletePopup from "./DeletePopup";
 
 const Users = (props) => {
   const [sectionData, setSectionData] = useState([]);
   const [alert, setAlert] = useState(false);
   const [alertMsg, setAlertmsg] = useState("");
   const [branchName, setBranchName] = useState("");
+  const [deleteAlert, setDeleteAlert] = useState(false);
+  const [deleteData, setDeleteData] = useState([]);
 
   const { data, refetch } = useQuery(GetUsers, {
     fetchPolicy: "network-only",
@@ -29,16 +32,6 @@ const Users = (props) => {
           : props.branch,
     },
   });
-
-  let [deactivateUser, { data: deactivatedData }] = useMutation(
-    DeactivateUser,
-    {
-      onCompleted: () => {
-        refetch();
-        // setShowPop(false);
-      },
-    }
-  );
 
   useEffect(() => {
     if (props.userType === "OTSuperUser") {
@@ -100,15 +93,6 @@ const Users = (props) => {
     return <Text style={styles.empty}>No members</Text>;
   };
 
-  const deactivate = (id) => {
-    deactivateUser({
-      variables: {
-        userId: id,
-        active: false,
-      },
-    });
-  };
-
   const checkUser = (val) => {
     switch (props.userType) {
       case "OTSuperUser":
@@ -146,6 +130,7 @@ const Users = (props) => {
               from: "admin",
               userId: title.id,
               userType: title.userType,
+              userName: title.name,
             });
           }}
         >
@@ -156,7 +141,14 @@ const Users = (props) => {
               color={"#010101"}
               size={20}
               onPress={() => {
-                deactivate(title.id);
+                setDeleteAlert(true);
+                setDeleteData([
+                  {
+                    id: title.id,
+                    name: title.name,
+                    type: title.userType,
+                  },
+                ]);
               }}
             />
           )}
@@ -191,9 +183,22 @@ const Users = (props) => {
     );
   };
 
+  const closeOnSuccess = (id) => {
+    setDeleteAlert(false);
+    refetch();
+  };
+
   return (
     <>
       <StatusBar animated={true} backgroundColor="#fff" hidden={false} />
+      <DeletePopup
+        alert={deleteAlert}
+        setAlert={setDeleteAlert}
+        id={deleteData[0]?.id}
+        name={deleteData[0]?.name}
+        type={deleteData[0]?.type}
+        closeOnSuccess={closeOnSuccess}
+      />
       <View
         style={{
           backgroundColor: "#fff",
