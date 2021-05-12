@@ -130,10 +130,10 @@ export const ResetPassword = gql`
   }
 `;
 export const GetAutoClaveDetails = gql`
-  query($Date: String) {
-    processDetails(where: { id: [4, 5, 6] }) {
+  query($Date: String,$branch:ID!) {
+    processDetails(where: { id: [4, 5, 6]}) {
       id
-      processes_data(where: { Date: $Date }) {
+      processes_data(where: { Date: $Date ,branch:$branch }) {
         Date
         check_editable {
           processCleared
@@ -158,10 +158,10 @@ export const GetProcessesDetails = gql`
 `;
 
 export const GetGaDetails = gql`
-  query($Date: String) {
+  query($Date: String,$branch:ID!) {
     processDetails(where: { id: [4, 5, 6] }) {
       id
-      processes_data(where: { Date: $Date }) {
+      processes_data(where: { Date: $Date,branch:$branch}) {
         Date
         check_editable {
           processCleared
@@ -176,6 +176,7 @@ export const GetProcessDataDetails = gql`
     $operation_theater: ID!
     $instance: Int
     $Date: String
+    $branch:ID!
   ) {
     processesData(
       where: {
@@ -183,6 +184,7 @@ export const GetProcessDataDetails = gql`
         operation_theater: $operation_theater
         instance: $instance
         Date: $Date
+        branch: $branch
       }
     ) {
       id
@@ -196,6 +198,7 @@ export const GetQuestionDetails = gql`
     $operation_theater: ID!
     $instance: Int
     $Date: String
+    $branch: ID!
   ) {
     processDetail(id: $processID) {
       id
@@ -211,11 +214,13 @@ export const GetQuestionDetails = gql`
         operation_theater: $operation_theater
         instance: $instance
         Date: $Date
+        branch: $branch
       }
     ) {
       id
       check_editable {
-        id
+        id,
+        processCleared
       }
       question {
         id
@@ -228,13 +233,14 @@ export const GetQuestionDetails = gql`
 `;
 
 export const GetAnswersProgress = gql`
-  query($operation_theater: ID!, $processID: ID!, $instance: Int, $Date: Date) {
+  query($operation_theater: ID!, $processID: ID!, $instance: Int, $Date: Date, $branch:ID!) {
     processesData(
       where: {
         process_detail: $processID
         operation_theater: $operation_theater
         instance: $instance
         Date: $Date
+        branch: $branch
       }
     ) {
       id
@@ -295,6 +301,7 @@ export const preProcessProgress_OTStaff = gql`
     $Date: Date
     $instance: Int
     $process_detail: ID!
+    $branch:ID!
   ) {
     processesData(
       where: {
@@ -303,6 +310,7 @@ export const preProcessProgress_OTStaff = gql`
         instance: $instance
         process_detail: $process_detail
         check_editable_null: false
+        branch:$branch
       }
     ) {
       id
@@ -362,7 +370,7 @@ export const preProcessProgress = gql`
 `;
 
 export const GetSurgeryDetails_OTStaff = gql`
-  query($operation_theater: ID!, $Date: Date) {
+  query($operation_theater: ID!, $Date: Date, $branch:ID!) {
     appResources(
       sort: "processOrder:asc"
       where: { resourceType: "OperationTheater" }
@@ -376,7 +384,7 @@ export const GetSurgeryDetails_OTStaff = gql`
     }
     questions(where: { id: 6 }) {
       processes_data(
-        where: { operation_theater: $operation_theater, Date: $Date }
+        where: { operation_theater: $operation_theater, Date: $Date,branch:$branch }
       ) {
         id
         Answer
@@ -536,6 +544,7 @@ export const SubmitAnswerForQuestion = gql`
     $Date: Date
     $Answer: String
     $instance: Int
+    $branch:ID!
   ) {
     createProcessesDatum(
       input: {
@@ -547,6 +556,7 @@ export const SubmitAnswerForQuestion = gql`
           process_detail: $process_detail
           Date: $Date
           instance: $instance
+          branch: $branch
         }
       }
     ) {
@@ -572,13 +582,14 @@ export const SubmitAnswerForQuestion = gql`
 `;
 
 export const SubmitCompleted = gql`
-  mutation($processes_data: [ID], $processCleared: Boolean) {
+  mutation($processes_data: [ID], $processCleared: Boolean,  $branch: ID!) {
     createCheckEditable(
       input: {
         data: {
           editable: true
           processes_data: $processes_data
           processCleared: $processCleared
+          branch: $branch
         }
       }
     ) {

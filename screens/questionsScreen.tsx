@@ -86,6 +86,7 @@ const initialProcessQuestionIndex = 2;
 var _isInitialProcess: boolean;
 var ignoreQuestionsCount: number;
 var networkError:Boolean;
+var inChargeOverride:Boolean;
 
 var imageAddress = ["../Images/P1.jpg","../Images/P2.jpg"];
 const contentButtons = [
@@ -187,6 +188,7 @@ export default function questionsScreen({
     gaValue,
     backgroundColor,
     processPseudoName,
+    branch,
     //imageAddress
   } = route.params;
   const [_data, setfetchData] = React.useState(false);
@@ -195,6 +197,7 @@ export default function questionsScreen({
   const [override, setOverride] = React.useState(false);
   const [_cleared, setCleared] = React.useState(false);
   const [showDrugList, setShowDrugList] = useState(false);
+  const [loadingCompletedButton, setLoadingCompletedButton] = useState(false);
   let { loading, error, data: questions_data, refetch } = useQuery(
     GetQuestionDetails,
     {
@@ -204,6 +207,7 @@ export default function questionsScreen({
         //app_user:userId,
         operation_theater: operationTheaterID,
         instance: instance,
+        branch: branch,
       },
     }
   );
@@ -223,6 +227,7 @@ export default function questionsScreen({
       setOverride(false);
       _processCleared = true;
       _isInitialProcess = false;
+      inChargeOverride = false;
       setCleared(true);
       ignoreQuestionsCount = 0;
       apolloClient
@@ -233,6 +238,7 @@ export default function questionsScreen({
             Date: new Date().toISOString().slice(0, 10),
             operation_theater: operationTheaterID,
             instance: instance,
+            branch: branch,
           },
           fetchPolicy: "network-only",
         })
@@ -263,6 +269,16 @@ export default function questionsScreen({
             questionCount = questionCount - ignoreQuestionsCount;
           }
           if (questions_data.processesData.length == questionCount) {
+           
+            if(userType == "OTIncharge" ){
+              if(!questions_data.processesData[0].check_editable.processCleared){
+                inChargeOverride = true;
+                setDisableCompleted(false);
+              }
+              else{
+                setDisableCompleted(true);
+              }
+            }else
             setDisableCompleted(false);
           }
           if (
@@ -312,10 +328,8 @@ export default function questionsScreen({
       dictId[mutationData.createProcessesDatum.processesDatum.question.id] =
         mutationData.createProcessesDatum.processesDatum.id;
       processDataId.push(mutationData.createProcessesDatum.processesDatum.id);
-      //console.log("LOG__",dictId,dictId.length,questionCount,processDataId);
-      // console.log("LOG__",temp);
       if (temp.length == questionCount) {
-
+        setLoadingCompletedButton(true);
         apolloClient
         .query({
           query: GetProcessDataDetails,
@@ -324,10 +338,12 @@ export default function questionsScreen({
             Date: new Date().toISOString().slice(0, 10),
             operation_theater: operationTheaterID,
             instance: instance,
+            branch: branch,
           },
           fetchPolicy: "network-only",
         })
         .then((Result) => {
+            setLoadingCompletedButton(false);
             processDataId = [];
             for(var i=0; i<questionCount;i++)
             {
@@ -352,11 +368,12 @@ export default function questionsScreen({
           Date: new Date().toISOString().slice(0, 10),
           Answer: value,
           instance: instance,
+          branch: branch
         },
     });
   };
 
-  let [updateFunction, { data: updateFunctiondata }] = useMutation(
+  let [updateFunction, { data: updateFunctiondata, }] = useMutation(
     UpdateSubmittedAnswerForQuestion
   );
 
@@ -365,6 +382,7 @@ export default function questionsScreen({
       variables: {
         question_Id: parseInt(index),
         Answer: value,
+        branch:branch
       },
     });
   };
@@ -406,10 +424,10 @@ export default function questionsScreen({
     //console.log("Process Cleared---",_processCleared)
     setDisableButtons(true);
     setDisableCompleted(true);
-    if (userType == "OTIncharge") {
+    if (userType == "OTIncharge" && inChargeOverride) {
       setCleared(true);
       for (var i = 0; i < temp.length; i++) {
-        //console.log(dict,processDataId,dictId,temp)
+        console.log(dict,processDataId,dictId,temp)
         if (dict[temp[i]] == "False") {
           updateQuery(dictId[temp[i]], "True");
           updateEditableFunction({
@@ -425,6 +443,7 @@ export default function questionsScreen({
         variables: {
           processes_data: processDataId.map(Number),
           processCleared: _processCleared,
+          branch:branch,
         },
       });
     }
@@ -784,18 +803,22 @@ export default function questionsScreen({
             <View style={{ justifyContent: "space-around" }}>
               <Button
                 mode="contained"
-                color={"#006bcc"}
-                disabled={disbaleCompleted}
+                color={disbaleCompleted?"#959595":"#006bcc"}
+                dark
+                //disabled={disbaleCompleted}
+                loading={loadingCompletedButton}
                 style={{
                   width: "100%",
                   height: 40,
                   justifyContent: "center",
                   alignSelf: "center",
+                  
                 }}
-                onPress={() => submitEditable()}
+                onPress={() => {if(!disbaleCompleted){submitEditable();}}}
               >
-                {userType == "OTIncharge" ? "Override" : "Completed"}
-              </Button>
+                {userType == "OTIncharge" && inChargeOverride ? "Override" : "Completed"}
+              </Button> 
+
             </View>
           </View>
         </View>

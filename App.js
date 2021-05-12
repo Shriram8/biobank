@@ -21,6 +21,7 @@ const initialState = {
   isLoggedIn: false,
   userId: "",
   userType: "",
+  branch: "",
 };
 const reducer = (state = initialState, action) => {
   switch (action.type) {

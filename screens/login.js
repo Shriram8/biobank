@@ -58,6 +58,7 @@ function login(props, navigation) {
             navigation.navigate("homeScreen", {
               userId: userId,
               userType: Result.data.appUsers[0].userType,
+              branch: Result.data.appUsers[0].branch?.id
             });
           } else {
             console.log("failed");
