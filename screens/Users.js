@@ -188,7 +188,8 @@ const Users = (props) => {
             props.navigation.navigate("adduser", {
               focus: true,
               branch:
-                props.route.params?.from === "branches"
+                props.route.params?.from === "branches" ||
+                props.route.params?.from === "adduser"
                   ? props.route.params?.branch
                   : props.branch,
             })
