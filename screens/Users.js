@@ -17,6 +17,7 @@ const Users = (props) => {
   const [sectionData, setSectionData] = useState([]);
   const [alert, setAlert] = useState(false);
   const [alertMsg, setAlertmsg] = useState("");
+  const [branchName, setBranchName] = useState("");
 
   const { data, refetch } = useQuery(GetUsers, {
     fetchPolicy: "network-only",
@@ -40,6 +41,11 @@ const Users = (props) => {
   );
 
   useEffect(() => {
+    if (props.userType === "OTSuperUser") {
+      setBranchName(props.route.params?.branchName);
+    } else {
+      setBranchName(props.branchName);
+    }
     if (props.route.params?.from === "adduser") {
       refetch();
       setAlertmsg(props.route.params?.msg);
@@ -162,7 +168,7 @@ const Users = (props) => {
   const ListHeaderComponent = () => {
     return (
       <View style={styles.topView}>
-        <Text style={styles.userText}>User</Text>
+        <Text style={styles.userText}>Users</Text>
         <Button
           icon="plus"
           mode="contained"
@@ -179,7 +185,7 @@ const Users = (props) => {
             })
           }
         >
-          Add
+          Add User
         </Button>
       </View>
     );
@@ -225,7 +231,7 @@ const Users = (props) => {
               props.userType !== "OTSuperUser" && { marginLeft: 73 },
             ]}
           >
-            Users
+            {branchName}
           </Text>
         </View>
         <SectionList
@@ -266,6 +272,7 @@ const Users = (props) => {
 const mapStateToProps = (state) => ({
   branch: state.branch,
   userType: state.userType,
+  branchName: state.branchName,
 });
 
 export default connect(mapStateToProps)(Users);
@@ -370,6 +377,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: "bold",
   },
 });

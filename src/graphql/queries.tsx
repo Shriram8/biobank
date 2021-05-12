@@ -22,6 +22,7 @@ export const GetDetailsWithEmployeeId = gql`
       resetpassword
       branch {
         id
+        name
       }
     }
   }
@@ -170,13 +171,13 @@ export const GetGaDetails = gql`
   }
 `;
 export const GetProcessDataDetails = gql`
- query(
+  query(
     $processID: ID!
     $operation_theater: ID!
     $instance: Int
     $Date: String
   ) {
-processesData(
+    processesData(
       where: {
         process_detail: $processID
         operation_theater: $operation_theater
@@ -188,7 +189,6 @@ processesData(
     }
   }
 `;
-
 
 export const GetQuestionDetails = gql`
   query(
@@ -373,7 +373,7 @@ export const GetSurgeryDetails_OTStaff = gql`
       process_details {
         id
       }
-    }  
+    }
     questions(where: { id: 6 }) {
       processes_data(
         where: { operation_theater: $operation_theater, Date: $Date }

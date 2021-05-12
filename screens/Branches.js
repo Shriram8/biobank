@@ -24,7 +24,7 @@ const Branches = (props) => {
   const ListHeaderComponent = () => {
     return (
       <View style={styles.topView}>
-        <Text style={styles.userText}>User</Text>
+        <Text style={styles.userText}>Centers</Text>
         <Button
           icon="plus"
           mode="contained"
@@ -36,7 +36,7 @@ const Branches = (props) => {
             props.navigation.navigate("userManagement", { screen: "addbranch" })
           }
         >
-          Add
+          Add Center
         </Button>
       </View>
     );
@@ -56,6 +56,7 @@ const Branches = (props) => {
             params: {
               branch: data.item.id,
               from: "branches",
+              branchName: data.item.name,
             },
           });
         }}

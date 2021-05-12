@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: "bold",
   },
   formView: {
     backgroundColor: "#fff",
