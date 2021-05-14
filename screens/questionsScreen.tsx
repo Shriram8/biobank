@@ -479,6 +479,7 @@ export default function questionsScreen({
             <Picker
               selectedValue={dict[item.id]}
               enabled={!disableButtons}
+              mode='dropdown'
               style={{
                 height: 40,
                 borderRadius: 7,
