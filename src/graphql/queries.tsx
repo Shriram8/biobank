@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 export const GetUserDetails = gql`
-  query($userID: String) {
+  query ($userID: String) {
     appUsers(where: { uid: $userID }) {
       id
       name
@@ -11,7 +11,7 @@ export const GetUserDetails = gql`
 `;
 
 export const GetDetailsWithEmployeeId = gql`
-  query($employeeid: String) {
+  query ($employeeid: String) {
     appUsers(
       where: { _or: [{ employeeid: $employeeid }, { uid: $employeeid }] }
     ) {
@@ -22,6 +22,7 @@ export const GetDetailsWithEmployeeId = gql`
       resetpassword
       branch {
         id
+        name
       }
     }
   }
@@ -48,7 +49,7 @@ export const GetDrugList = gql`
 `;
 
 export const GetUsers = gql`
-  query($branch: ID!) {
+  query ($branch: ID!) {
     appUsers(where: { branch: $branch, active: true }) {
       id
       name
@@ -59,7 +60,7 @@ export const GetUsers = gql`
 `;
 
 export const GetUserDataById = gql`
-  query($userId: ID!) {
+  query ($userId: ID!) {
     appUsers(where: { id: $userId }) {
       id
       name
@@ -76,7 +77,7 @@ export const GetUserDataById = gql`
 `;
 
 export const GetPassword = gql`
-  query($userId: ID!) {
+  query ($userId: ID!) {
     appUsers(where: { id: $userId }) {
       id
       password
@@ -85,7 +86,7 @@ export const GetPassword = gql`
 `;
 
 export const UpdatePassword = gql`
-  mutation($userId: ID!, $password: String!, $resetpassword: Boolean!) {
+  mutation ($userId: ID!, $password: String!, $resetpassword: Boolean!) {
     updateAppUser(
       input: {
         where: { id: $userId }
@@ -101,20 +102,24 @@ export const UpdatePassword = gql`
 `;
 
 export const DeactivateUser = gql`
-  mutation($userId: ID!, $active: Boolean!) {
+  mutation ($userId: ID!, $active: Boolean!) {
     updateAppUser(
       input: { where: { id: $userId }, data: { active: $active } }
     ) {
       appUser {
         id
         name
+        branch {
+          id
+          name
+        }
       }
     }
   }
 `;
 
 export const ResetPassword = gql`
-  mutation($userId: ID!, $resetpassword: Boolean!) {
+  mutation ($userId: ID!, $resetpassword: Boolean!) {
     updateAppUser(
       input: { where: { id: $userId }, data: { resetpassword: $resetpassword } }
     ) {
@@ -129,10 +134,10 @@ export const ResetPassword = gql`
   }
 `;
 export const GetAutoClaveDetails = gql`
-  query($Date: String,$branch:ID!) {
-    processDetails(where: { id: [4, 5, 6]}) {
+  query ($Date: String, $branch: ID!) {
+    processDetails(where: { id: [4, 5, 6] }) {
       id
-      processes_data(where: { Date: $Date ,branch:$branch }) {
+      processes_data(where: { Date: $Date, branch: $branch }) {
         Date
         check_editable {
           processCleared
@@ -142,7 +147,7 @@ export const GetAutoClaveDetails = gql`
   }
 `;
 export const GetProcessesDetails = gql`
-  query($resourceID: ID!) {
+  query ($resourceID: ID!) {
     appResource(id: $resourceID) {
       process_details {
         id
@@ -157,10 +162,10 @@ export const GetProcessesDetails = gql`
 `;
 
 export const GetGaDetails = gql`
-  query($Date: String,$branch:ID!) {
+  query ($Date: String, $branch: ID!) {
     processDetails(where: { id: [4, 5, 6] }) {
       id
-      processes_data(where: { Date: $Date,branch:$branch}) {
+      processes_data(where: { Date: $Date, branch: $branch }) {
         Date
         check_editable {
           processCleared
@@ -170,14 +175,14 @@ export const GetGaDetails = gql`
   }
 `;
 export const GetProcessDataDetails = gql`
- query(
+  query (
     $processID: ID!
     $operation_theater: ID!
     $instance: Int
     $Date: String
-    $branch:ID!
+    $branch: ID!
   ) {
-processesData(
+    processesData(
       where: {
         process_detail: $processID
         operation_theater: $operation_theater
@@ -191,9 +196,8 @@ processesData(
   }
 `;
 
-
 export const GetQuestionDetails = gql`
-  query(
+  query (
     $processID: ID!
     $operation_theater: ID!
     $instance: Int
@@ -219,7 +223,7 @@ export const GetQuestionDetails = gql`
     ) {
       id
       check_editable {
-        id,
+        id
         processCleared
       }
       question {
@@ -233,7 +237,13 @@ export const GetQuestionDetails = gql`
 `;
 
 export const GetAnswersProgress = gql`
-  query($operation_theater: ID!, $processID: ID!, $instance: Int, $Date: Date, $branch:ID!) {
+  query (
+    $operation_theater: ID!
+    $processID: ID!
+    $instance: Int
+    $Date: Date
+    $branch: ID!
+  ) {
     processesData(
       where: {
         process_detail: $processID
@@ -270,7 +280,7 @@ export const GetSharedResource_OperationTheaters = gql`
 `;
 
 export const autoClaveProgress = gql`
-  query(
+  query (
     $operation_theater: ID!
     $Date: Date
     $instance: Int
@@ -296,12 +306,12 @@ export const autoClaveProgress = gql`
 `;
 
 export const preProcessProgress_OTStaff = gql`
-  query(
+  query (
     $operation_theater: ID!
     $Date: Date
     $instance: Int
     $process_detail: ID!
-    $branch:ID!
+    $branch: ID!
   ) {
     processesData(
       where: {
@@ -310,7 +320,7 @@ export const preProcessProgress_OTStaff = gql`
         instance: $instance
         process_detail: $process_detail
         check_editable_null: false
-        branch:$branch
+        branch: $branch
       }
     ) {
       id
@@ -333,7 +343,7 @@ export const preProcessProgress_OTStaff = gql`
 `;
 
 export const preProcessProgress = gql`
-  query(
+  query (
     $operation_theater: ID!
     $app_user: ID!
     $Date: Date
@@ -370,7 +380,7 @@ export const preProcessProgress = gql`
 `;
 
 export const GetSurgeryDetails_OTStaff = gql`
-  query($operation_theater: ID!, $Date: Date, $branch:ID!) {
+  query ($operation_theater: ID!, $Date: Date, $branch: ID!) {
     appResources(
       sort: "processOrder:asc"
       where: { resourceType: "OperationTheater" }
@@ -381,10 +391,14 @@ export const GetSurgeryDetails_OTStaff = gql`
       process_details {
         id
       }
-    }  
+    }
     questions(where: { id: 6 }) {
       processes_data(
-        where: { operation_theater: $operation_theater, Date: $Date,branch:$branch }
+        where: {
+          operation_theater: $operation_theater
+          Date: $Date
+          branch: $branch
+        }
       ) {
         id
         Answer
@@ -421,7 +435,7 @@ export const GetSurgeryDetails_OTStaff = gql`
 `;
 
 export const GetSurgeryDetails = gql`
-  query($operation_theater: ID!, $app_user: ID!, $Date: Date) {
+  query ($operation_theater: ID!, $app_user: ID!, $Date: Date) {
     appResources(
       sort: "processOrder:asc"
       where: { resourceType: "OperationTheater" }
@@ -452,7 +466,7 @@ export const GetSurgeryDetails = gql`
   }
 `;
 export const Check_Process_Progress = gql`
-  query($otID: ID!, $date: String) {
+  query ($otID: ID!, $date: String) {
     appResources(
       sort: "processOrder:asc"
       where: { resourceType: "OperationTheater" }
@@ -536,7 +550,7 @@ export enum ENUM_RESOURCE_TYPE {
 }
 
 export const SubmitAnswerForQuestion = gql`
-  mutation(
+  mutation (
     $operation_theater: ID!
     $question: ID!
     $app_user: ID!
@@ -544,7 +558,7 @@ export const SubmitAnswerForQuestion = gql`
     $Date: Date
     $Answer: String
     $instance: Int
-    $branch:ID!
+    $branch: ID!
   ) {
     createProcessesDatum(
       input: {
@@ -582,7 +596,7 @@ export const SubmitAnswerForQuestion = gql`
 `;
 
 export const SubmitCompleted = gql`
-  mutation($processes_data: [ID], $processCleared: Boolean,  $branch: ID!) {
+  mutation ($processes_data: [ID], $processCleared: Boolean, $branch: ID!) {
     createCheckEditable(
       input: {
         data: {
@@ -603,7 +617,7 @@ export const SubmitCompleted = gql`
 `;
 
 export const UpdateSubmitCompleted = gql`
-  mutation($checkEditable_Id: ID!) {
+  mutation ($checkEditable_Id: ID!) {
     updateCheckEditable(
       input: {
         where: { id: $checkEditable_Id }
@@ -620,7 +634,7 @@ export const UpdateSubmitCompleted = gql`
 `;
 
 export const UpdateSubmittedAnswerForQuestion = gql`
-  mutation($question_Id: ID!, $Answer: String) {
+  mutation ($question_Id: ID!, $Answer: String) {
     updateProcessesDatum(
       input: { where: { id: $question_Id }, data: { Answer: $Answer } }
     ) {
@@ -633,7 +647,7 @@ export const UpdateSubmittedAnswerForQuestion = gql`
 `;
 
 export const addNewUser = gql`
-  mutation(
+  mutation (
     $name: String!
     $password: String!
     $uid: String!
@@ -671,7 +685,7 @@ export const addNewUser = gql`
 `;
 
 export const UpdateUser = gql`
-  mutation(
+  mutation (
     $userId: ID!
     $name: String!
     $userType: ENUM_APPUSERS_USERTYPE
@@ -696,7 +710,7 @@ export const UpdateUser = gql`
 `;
 
 export const addNewBranch = gql`
-  mutation($name: String!) {
+  mutation ($name: String!) {
     createBranch(input: { data: { name: $name } }) {
       branch {
         id
@@ -708,7 +722,7 @@ export const addNewBranch = gql`
 
 export const getBranchDetails = gql`
   query {
-    branches {
+    branches(sort: "name") {
       id
       name
     }

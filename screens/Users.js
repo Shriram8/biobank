@@ -8,15 +8,19 @@ import {
   Platform,
 } from "react-native";
 import { Button, IconButton, Portal } from "react-native-paper";
-import { GetUsers, DeactivateUser } from "../src/graphql/queries";
-import { useQuery, useMutation } from "@apollo/client";
+import { GetUsers } from "../src/graphql/queries";
+import { useQuery } from "@apollo/client";
 import { TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
+import DeletePopup from "./DeletePopup";
 
 const Users = (props) => {
   const [sectionData, setSectionData] = useState([]);
   const [alert, setAlert] = useState(false);
   const [alertMsg, setAlertmsg] = useState("");
+  const [branchName, setBranchName] = useState("");
+  const [deleteAlert, setDeleteAlert] = useState(false);
+  const [deleteData, setDeleteData] = useState([]);
 
   const { data, refetch } = useQuery(GetUsers, {
     fetchPolicy: "network-only",
@@ -29,17 +33,12 @@ const Users = (props) => {
     },
   });
 
-  let [deactivateUser, { data: deactivatedData }] = useMutation(
-    DeactivateUser,
-    {
-      onCompleted: () => {
-        refetch();
-        // setShowPop(false);
-      },
-    }
-  );
-
   useEffect(() => {
+    if (props.userType === "OTSuperUser") {
+      setBranchName(props.route.params?.branchName);
+    } else {
+      setBranchName(props.branchName);
+    }
     if (props.route.params?.from === "adduser") {
       refetch();
       setAlertmsg(props.route.params?.msg);
@@ -94,15 +93,6 @@ const Users = (props) => {
     return <Text style={styles.empty}>No members</Text>;
   };
 
-  const deactivate = (id) => {
-    deactivateUser({
-      variables: {
-        userId: id,
-        active: false,
-      },
-    });
-  };
-
   const checkUser = (val) => {
     switch (props.userType) {
       case "OTSuperUser":
@@ -117,6 +107,21 @@ const Users = (props) => {
         }
       case "OTAdmin":
         if (val !== "OTAdmin") {
+          return true;
+        } else {
+          return false;
+        }
+    }
+  };
+
+  const setFocus = (type) => {
+    switch (type) {
+      case "OTStaff":
+        return true;
+      case "OTIncharge":
+        return true;
+      case "OTAdmin":
+        if (props.userType !== "OTAdmin") {
           return true;
         } else {
           return false;
@@ -140,6 +145,8 @@ const Users = (props) => {
               from: "admin",
               userId: title.id,
               userType: title.userType,
+              userName: title.name,
+              focus: setFocus(title.userType),
             });
           }}
         >
@@ -150,7 +157,14 @@ const Users = (props) => {
               color={"#010101"}
               size={20}
               onPress={() => {
-                deactivate(title.id);
+                setDeleteAlert(true);
+                setDeleteData([
+                  {
+                    id: title.id,
+                    name: title.name,
+                    type: title.userType,
+                  },
+                ]);
               }}
             />
           )}
@@ -162,7 +176,7 @@ const Users = (props) => {
   const ListHeaderComponent = () => {
     return (
       <View style={styles.topView}>
-        <Text style={styles.userText}>User</Text>
+        <Text style={styles.userText}>Users</Text>
         <Button
           icon="plus"
           mode="contained"
@@ -172,22 +186,37 @@ const Users = (props) => {
           style={{ borderRadius: 7 }}
           onPress={() =>
             props.navigation.navigate("adduser", {
+              focus: true,
               branch:
-                props.route.params?.from === "branches"
+                props.route.params?.from === "branches" ||
+                props.route.params?.from === "adduser"
                   ? props.route.params?.branch
                   : props.branch,
             })
           }
         >
-          Add
+          Add User
         </Button>
       </View>
     );
   };
 
+  const closeOnSuccess = (id) => {
+    setDeleteAlert(false);
+    refetch();
+  };
+
   return (
     <>
       <StatusBar animated={true} backgroundColor="#fff" hidden={false} />
+      <DeletePopup
+        alert={deleteAlert}
+        setAlert={setDeleteAlert}
+        id={deleteData[0]?.id}
+        name={deleteData[0]?.name}
+        type={deleteData[0]?.type}
+        closeOnSuccess={closeOnSuccess}
+      />
       <View
         style={{
           backgroundColor: "#fff",
@@ -225,7 +254,7 @@ const Users = (props) => {
               props.userType !== "OTSuperUser" && { marginLeft: 73 },
             ]}
           >
-            Users
+            {branchName}
           </Text>
         </View>
         <SectionList
@@ -266,6 +295,7 @@ const Users = (props) => {
 const mapStateToProps = (state) => ({
   branch: state.branch,
   userType: state.userType,
+  branchName: state.branchName,
 });
 
 export default connect(mapStateToProps)(Users);
@@ -370,6 +400,6 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: "bold",
   },
 });
