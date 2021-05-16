@@ -348,6 +348,19 @@ export default function questionsScreen({
             for(var i=0; i<questionCount;i++)
             {
               processDataId.push(Result.data.processesData[i].id);
+
+              if (Result.data.processesData[i].Answer == "False") {
+                if (!_isInitialProcess) {
+                  _processCleared = false;
+                  setCleared(false);
+                } else {
+                  if (Result.data.processesData[i].question.id == initialProcessQuestionIndex) {
+                    _processCleared = false;
+                    setCleared(false);
+                  }
+                }
+              }
+              
             }
             setDisableCompleted(false);
         })
@@ -396,17 +409,7 @@ export default function questionsScreen({
       } else if (value == 2) {
         value = "N/A";
       }
-      if (value == "False") {
-        if (!_isInitialProcess) {
-          _processCleared = false;
-          setCleared(false);
-        } else {
-          if (index == initialProcessQuestionIndex) {
-            _processCleared = false;
-            setCleared(false);
-          }
-        }
-      }
+      
     }
     if (temp.indexOf(index) != -1) {
       updateQuery(dictId[index], value);
