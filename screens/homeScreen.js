@@ -95,7 +95,7 @@ function homeScreen(props, route) {
   // if(loading){
   //     //console.log("loading",loading);
   // }
-
+console.log("props.userId",props.userId)
   const { data, refetch } = useQuery(GetUserDataById, {
     fetchPolicy:'network-only',
     variables: {
@@ -155,7 +155,7 @@ function homeScreen(props, route) {
     const unsubscribe = props.navigation.addListener("focus", () => {
       //console.log("HOME SCREEN")
       setloadingProcessData(false)
-      apolloClient
+     apolloClient
         .query({
           query: GetSharedResource_OperationTheaters,
           fetchPolicy: "network-only",
@@ -184,7 +184,7 @@ function homeScreen(props, route) {
             iconValue = [];
             moduleLock = false;
 
-           await apolloClient
+      await apolloClient
         .query({
           query: GetSurgeryDetails_OTStaff,
           variables:{
@@ -239,7 +239,7 @@ function homeScreen(props, route) {
                           instance: i,
                           process_detail: _data[i].process_details[k].id
                         },
-                        fetchPolicy:"cache-only"
+                        fetchPolicy:"cache-first"
                       })
                       .then((Result) => {
                         _Result.push(Result.data);
@@ -288,10 +288,12 @@ function homeScreen(props, route) {
                       })
                     }  
               }
+              
             })
             global_process_status.push(setHeaderText())
+            console.log("*************",global_process_status)
            // setGlobalMessage(global_process_status)
-          
+           
            // global_process_status=[];
               lock  = [];
             moduleLock ;
@@ -301,7 +303,7 @@ function homeScreen(props, route) {
               processCount  = [];
            netProgress  = [];
       }
-      
+     
       setGlobalMessage(global_process_status)
       global_process_status=[]
       setflatlistrender(!flatlistrender)

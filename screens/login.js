@@ -35,43 +35,83 @@ function login(props, navigation) {
   const [showHelperText, setShowHelperText] = useState(false);
   const [register, setRegister] = useState(false);
   const [forgot, setForgot] = useState(false);
+  const axios = require('axios').default;
   const verifyLogin = () => {
     if (password.trim().length != "" && userId.trim().length != "") {
-      apolloClient
-        .query({
-          query: GetDetailsWithEmployeeId,
-          variables: {
-            employeeid: userId,
-            // userID: userId,
-          },
-          fetchPolicy: "network-only",
-        })
-        .then((Result) => {
-          console.log("result", Result.data.appUsers[0].branch);
-          if (Result.data.appUsers[0].password === password) {
-            props.changeLogin(
-              Result.data.appUsers[0].id,
-              Result.data.appUsers[0].userType,
-              Result.data.appUsers[0].branch?.id
-            );
-            navigation.navigate("homeScreen", {
-              userId: userId,
-              userType: Result.data.appUsers[0].userType,
-            });
-          } else {
-            console.log("failed");
-            setShowHelperText(true);
-            setErrorMsg("Username and password didn’t match.");
-          }
-        })
-        .catch(() => {
-          setShowHelperText(true);
-          setErrorMsg("Username and password didn’t match.");
-        });
+
+      axios({
+        method: 'post', 
+        url: 'http://localhost:1337/users-permissions/customlogin',
+        data: {
+          employeeid: userId,
+          password:password
+        }
+      }).then((response)=>{
+         console.log("*********Response **********", response)
+         if (response.data.login=== true) {
+                  props.changeLogin(
+                    response.data.id,
+                    response.data.userType,
+                    response.data.branch
+                  );
+                  navigation.navigate("homeScreen", {
+                    userId: userId,
+                    userType:  response.data.userType.userType,
+                  });
+                } else {
+                  console.log("failed");
+                  setShowHelperText(true);
+                  setErrorMsg(response.data.message);
+                  if(response.data.message === "invalid password"){
+                    setErrorMsg("Username and password didn’t match.")
+                  }else if(response.data.message === "no user found"){
+                    setErrorMsg("No user found!")
+                  }
+                  setTimeout(()=>{
+                    setErrorMsg("")
+                  },2000)
+                }
+      }).catch((err)=>{
+        console.log("*********Response **********", err)
+      });
+
+    //   apolloClient
+    //     .query({
+    //       query: GetDetailsWithEmployeeId,
+          
+    //       variables: {
+    //         employeeid: userId,
+    //         // userID: userId,
+    //       },
+    //       fetchPolicy: "network-only",
+    //     })
+    //     .then((Result) => {
+    //       console.log("result", Result.data.appUsers[0].branch);
+    //       if (Result.data.appUsers[0].password === password) {
+    //         props.changeLogin(
+    //           Result.data.appUsers[0].id,
+    //           Result.data.appUsers[0].userType,
+    //           Result.data.appUsers[0].branch?.id
+    //         );
+    //         navigation.navigate("homeScreen", {
+    //           userId: userId,
+    //           userType: Result.data.appUsers[0].userType,
+    //         });
+    //       } else {
+    //         console.log("failed");
+    //         setShowHelperText(true);
+    //         setErrorMsg("Username and password didn’t match.");
+    //       }
+    //     })
+    //     .catch(() => {
+    //       setShowHelperText(true);
+    //       setErrorMsg("Username and password didn’t match.");
+    //     });
     } else {
       setShowHelperText(true);
       setErrorMsg("Please fill all the fields.");
     }
+    
   };
 
   const getUserDetails = () => {
