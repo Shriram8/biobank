@@ -20,6 +20,7 @@ const processBackgroundColor = ['#00a79d','#27aae2','#f25a29',
 '#f25a29','#00a79d','#f25a29','#27aae2','#f25a29','#00a79d','#27aae2',
 '#f25a29','#019cb2','#27aae2','#f25a29','#00a79d','#27aae2','#f25a29',
 '#019cb2','#27aae2','#f25a29']
+var isProcessUserMe: any [] = [];
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId,operationTheaterID,resourceID, resourceName,instance,userType,branch } = route.params;
     let [refresh,setRefresh] = useState(true);
@@ -33,6 +34,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
         progress = []
         colorValue =[]
         IconValue = []
+        isProcessUserMe = []
         apolloClient
         .query({
           query: GetProcessesDetails,
@@ -63,8 +65,20 @@ export default function processScreen({route, navigation}: {navigation: any, rou
                   })
                   .then((Result) => {
                     try{
+                      try{
+                       
+                        if(Result.data.processesData[0].app_user.id == userId ){
+                          isProcessUserMe[Result.data.processesData[0].process_detail.id] = true;
+                        }
+                        else{
+                          isProcessUserMe[Result.data.processesData[0].process_detail.id] = false;
+                        }
+                      }catch{
+                        if(Result.data.processesData[0].process_detail.id)
+                        isProcessUserMe[Result.data.processesData[0].process_detail.id] = false;
+                      }
                       if(Result.data.processesData[0].id){
-                        //console.log("Progress Log-------",Result.data);
+                        //
                         progress[Result.data.processesData[0].process_detail.id] = Result.data.processesData.length;
                         colorValue[Result.data.processesData[0].process_detail.id] = "#ff8d48";
                       }
@@ -112,7 +126,6 @@ export default function processScreen({route, navigation}: {navigation: any, rou
               
               try{
                _gaValue = Result.data.processesData[0].Answer;
-              //  console.log("RESULT OF GA DATA--",_gaValue);
               }catch{
               _gaValue = null;
               }
@@ -143,7 +156,6 @@ export default function processScreen({route, navigation}: {navigation: any, rou
       //console.log("Progress bar",progress[id]/questionsCount[id])
       try{
         if(progress[id]){
-          var value = progress[id]/questionsCount[id];
           // if(value == 1){
           //   if(colorValue[id] != "#f40000")
           //     colorValue[id] = "#0fbb5b"
@@ -160,6 +172,9 @@ export default function processScreen({route, navigation}: {navigation: any, rou
 
     const changeIconSet=(id: number)=>{
       try{
+        if(isProcessUserMe[id] == false){
+          return "lock-outline";
+        }
         if(progress[id]){
           var value = progress[id]/questionsCount[id];
             if(colorValue[id] == "#0fbb5b"){
@@ -181,7 +196,6 @@ export default function processScreen({route, navigation}: {navigation: any, rou
 
     return (
     <View style={styles.item}>
-      
       <TouchableOpacity
       style={[styles.appButtonContainer,{flex:1,borderBottomLeftRadius :2,borderBottomRightRadius:2,zIndex:1}]}onPress={()=>{
         navigation.navigate('questionsScreen',{
@@ -195,6 +209,7 @@ export default function processScreen({route, navigation}: {navigation: any, rou
             processPseudoName:item.Number,
             backgroundColor:processBackgroundColor[item.Number-1],
             branch:branch,
+            isProcessUserMe: isProcessUserMe[item.id] != null ?isProcessUserMe[item.id]:true,
           })}}>
       
       <View style={{width:18,height:18,marginLeft:14}}>

@@ -191,7 +191,14 @@ export const GetProcessDataDetails = gql`
         branch: $branch
       }
     ) {
-      id
+      id,
+      Answer,
+      app_user {
+        id
+      },
+      question {
+        id
+      }
     }
   }
 `;
@@ -253,7 +260,10 @@ export const GetAnswersProgress = gql`
         branch: $branch
       }
     ) {
-      id
+      id,
+      app_user {
+        id
+      }
       Answer
       check_editable {
         id

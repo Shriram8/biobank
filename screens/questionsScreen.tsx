@@ -12,7 +12,7 @@ import {
   Image,
   DevSettings,
 } from "react-native";
-import { useQuery, gql, useMutation } from "@apollo/client";
+import { useQuery, gql, useMutation, useLazyQuery } from "@apollo/client";
 import { client } from "../src/graphql/ApolloClientProvider";
 import {
   UpdateSubmitCompleted,
@@ -74,7 +74,7 @@ const drugList = [
 ];
 var dict: string[] = [];
 var key;
-var value;
+var value: string;
 var dictId: string[] = [];
 var editableId: string[] = [];
 var temp = new Array();
@@ -87,7 +87,9 @@ var _isInitialProcess: boolean;
 var ignoreQuestionsCount: number;
 var networkError:Boolean;
 var inChargeOverride:Boolean;
-
+var tempIndex: string;
+var tempValue: any;
+var userVerified: Boolean;
 var imageAddress = ["../Images/P1.jpg","../Images/P2.jpg"];
 const contentButtons = [
     {
@@ -189,6 +191,7 @@ export default function questionsScreen({
     backgroundColor,
     processPseudoName,
     branch,
+    isProcessUserMe
     //imageAddress
   } = route.params;
   const [_data, setfetchData] = React.useState(false);
@@ -198,6 +201,7 @@ export default function questionsScreen({
   const [_cleared, setCleared] = React.useState(false);
   const [showDrugList, setShowDrugList] = useState(false);
   const [loadingCompletedButton, setLoadingCompletedButton] = useState(false);
+  const [isMe,setIsMe] = useState(true);
   let { loading, error, data: questions_data, refetch } = useQuery(
     GetQuestionDetails,
     {
@@ -213,12 +217,7 @@ export default function questionsScreen({
   );
   const [modalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    //console.log("GAAA VALUEEEE",gaValue)
-    if (questions_data) {
-      //console.log("USER TYPE__",userType)
-    }
-  }, [questions_data]);
+  
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -229,7 +228,9 @@ export default function questionsScreen({
       _isInitialProcess = false;
       inChargeOverride = false;
       setCleared(true);
+      setIsMe(isProcessUserMe);
       ignoreQuestionsCount = 0;
+      userVerified = false;
       apolloClient
         .query({
           query: GetQuestionDetails,
@@ -243,6 +244,7 @@ export default function questionsScreen({
           fetchPolicy: "network-only",
         })
         .then((Result) => {
+          
           questions_data = Result.data;
           if (questions_data.processDetail.id == processNumber_Initial) {
             _isInitialProcess = true;
@@ -278,15 +280,20 @@ export default function questionsScreen({
               else{
                 setDisableCompleted(true);
               }
-            }else
-            setDisableCompleted(false);
+            }else if(userType == "OTStaff" && isProcessUserMe)
+                setDisableCompleted(false);
           }
           if (
             questions_data.processesData.length >= 1 &&
             questions_data.processesData[0].check_editable
           ) {
             setDisableButtons(true);
-            if (userType != "OTIncharge") setDisableCompleted(true);
+            if (userType == "OTStaff" && isProcessUserMe) setDisableCompleted(true);
+          }
+
+          if(userType == "OTStaff" && !isProcessUserMe){
+              setDisableCompleted(true);
+              setDisableButtons(true);
           }
 
           for (var i = 0; i < questions_data.processesData.length; i++) {
@@ -354,6 +361,7 @@ export default function questionsScreen({
                   _processCleared = false;
                   setCleared(false);
                 } else {
+                 
                   if (Result.data.processesData[i].question.id == initialProcessQuestionIndex) {
                     _processCleared = false;
                     setCleared(false);
@@ -368,22 +376,90 @@ export default function questionsScreen({
     }
   }, [mutationData]);
 
+  const [getUser, { loading:loadingGetUser, data:UserData }] = useLazyQuery(GetProcessDataDetails);
+
+  
+  useEffect(() => {
+    if(UserData && !userVerified) {
+      userVerified = true;
+      try{
+        if(UserData.processesData[0].app_user.id == userId){
+          setIsMe(true);
+         
+          mutateFunction({
+            variables: {
+              operation_theater: parseInt(operationTheaterID),
+              question: parseInt(tempIndex),
+              app_user: parseInt(userId),
+              process_detail: parseInt(processID),
+              Date: new Date().toISOString().slice(0, 10),
+              Answer: tempValue,
+              instance: instance,
+              branch: branch
+            },
+        });
+        }else{
+          setIsMe(false);
+          setDisableButtons(true);
+          setDisableCompleted(true);
+        }
+      
+    }catch{
+      setIsMe(true);
+          mutateFunction({
+            variables: {
+              operation_theater: parseInt(operationTheaterID),
+              question: parseInt(tempIndex),
+              app_user: parseInt(userId),
+              process_detail: parseInt(processID),
+              Date: new Date().toISOString().slice(0, 10),
+              Answer: tempValue,
+              instance: instance,
+              branch: branch
+            },
+      });
+    }
+   }
+  }, [UserData]);
+
+
+  const checkIfUserCanEdit = () =>{
+    getUser({ variables: {
+            processID: processID,
+            Date: new Date().toISOString().slice(0, 10),
+            operation_theater: operationTheaterID,
+            instance: instance,
+            branch: branch,
+    },
+  })
+  }
+
   const callQuery =  (index: any, value: any) => {
     temp.push(index);
     dictId[index]; 
-    
-    mutateFunction({
-        variables: {
-          operation_theater: parseInt(operationTheaterID),
-          question: parseInt(index),
-          app_user: parseInt(userId),
-          process_detail: parseInt(processID),
-          Date: new Date().toISOString().slice(0, 10),
-          Answer: value,
-          instance: instance,
-          branch: branch
-        },
-    });
+    if(UserData){
+       if(isMe){
+        
+          mutateFunction({
+            variables: {
+              operation_theater: parseInt(operationTheaterID),
+              question: parseInt(index),
+              app_user: parseInt(userId),
+              process_detail: parseInt(processID),
+              Date: new Date().toISOString().slice(0, 10),
+              Answer: value,
+              instance: instance,
+              branch: branch
+            },
+        });
+       }
+    }
+    else{
+        
+         tempIndex = index;
+         tempValue = value;
+         checkIfUserCanEdit();
+    }
   };
 
   let [updateFunction, { data: updateFunctiondata, }] = useMutation(
@@ -430,7 +506,7 @@ export default function questionsScreen({
     if (userType == "OTIncharge" && inChargeOverride) {
       setCleared(true);
       for (var i = 0; i < temp.length; i++) {
-        console.log(dict,processDataId,dictId,temp)
+       
         if (dict[temp[i]] == "False") {
           updateQuery(dictId[temp[i]], "True");
           updateEditableFunction({
