@@ -16,7 +16,7 @@ import {store} from './../../App.js';
 
 export const cache = new InMemoryCache({ })
 const httpLink = createHttpLink({
-  uri: "http://localhost:1337/graphql" 
+  uri: "http://135.181.82.22:1337/graphql" 
 });
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
