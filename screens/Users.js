@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, SectionList } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  SectionList,
+  StatusBar,
+  Platform,
+} from "react-native";
 import { Button, IconButton, Portal } from "react-native-paper";
-import { GetUsers, DeactivateUser } from "../src/graphql/queries";
-import { useQuery, useMutation } from "@apollo/client";
+import { GetUsers } from "../src/graphql/queries";
+import { useQuery } from "@apollo/client";
 import { TouchableOpacity } from "react-native";
 import { connect } from "react-redux";
+import DeletePopup from "./DeletePopup";
 
 const Users = (props) => {
   const [sectionData, setSectionData] = useState([]);
   const [alert, setAlert] = useState(false);
   const [alertMsg, setAlertmsg] = useState("");
+  const [branchName, setBranchName] = useState("");
+  const [deleteAlert, setDeleteAlert] = useState(false);
+  const [deleteData, setDeleteData] = useState([]);
 
   const { data, refetch } = useQuery(GetUsers, {
     fetchPolicy: "network-only",
@@ -22,17 +33,12 @@ const Users = (props) => {
     },
   });
 
-  let [deactivateUser, { data: deactivatedData }] = useMutation(
-    DeactivateUser,
-    {
-      onCompleted: () => {
-        refetch();
-        // setShowPop(false);
-      },
-    }
-  );
-
   useEffect(() => {
+    if (props.userType === "OTSuperUser") {
+      setBranchName(props.route.params?.branchName);
+    } else {
+      setBranchName(props.branchName);
+    }
     if (props.route.params?.from === "adduser") {
       refetch();
       setAlertmsg(props.route.params?.msg);
@@ -87,15 +93,6 @@ const Users = (props) => {
     return <Text style={styles.empty}>No members</Text>;
   };
 
-  const deactivate = (id) => {
-    deactivateUser({
-      variables: {
-        userId: id,
-        active: false,
-      },
-    });
-  };
-
   const checkUser = (val) => {
     switch (props.userType) {
       case "OTSuperUser":
@@ -110,6 +107,21 @@ const Users = (props) => {
         }
       case "OTAdmin":
         if (val !== "OTAdmin") {
+          return true;
+        } else {
+          return false;
+        }
+    }
+  };
+
+  const setFocus = (type) => {
+    switch (type) {
+      case "OTStaff":
+        return true;
+      case "OTIncharge":
+        return true;
+      case "OTAdmin":
+        if (props.userType !== "OTAdmin") {
           return true;
         } else {
           return false;
@@ -133,6 +145,8 @@ const Users = (props) => {
               from: "admin",
               userId: title.id,
               userType: title.userType,
+              userName: title.name,
+              focus: setFocus(title.userType),
             });
           }}
         >
@@ -143,7 +157,14 @@ const Users = (props) => {
               color={"#010101"}
               size={20}
               onPress={() => {
-                deactivate(title.id);
+                setDeleteAlert(true);
+                setDeleteData([
+                  {
+                    id: title.id,
+                    name: title.name,
+                    type: title.userType,
+                  },
+                ]);
               }}
             />
           )}
@@ -155,7 +176,7 @@ const Users = (props) => {
   const ListHeaderComponent = () => {
     return (
       <View style={styles.topView}>
-        <Text style={styles.userText}>User</Text>
+        <Text style={styles.userText}>Users</Text>
         <Button
           icon="plus"
           mode="contained"
@@ -165,58 +186,116 @@ const Users = (props) => {
           style={{ borderRadius: 7 }}
           onPress={() =>
             props.navigation.navigate("adduser", {
+              focus: true,
               branch:
-                props.route.params?.from === "branches"
+                props.route.params?.from === "branches" ||
+                props.route.params?.from === "adduser"
                   ? props.route.params?.branch
                   : props.branch,
             })
           }
         >
-          Add
+          Add User
         </Button>
       </View>
     );
   };
 
+  const closeOnSuccess = (id) => {
+    setDeleteAlert(false);
+    refetch();
+  };
+
   return (
-    <View style={{ backgroundColor: "#fff", flex: 1 }}>
-      <SectionList
-        sections={sectionData}
-        keyExtractor={(item, index) => item + index}
-        ListHeaderComponent={ListHeaderComponent}
-        renderItem={({ item }) => <Item title={item} />}
-        ListEmptyComponent={emptyComponent}
-        renderSectionHeader={({ section: { title } }) => (
-          <Text style={styles.title}>{title}</Text>
-        )}
+    <>
+      <StatusBar animated={true} backgroundColor="#fff" hidden={false} />
+      <DeletePopup
+        alert={deleteAlert}
+        setAlert={setDeleteAlert}
+        id={deleteData[0]?.id}
+        name={deleteData[0]?.name}
+        type={deleteData[0]?.type}
+        closeOnSuccess={closeOnSuccess}
       />
-      {alert && (
-        <Portal>
-          <View style={styles.alertView}>
-            <View style={styles.alertContainer}>
-              <Text style={styles.alertHeader}>User Alert</Text>
-              <Text style={styles.alertText}>{alertMsg}</Text>
-              <Button
-                mode="contained"
-                color={"#006bcc"}
-                uppercase={false}
-                labelStyle={{ fontSize: 16 }}
-                style={{ borderRadius: 7, marginTop: 20 }}
-                onPress={() => setAlert(false)}
-              >
-                Okay
-              </Button>
+      <View
+        style={{
+          backgroundColor: "#fff",
+          flex: 1,
+          marginTop: StatusBar.currentHeight,
+        }}
+      >
+        <View
+          style={[
+            styles.modalHeader,
+            Platform.OS === "web" && {
+              borderBottomWidth: 1,
+              borderBottomColor: "#E0E0E0",
+              paddingVertical: 20,
+            },
+            props.userType === "OTSuperUser" && { justifyContent: "center" },
+          ]}
+        >
+          <IconButton
+            icon={props.userType === "OTSuperUser" ? "arrow-left" : "menu"}
+            color={"#010101"}
+            size={25}
+            style={{ position: "absolute", left: 2 }}
+            onPress={() => {
+              if (props.userType === "OTSuperUser") {
+                props.navigation.goBack();
+              } else {
+                props.navigation.openDrawer();
+              }
+            }}
+          />
+          <Text
+            style={[
+              styles.headerTitle,
+              props.userType !== "OTSuperUser" && { marginLeft: 73 },
+            ]}
+          >
+            {branchName}
+          </Text>
+        </View>
+        <SectionList
+          sections={sectionData}
+          keyExtractor={(item, index) => item + index}
+          ListHeaderComponent={ListHeaderComponent}
+          renderItem={({ item }) => <Item title={item} />}
+          ListEmptyComponent={emptyComponent}
+          renderSectionHeader={({ section: { title } }) => (
+            <Text style={styles.title}>{title}</Text>
+          )}
+        />
+        {alert && (
+          <Portal>
+            <View style={styles.alertView}>
+              <View style={styles.alertContainer}>
+                <Text style={styles.alertHeader}>User Alert</Text>
+                <Text style={styles.alertText}>{alertMsg}</Text>
+                <Button
+                  mode="contained"
+                  color={"#006bcc"}
+                  uppercase={false}
+                  labelStyle={{ fontSize: 16 }}
+                  style={{ borderRadius: 7, marginTop: 20 }}
+                  onPress={() => setAlert(false)}
+                >
+                  Okay
+                </Button>
+              </View>
             </View>
-          </View>
-        </Portal>
-      )}
-    </View>
+          </Portal>
+        )}
+      </View>
+    </>
   );
 };
 
 const mapStateToProps = (state) => ({
   branch: state.branch,
   userType: state.userType,
+  branchName: state.branchName,
 });
 
 export default connect(mapStateToProps)(Users);
@@ -311,5 +390,16 @@ const styles = StyleSheet.create({
     color: "#170500",
     fontWeight: "bold",
     marginBottom: 25,
+  },
+  modalHeader: {
+    backgroundColor: "#fff",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 16,
+    elevation: 4,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });

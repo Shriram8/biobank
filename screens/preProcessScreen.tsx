@@ -3,7 +3,7 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetSurgeryDetails,GetAutoClaveDetails,GetSurgeryDetails_OTStaff,preProcessProgress_OTStaff} from '../src/graphql/queries';
+import {GetAutoClaveDetails,GetSurgeryDetails_OTStaff,preProcessProgress_OTStaff} from '../src/graphql/queries';
 import { ProgressBar } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; 
@@ -32,7 +32,7 @@ var _length: number;
 var _headerColor;
 var checkPoint: any [] = [];
 export default function preProcessScreen({route, navigation}: {navigation: any, route:any}) {
-    const { userId, operationTheaterID, operationTheaterName, userType} = route.params;
+    const { userId, operationTheaterID, operationTheaterName, userType,branch} = route.params;
     const [renderFlatlistData,setRenderFlatlistData] = useState();
     const [message,setMessage]=useState(null);
     const [refresh,setRefresh] = useState(0);
@@ -68,6 +68,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             operation_theater:parseInt(operationTheaterID),
             Date:new Date().toISOString().slice(0, 10),
             // app_user:parseInt(userId),
+            branch:branch,
           },
           fetchPolicy:"network-only"
         })
@@ -123,7 +124,8 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
                           Date:new Date().toISOString().slice(0, 10),
                           //app_user:parseInt(userId),
                           instance: i,
-                          process_detail: _data[i].process_details[k].id
+                          process_detail: _data[i].process_details[k].id,
+                          branch:branch
                         },
                         fetchPolicy:"network-only"
                       })
@@ -152,6 +154,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           query: GetAutoClaveDetails,
           variables:{
             Date:new Date().toISOString().slice(0, 10),
+            branch:branch,
           },
           fetchPolicy:"network-only"
         })
@@ -393,6 +396,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
             operationTheaterName: route.params.operationTheaterName,
             resourceName:item.name,
             instance: parseInt(index),
+            branch:branch,
           })}}>
       <Text style={[styles.appButtonText,{flex:1, marginRight:14,fontSize: 18, fontWeight:'500'},lock[index]?{color: "#959595",}:{}]}>
       {item.id == 4 ?item.name+"-0"+(index/2):(item.id == 6 ?item.name+"-0"+((index-1)/2):item.name)}

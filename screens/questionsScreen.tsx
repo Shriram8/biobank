@@ -12,7 +12,7 @@ import {
   Image,
   DevSettings,
 } from "react-native";
-import { useQuery, gql, useMutation } from "@apollo/client";
+import { useQuery, gql, useMutation, useLazyQuery } from "@apollo/client";
 import { client } from "../src/graphql/ApolloClientProvider";
 import {
   UpdateSubmitCompleted,
@@ -20,6 +20,7 @@ import {
   SubmitAnswerForQuestion,
   UpdateSubmittedAnswerForQuestion,
   SubmitCompleted,
+  GetProcessDataDetails
 } from "../src/graphql/queries";
 import {
   Avatar,
@@ -38,6 +39,8 @@ import { RadioGroup, RadioButton } from "react-native-radio-btn";
 import DrugListPopover from "./DrugListPopover";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Picker } from "@react-native-picker/picker";
+import NetworkComponent from "../src/Components/NetworlComponent";
+
 const apolloClient = client;
 const radioItems = [
   {
@@ -71,7 +74,7 @@ const drugList = [
 ];
 var dict: string[] = [];
 var key;
-var value;
+var value: string;
 var dictId: string[] = [];
 var editableId: string[] = [];
 var temp = new Array();
@@ -82,6 +85,11 @@ const processNumber_Initial = 1;
 const initialProcessQuestionIndex = 2;
 var _isInitialProcess: boolean;
 var ignoreQuestionsCount: number;
+var networkError:Boolean;
+var inChargeOverride:Boolean;
+var tempIndex: string;
+var tempValue: any;
+var userVerified: Boolean;
 var imageAddress = ["../Images/P1.jpg","../Images/P2.jpg"];
 const contentButtons = [
     {
@@ -182,6 +190,8 @@ export default function questionsScreen({
     gaValue,
     backgroundColor,
     processPseudoName,
+    branch,
+    isProcessUserMe
     //imageAddress
   } = route.params;
   const [_data, setfetchData] = React.useState(false);
@@ -190,6 +200,8 @@ export default function questionsScreen({
   const [override, setOverride] = React.useState(false);
   const [_cleared, setCleared] = React.useState(false);
   const [showDrugList, setShowDrugList] = useState(false);
+  const [loadingCompletedButton, setLoadingCompletedButton] = useState(false);
+  const [isMe,setIsMe] = useState(true);
   let { loading, error, data: questions_data, refetch } = useQuery(
     GetQuestionDetails,
     {
@@ -199,17 +211,13 @@ export default function questionsScreen({
         //app_user:userId,
         operation_theater: operationTheaterID,
         instance: instance,
+        branch: branch,
       },
     }
   );
   const [modalVisible, setModalVisible] = useState(false);
 
-  useEffect(() => {
-    //console.log("GAAA VALUEEEE",gaValue)
-    if (questions_data) {
-      //console.log("USER TYPE__",userType)
-    }
-  }, [questions_data]);
+  
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -218,8 +226,11 @@ export default function questionsScreen({
       setOverride(false);
       _processCleared = true;
       _isInitialProcess = false;
+      inChargeOverride = false;
       setCleared(true);
+      setIsMe(isProcessUserMe);
       ignoreQuestionsCount = 0;
+      userVerified = false;
       apolloClient
         .query({
           query: GetQuestionDetails,
@@ -228,10 +239,12 @@ export default function questionsScreen({
             Date: new Date().toISOString().slice(0, 10),
             operation_theater: operationTheaterID,
             instance: instance,
+            branch: branch,
           },
           fetchPolicy: "network-only",
         })
         .then((Result) => {
+          
           questions_data = Result.data;
           if (questions_data.processDetail.id == processNumber_Initial) {
             _isInitialProcess = true;
@@ -258,14 +271,29 @@ export default function questionsScreen({
             questionCount = questionCount - ignoreQuestionsCount;
           }
           if (questions_data.processesData.length == questionCount) {
-            setDisableCompleted(false);
+           
+            if(userType == "OTIncharge" ){
+              if(!questions_data.processesData[0].check_editable.processCleared){
+                inChargeOverride = true;
+                setDisableCompleted(false);
+              }
+              else{
+                setDisableCompleted(true);
+              }
+            }else if(userType == "OTStaff" && isProcessUserMe)
+                setDisableCompleted(false);
           }
           if (
             questions_data.processesData.length >= 1 &&
             questions_data.processesData[0].check_editable
           ) {
             setDisableButtons(true);
-            if (userType != "OTIncharge") setDisableCompleted(true);
+            if (userType == "OTStaff" && isProcessUserMe) setDisableCompleted(true);
+          }
+
+          if(userType == "OTStaff" && !isProcessUserMe){
+              setDisableCompleted(true);
+              setDisableButtons(true);
           }
 
           for (var i = 0; i < questions_data.processesData.length; i++) {
@@ -300,36 +328,141 @@ export default function questionsScreen({
     return unsubscribe;
   }, [navigation]);
 
-  const [mutateFunction, { data }] = useMutation(SubmitAnswerForQuestion);
+  const [mutateFunction, { data:mutationData,error:mutationError, }] = useMutation(SubmitAnswerForQuestion);
+
   useEffect(() => {
-    if (data) {
-      dictId[data.createProcessesDatum.processesDatum.question.id] =
-        data.createProcessesDatum.processesDatum.id;
-      processDataId.push(data.createProcessesDatum.processesDatum.id);
-      console.log("LOG__",dictId,dictId.length,questionCount);
-      if (Object.keys(dictId).length == questionCount) {
-        setDisableCompleted(false);
+    if (mutationData) {
+      dictId[mutationData.createProcessesDatum.processesDatum.question.id] =
+        mutationData.createProcessesDatum.processesDatum.id;
+      processDataId.push(mutationData.createProcessesDatum.processesDatum.id);
+      if (temp.length == questionCount) {
+        setLoadingCompletedButton(true);
+        apolloClient
+        .query({
+          query: GetProcessDataDetails,
+          variables: {
+            processID: processID,
+            Date: new Date().toISOString().slice(0, 10),
+            operation_theater: operationTheaterID,
+            instance: instance,
+            branch: branch,
+          },
+          fetchPolicy: "network-only",
+        })
+        .then((Result) => {
+            setLoadingCompletedButton(false);
+            processDataId = [];
+            for(var i=0; i<questionCount;i++)
+            {
+              processDataId.push(Result.data.processesData[i].id);
+
+              if (Result.data.processesData[i].Answer == "False") {
+                if (!_isInitialProcess) {
+                  _processCleared = false;
+                  setCleared(false);
+                } else {
+                 
+                  if (Result.data.processesData[i].question.id == initialProcessQuestionIndex) {
+                    _processCleared = false;
+                    setCleared(false);
+                  }
+                }
+              }
+              
+            }
+            setDisableCompleted(false);
+        })
       }
     }
-  }, [data]);
+  }, [mutationData]);
 
-  const callQuery = (index: any, value: any) => {
+  const [getUser, { loading:loadingGetUser, data:UserData }] = useLazyQuery(GetProcessDataDetails);
+
+  
+  useEffect(() => {
+    if(UserData && !userVerified) {
+      userVerified = true;
+      try{
+        if(UserData.processesData[0].app_user.id == userId){
+          setIsMe(true);
+         
+          mutateFunction({
+            variables: {
+              operation_theater: parseInt(operationTheaterID),
+              question: parseInt(tempIndex),
+              app_user: parseInt(userId),
+              process_detail: parseInt(processID),
+              Date: new Date().toISOString().slice(0, 10),
+              Answer: tempValue,
+              instance: instance,
+              branch: branch
+            },
+        });
+        }else{
+          setIsMe(false);
+          setDisableButtons(true);
+          setDisableCompleted(true);
+        }
+      
+    }catch{
+      setIsMe(true);
+          mutateFunction({
+            variables: {
+              operation_theater: parseInt(operationTheaterID),
+              question: parseInt(tempIndex),
+              app_user: parseInt(userId),
+              process_detail: parseInt(processID),
+              Date: new Date().toISOString().slice(0, 10),
+              Answer: tempValue,
+              instance: instance,
+              branch: branch
+            },
+      });
+    }
+   }
+  }, [UserData]);
+
+
+  const checkIfUserCanEdit = () =>{
+    getUser({ variables: {
+            processID: processID,
+            Date: new Date().toISOString().slice(0, 10),
+            operation_theater: operationTheaterID,
+            instance: instance,
+            branch: branch,
+    },
+  })
+  }
+
+  const callQuery =  (index: any, value: any) => {
     temp.push(index);
-    dictId[index];
-    mutateFunction({
-      variables: {
-        operation_theater: parseInt(operationTheaterID),
-        question: parseInt(index),
-        app_user: parseInt(userId),
-        process_detail: parseInt(processID),
-        Date: new Date().toISOString().slice(0, 10),
-        Answer: value,
-        instance: instance,
-      },
-    });
+    dictId[index]; 
+    if(UserData){
+       if(isMe){
+        
+          mutateFunction({
+            variables: {
+              operation_theater: parseInt(operationTheaterID),
+              question: parseInt(index),
+              app_user: parseInt(userId),
+              process_detail: parseInt(processID),
+              Date: new Date().toISOString().slice(0, 10),
+              Answer: value,
+              instance: instance,
+              branch: branch
+            },
+        });
+       }
+    }
+    else{
+        
+         tempIndex = index;
+         tempValue = value;
+         checkIfUserCanEdit();
+    }
   };
 
-  let [updateFunction, { data: updateFunctiondata }] = useMutation(
+  let [updateFunction, { data: updateFunctiondata, }] = useMutation(
     UpdateSubmittedAnswerForQuestion
   );
 
@@ -338,6 +471,7 @@ export default function questionsScreen({
       variables: {
         question_Id: parseInt(index),
         Answer: value,
+        branch:branch
       },
     });
   };
@@ -351,17 +485,7 @@ export default function questionsScreen({
       } else if (value == 2) {
         value = "N/A";
       }
-      if (value == "False") {
-        if (!_isInitialProcess) {
-          _processCleared = false;
-          setCleared(false);
-        } else {
-          if (index == initialProcessQuestionIndex) {
-            _processCleared = false;
-            setCleared(false);
-          }
-        }
-      }
+      
     }
     if (temp.indexOf(index) != -1) {
       updateQuery(dictId[index], value);
@@ -379,10 +503,10 @@ export default function questionsScreen({
     //console.log("Process Cleared---",_processCleared)
     setDisableButtons(true);
     setDisableCompleted(true);
-    if (userType == "OTIncharge") {
+    if (userType == "OTIncharge" && inChargeOverride) {
       setCleared(true);
       for (var i = 0; i < temp.length; i++) {
-        //console.log(dict,processDataId,dictId,temp)
+       
         if (dict[temp[i]] == "False") {
           updateQuery(dictId[temp[i]], "True");
           updateEditableFunction({
@@ -398,6 +522,7 @@ export default function questionsScreen({
         variables: {
           processes_data: processDataId.map(Number),
           processCleared: _processCleared,
+          branch:branch,
         },
       });
     }
@@ -433,6 +558,7 @@ export default function questionsScreen({
             <Picker
               selectedValue={dict[item.id]}
               enabled={!disableButtons}
+              mode='dropdown'
               style={{
                 height: 40,
                 borderRadius: 7,
@@ -757,18 +883,22 @@ export default function questionsScreen({
             <View style={{ justifyContent: "space-around" }}>
               <Button
                 mode="contained"
-                color={"#006bcc"}
-                disabled={disbaleCompleted}
+                color={disbaleCompleted?"#959595":"#006bcc"}
+                dark
+                //disabled={disbaleCompleted}
+                loading={loadingCompletedButton}
                 style={{
                   width: "100%",
                   height: 40,
                   justifyContent: "center",
                   alignSelf: "center",
+                  
                 }}
-                onPress={() => submitEditable()}
+                onPress={() => {if(!disbaleCompleted){submitEditable();}}}
               >
-                {userType == "OTIncharge" ? "Override" : "Completed"}
-              </Button>
+                {userType == "OTIncharge" && inChargeOverride ? "Override" : "Completed"}
+              </Button> 
+
             </View>
           </View>
         </View>

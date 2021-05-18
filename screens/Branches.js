@@ -16,15 +16,15 @@ const Branches = (props) => {
   });
 
   useEffect(() => {
-    if (props.route.params?.from === "addbranch") {
+    if (props.route?.params?.from === "addbranch") {
       refetch();
     }
-  }, [props.route.params]);
+  }, [props.route]);
 
   const ListHeaderComponent = () => {
     return (
       <View style={styles.topView}>
-        <Text style={styles.userText}>User</Text>
+        <Text style={styles.userText}>Centers</Text>
         <Button
           icon="plus"
           mode="contained"
@@ -32,9 +32,11 @@ const Branches = (props) => {
           labelStyle={{ fontSize: 16 }}
           uppercase={false}
           style={{ borderRadius: 7 }}
-          onPress={() => props.navigation.navigate("addbranch")}
+          onPress={() =>
+            props.navigation.navigate("userManagement", { screen: "addbranch" })
+          }
         >
-          Add
+          Add Center
         </Button>
       </View>
     );
@@ -49,9 +51,13 @@ const Branches = (props) => {
       <TouchableOpacity
         style={styles.ItemContainer}
         onPress={() => {
-          props.navigation.navigate("users", {
-            branch: data.item.id,
-            from: "branches",
+          props.navigation.navigate("userManagement", {
+            screen: "users",
+            params: {
+              branch: data.item.id,
+              from: "branches",
+              branchName: data.item.name,
+            },
           });
         }}
       >

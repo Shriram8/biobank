@@ -390,13 +390,14 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    changeLogin: (userId, userType, branch) =>
+    changeLogin: (userId, userType, branch, branchName) =>
       dispatch({
         type: "CHANGE_LOGIN",
         payload: {
           userId,
           userType,
           branch,
+          branchName,
         },
       }),
   };

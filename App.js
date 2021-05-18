@@ -21,6 +21,7 @@ const initialState = {
   isLoggedIn: false,
   userId: "",
   userType: "",
+  branch: "",
 };
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -31,6 +32,7 @@ const reducer = (state = initialState, action) => {
         userId: action.payload.userId,
         userType: action.payload.userType,
         branch: action.payload.branch,
+        branchName: action.payload.branchName,
       };
     case "CHANGE_LOGOUT":
       return {
@@ -38,6 +40,7 @@ const reducer = (state = initialState, action) => {
         userId: "",
         userType: "",
         branch: "",
+        branchName: "",
       };
     default:
       break;
