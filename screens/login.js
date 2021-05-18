@@ -52,7 +52,9 @@ function login(props, navigation) {
                   props.changeLogin(
                     response.data.id,
                     response.data.userType,
-                    response.data.branch
+                    response.data.branch,
+                    response.data.branchName,
+                    response.data.token
                   );
                   navigation.navigate("homeScreen", {
                     userId: userId,
@@ -390,7 +392,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    changeLogin: (userId, userType, branch, branchName) =>
+    changeLogin: (userId, userType, branch, branchName, jwtToken) =>
       dispatch({
         type: "CHANGE_LOGIN",
         payload: {
@@ -398,6 +400,7 @@ const mapDispatchToProps = (dispatch) => {
           userType,
           branch,
           branchName,
+          jwtToken
         },
       }),
   };

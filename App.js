@@ -33,6 +33,7 @@ const reducer = (state = initialState, action) => {
         userType: action.payload.userType,
         branch: action.payload.branch,
         branchName: action.payload.branchName,
+        jwtToken: action.payload.jwtToken
       };
     case "CHANGE_LOGOUT":
       return {
@@ -41,6 +42,7 @@ const reducer = (state = initialState, action) => {
         userType: "",
         branch: "",
         branchName: "",
+        jwtToken:"",
       };
     default:
       break;
@@ -53,7 +55,7 @@ const persistConfig = {
   storage: AsyncStorage,
 };
 const persistedReducer = persistReducer(persistConfig, reducer);
-const store = createStore(persistedReducer);
+export const store = createStore(persistedReducer);
 const persister = persistStore(store);
 
 export default function App() {

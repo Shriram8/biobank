@@ -99,8 +99,7 @@ function homeScreen(props, route) {
   // }
   // if(loading){
   //     //console.log("loading",loading);
-  // }
-console.log("props.userId",props.userId)
+  // } 
   const { data, refetch } = useQuery(GetUserDataById, {
     fetchPolicy: "network-only",
     variables: {
@@ -720,6 +719,7 @@ const mapStateToProps = (state) => ({
   userId: state.userId,
   userType: state.userType,
   branch: state.branch,
+  jwtToken:state.jwtToken
 });
 export default connect(mapStateToProps)(withNavigation(homeScreen));
 
