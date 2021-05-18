@@ -273,15 +273,27 @@ export default function questionsScreen({
           if (questions_data.processesData.length == questionCount) {
            
             if(userType == "OTIncharge" ){
-              if(!questions_data.processesData[0].check_editable.processCleared){
-                inChargeOverride = true;
-                setDisableCompleted(false);
-              }
-              else{
+              try{
+                if(!questions_data.processesData[0].check_editable.processCleared){
+                  inChargeOverride = true;
+                  setDisableCompleted(false);
+                }
+                else{
+                  setDisableCompleted(true);
+                }
+              }catch{
+                setDisableButtons(true);
                 setDisableCompleted(true);
               }
+             
+              
             }else if(userType == "OTStaff" && isProcessUserMe)
                 setDisableCompleted(false);
+          }else{
+            if(userType == "OTIncharge" && !isProcessUserMe){
+              setDisableCompleted(true);
+              setDisableButtons(true);
+             }
           }
           if (
             questions_data.processesData.length >= 1 &&
