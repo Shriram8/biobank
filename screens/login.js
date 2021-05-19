@@ -23,6 +23,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { connect } from "react-redux";
 import { changeUserLogin } from "../src/Actions/UserLogin";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
+import { db_url } from "../src/Constants/login";
 
 const apolloClient = client;
 const LoginRootStack = createStackNavigator();
@@ -41,13 +42,13 @@ function login(props, navigation) {
 
       axios({
         method: 'post', 
-        url: 'http://localhost:1337/users-permissions/customlogin',
+        url: db_url+'/users-permissions/customlogin',
         data: {
           employeeid: userId,
           password:password
         }
       }).then((response)=>{
-         console.log("*********Response **********", response)
+         
          if (response.data.login=== true) {
                   props.changeLogin(
                     response.data.id,
@@ -117,17 +118,15 @@ function login(props, navigation) {
   };
 
   const getUserDetails = () => {
-    if (userId.trim() !== "") {
-      apolloClient
-        .query({
-          query: GetDetailsWithEmployeeId,
-          variables: {
-            employeeid: userId,
-          },
-          fetchPolicy: "network-only",
-        })
-        .then((Result) => {
-          console.log("result", Result);
+    axios({
+      method: 'post', 
+      url: db_url+'/users-permissions/getUserDetails',
+      data: {
+        employeeid: userId,
+        password:password
+      }
+    }).then((Result)=>{
+        
           if (Result.data.appUsers[0]?.resetpassword === true) {
             props.navigation.navigate("setPassword", {
               from: "login",
@@ -141,9 +140,37 @@ function login(props, navigation) {
           if (Result.data.appUsers.length === 0) {
             setShowHelperText(true);
             setErrorMsg("Mobile/employee ID not found");
-          }
-        });
-    }
+          } 
+    }).catch((err)=>{ 
+    });
+
+    // if (userId.trim() !== "") {
+    //   apolloClient
+    //     .query({
+    //       query: GetDetailsWithEmployeeId,
+    //       variables: {
+    //         employeeid: userId,
+    //       },
+    //       fetchPolicy: "network-only",
+    //     })
+    //     .then((Result) => {
+    //       console.log("result", Result);
+    //       if (Result.data.appUsers[0]?.resetpassword === true) {
+    //         props.navigation.navigate("setPassword", {
+    //           from: "login",
+    //           userId: Result.data.appUsers[0].id,
+    //         });
+    //         setRegister(false);
+    //       } else {
+    //         setShowHelperText(true);
+    //         setErrorMsg("You are not allowed to reset password");
+    //       }
+    //       if (Result.data.appUsers.length === 0) {
+    //         setShowHelperText(true);
+    //         setErrorMsg("Mobile/employee ID not found");
+    //       }
+    //     });
+    // }
   };
 
   const rendereHeaderText = () => {

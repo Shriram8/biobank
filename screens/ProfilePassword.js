@@ -12,9 +12,10 @@ import { connect } from "react-redux";
 import { client } from "../src/graphql/ApolloClientProvider";
 import { GetPassword, UpdatePassword } from "../src/graphql/queries";
 import { useMutation } from "@apollo/client";
+import { db_url } from "../src/Constants/login";
 
 const apolloClient = client;
-
+const axios = require('axios').default;
 const ProfilePassword = (props) => {
   const [password, setPassword] = useState("");
   const [newpassword, setNewPassword] = useState("");
@@ -40,13 +41,36 @@ const ProfilePassword = (props) => {
       setShowError(false);
       if (newpassword.trim().length > 6) {
         if (newpassword === confirmPassword) {
-          updatePass({
-            variables: {
+
+
+          axios({
+            method: 'post', 
+            url: db_url+'/users-permissions/updatePassword',
+            data: {
               userId: props.route.params?.userId,
               password: newpassword,
               resetpassword: false,
-            },
+            }
+          }).then((response)=>{
+             if(response.data.status){
+              props.navigation.goBack();
+            }else {
+              setShowError(true);
+              setErrorMsg("Unable to update password. Please try again later");
+            }
+          }).catch((err)=>{
+              setShowError(true);
+            setErrorMsg("Unable to update password. Please try again later");
           });
+
+
+          // updatePass({
+          //   variables: {
+          //     userId: props.route.params?.userId,
+          //     password: newpassword,
+          //     resetpassword: false,
+          //   },
+          // });
         } else {
           setShowError(true);
           setErrorMsg("Passwords did not match.");
