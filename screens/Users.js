@@ -56,6 +56,10 @@ const Users = (props) => {
       data: [],
     },
     {
+      title: "Doctor",
+      data: [],
+    },
+    {
       title: "Admin",
       data: [],
     },
@@ -71,8 +75,11 @@ const Users = (props) => {
           case "OTIncharge":
             DATA[1].data.push(data.appUsers[index]);
             break;
-          case "OTAdmin":
+          case "OTDoctor":
             DATA[2].data.push(data.appUsers[index]);
+            break;
+          case "OTAdmin":
+            DATA[3].data.push(data.appUsers[index]);
             break;
         }
       }
@@ -105,6 +112,12 @@ const Users = (props) => {
         } else {
           return false;
         }
+      case "OTDoctor":
+        if (val === "OTStaff" || val === "OTIncharge") {
+          return true;
+        } else {
+          return false;
+        }
       case "OTAdmin":
         if (val !== "OTAdmin") {
           return true;
@@ -120,8 +133,14 @@ const Users = (props) => {
         return true;
       case "OTIncharge":
         return true;
+      case "OTDoctor":
+        if (props.userType === "OTAdmin" || props.userType === "OTSuperUser") {
+          return true;
+        } else {
+          return false;
+        }
       case "OTAdmin":
-        if (props.userType !== "OTAdmin") {
+        if (props.userType !== "OTAdmin" && props.userType !== "OTDoctor") {
           return true;
         } else {
           return false;
