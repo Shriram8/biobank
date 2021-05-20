@@ -21,4 +21,3 @@ export function getfirebasedb() {
   return db;
 }
 
-export default config;
