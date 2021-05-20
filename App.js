@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import useCachedResources from "./hooks/useCachedResources";
@@ -16,6 +16,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createStore } from "redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { Provider as PaperProvider } from "react-native-paper";
+import {getfirebasedb,fbAuthenticated} from "./src/config";
+
 const apolloClient = client;
 const initialState = {
   isLoggedIn: false,
@@ -55,10 +57,18 @@ const persistConfig = {
 const persistedReducer = persistReducer(persistConfig, reducer);
 const store = createStore(persistedReducer);
 const persister = persistStore(store);
+var firebaseAuth = false;
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
+
+  useEffect(()=>{
+    if(!firebaseAuth){
+      firebaseAuth = true;
+      fbAuthenticated();
+    }
+  },[firebaseAuth])
 
   if (!isLoadingComplete) {
     return null;
