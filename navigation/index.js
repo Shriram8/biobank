@@ -177,7 +177,7 @@ const Navigation = (props) => {
             name="Profile"
             component={ProfileStackNavigator}
           />
-          {props.userType === "OTAdmin" && (
+          {(props.userType === "OTAdmin" || props.userType === "OTDoctor") && (
             <Drawer.Screen
               headerShown={true}
               options={{

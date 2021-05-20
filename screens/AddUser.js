@@ -151,6 +151,15 @@ const AddUser = (props) => {
           } else {
             return false;
           }
+        case "OTDoctor":
+          if (
+            props.route.params?.userType === "OTStaff" ||
+            props.route.params?.userType === "OTIncharge"
+          ) {
+            return true;
+          } else {
+            return false;
+          }
         case "OTAdmin":
           if (props.route.params?.userType !== "OTAdmin") {
             return true;
@@ -169,6 +178,12 @@ const AddUser = (props) => {
         return false;
       case "OTIncharge":
         if (val === "OTStaff") {
+          return true;
+        } else {
+          return false;
+        }
+      case "OTDoctor":
+        if (val === "OTStaff" || val === "OTIncharge") {
           return true;
         } else {
           return false;
@@ -386,6 +401,13 @@ const AddUser = (props) => {
                 onPress={() => setList("OTIncharge")}
               />
             )}
+            {createUserTypeValidation("OTDoctor") && (
+              <List.Item
+                title="Doctor"
+                titleStyle={{ color: "#959595" }}
+                onPress={() => setList("OTDoctor")}
+              />
+            )}
             {createUserTypeValidation("OTAdmin") && (
               <List.Item
                 title="Admin"
@@ -536,8 +558,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   listHead: {
-    // borderColor: "#959595",
-    // borderWidth: 1,
     borderRadius: 8,
     fontSize: 16,
     width: "90%",
