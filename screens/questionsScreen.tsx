@@ -40,6 +40,7 @@ import DrugListPopover from "./DrugListPopover";
 import DropDownPicker from "react-native-dropdown-picker";
 import { Picker } from "@react-native-picker/picker";
 import NetworkComponent from "../src/Components/NetworlComponent";
+import {getfirebasedb} from "../src/config";
 
 const apolloClient = client;
 const radioItems = [
@@ -511,6 +512,21 @@ export default function questionsScreen({
     UpdateSubmitCompleted
   );
 
+  const sendProcessTimeExceedAlert=()=>{
+    // getfirebasedb()
+    //         .ref("timeOver/" + branch)
+    //         .push( {
+    //               createdAt: new Date().toString(),
+    //               user:userId,
+    //               processName:processName,
+
+    //             }).then((response) => {
+    //                     console.log("SUCCESSS")
+    //                     // getfirebasedb().ref("csServerEvents").push(data);
+    //                     // callback();
+    //             });
+  }
+
   const submitEditable = () => {
     //console.log("Process Cleared---",_processCleared)
     setDisableButtons(true);
@@ -526,6 +542,7 @@ export default function questionsScreen({
               checkEditable_Id: parseInt(editableId[temp[i]]),
             },
           });
+          
         }
         setOverride(true);
       }
@@ -537,6 +554,7 @@ export default function questionsScreen({
           branch:branch,
         },
       });
+      sendProcessTimeExceedAlert();
     }
     setModalVisible(true);
   };
