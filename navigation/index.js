@@ -36,11 +36,15 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { connect } from "react-redux";
 import MenuDrawer from "react-native-side-drawer";
 import { useState } from "react";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+  DrawerItem,
+} from "@react-navigation/drawer";
 import { Button } from "react-native-paper";
 import Alerts from "../screens/Alerts";
 import HistoryScreen from "../screens/HistoryScreen";
-import Logout from "../screens/Logout";
 import Users from "../screens/Users";
 import AddUser from "../screens/AddUser";
 import Profile from "../screens/Profile";
@@ -52,7 +56,30 @@ const Drawer = createDrawerNavigator();
 const Navigation = (props) => {
   const logoutFunction = () => {
     props.changeLogOut();
-    return null;
+  };
+
+  const CustomDrawerContent = (props) => {
+    return (
+      <DrawerContentScrollView {...props}>
+        <DrawerItemList {...props} />
+        <DrawerItem
+          icon={() => (
+            <Image
+              style={{ height: 30, width: 30 }}
+              source={require("./../assets/screenIcons/logout.svg")}
+            />
+          )}
+          label={() => (
+            <Text
+              style={{ fontWeight: "bold", fontSize: 16, color: "#707070" }}
+            >
+              Logout
+            </Text>
+          )}
+          onPress={logoutFunction}
+        />
+      </DrawerContentScrollView>
+    );
   };
   return (
     <NavigationContainer>
@@ -75,6 +102,7 @@ const Navigation = (props) => {
             paddingTop: 75,
           }}
           initialRouteName="Home"
+          drawerContent={(props) => <CustomDrawerContent {...props} />}
         >
           <Drawer.Screen
             headerShown={false}
@@ -165,20 +193,6 @@ const Navigation = (props) => {
               component={UserStackNavigator}
             />
           )}
-          <Drawer.Screen
-            headerShown={true}
-            options={{
-              headerShown: true,
-              drawerIcon: () => (
-                <Image
-                  style={{ height: 30, width: 30 }}
-                  source={require("./../assets/screenIcons/logout.svg")}
-                />
-              ),
-            }}
-            name="Logout"
-            component={logoutFunction}
-          />
         </Drawer.Navigator>
       ) : (
         <MainStack.Navigator initialRouteName="login">
