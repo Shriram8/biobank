@@ -23,6 +23,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { connect } from "react-redux";
 import { changeUserLogin } from "../src/Actions/UserLogin";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
+import { db_url } from "../src/Constants/login";
 
 const apolloClient = client;
 const LoginRootStack = createStackNavigator();
@@ -35,59 +36,97 @@ function login(props, navigation) {
   const [showHelperText, setShowHelperText] = useState(false);
   const [register, setRegister] = useState(false);
   const [forgot, setForgot] = useState(false);
+  const axios = require('axios').default;
   const verifyLogin = () => {
     if (password.trim().length != "" && userId.trim().length != "") {
-      apolloClient
-        .query({
-          query: GetDetailsWithEmployeeId,
-          variables: {
-            employeeid: userId,
-            // userID: userId,
-          },
-          fetchPolicy: "network-only",
-        })
-        .then((Result) => {
-          console.log("result", Result.data.appUsers[0].branch);
-          if (Result.data.appUsers[0].password === password) {
-            props.changeLogin(
-              Result.data.appUsers[0].id,
-              Result.data.appUsers[0].userType,
-              Result.data.appUsers[0].branch?.id,
-              Result.data.appUsers[0].branch?.name
-            );
-            navigation.navigate("homeScreen", {
-              userId: userId,
-              userType: Result.data.appUsers[0].userType,
-              branch: Result.data.appUsers[0].branch?.id
-            });
-          } else {
-            console.log("failed");
-            setShowHelperText(true);
-            setErrorMsg("Username and password didn’t match.");
-          }
-        })
-        .catch(() => {
-          setShowHelperText(true);
-          setErrorMsg("Username and password didn’t match.");
-        });
+
+      axios({
+        method: 'post', 
+        url: db_url+'/users-permissions/customlogin',
+        data: {
+          employeeid: userId,
+          password:password
+        }
+      }).then((response)=>{
+         
+         if (response.data.login=== true) {
+                  props.changeLogin(
+                    response.data.id,
+                    response.data.userType,
+                    response.data.branch,
+                    response.data.branchName,
+                    response.data.token
+                  );
+                  navigation.navigate("homeScreen", {
+                    userId: userId,
+                    userType:  response.data.userType.userType,
+                  });
+                } else {
+                  console.log("failed");
+                  setShowHelperText(true);
+                  setErrorMsg(response.data.message);
+                  if(response.data.message === "invalid password"){
+                    setErrorMsg("Username and password didn’t match.")
+                  }else if(response.data.message === "no user found"){
+                    setErrorMsg("No user found!")
+                  }
+                  setTimeout(()=>{
+                    setErrorMsg("")
+                  },2000)
+                }
+      }).catch((err)=>{
+        console.log("*********Response **********", err)
+      });
+
+    //   apolloClient
+    //     .query({
+    //       query: GetDetailsWithEmployeeId,
+          
+    //       variables: {
+    //         employeeid: userId,
+    //         // userID: userId,
+    //       },
+    //       fetchPolicy: "network-only",
+    //     })
+    //     .then((Result) => {
+    //       console.log("result", Result.data.appUsers[0].branch);
+    //       if (Result.data.appUsers[0].password === password) {
+    //         props.changeLogin(
+    //           Result.data.appUsers[0].id,
+    //           Result.data.appUsers[0].userType,
+    //           Result.data.appUsers[0].branch?.id
+    //         );
+    //         navigation.navigate("homeScreen", {
+    //           userId: userId,
+    //           userType: Result.data.appUsers[0].userType,
+    //         });
+    //       } else {
+    //         console.log("failed");
+    //         setShowHelperText(true);
+    //         setErrorMsg("Username and password didn’t match.");
+    //       }
+    //     })
+    //     .catch(() => {
+    //       setShowHelperText(true);
+    //       setErrorMsg("Username and password didn’t match.");
+    //     });
     } else {
       setShowHelperText(true);
       setErrorMsg("Please fill all the fields.");
     }
+    
   };
 
   const getUserDetails = () => {
-    if (userId.trim() !== "") {
-      apolloClient
-        .query({
-          query: GetDetailsWithEmployeeId,
-          variables: {
-            employeeid: userId,
-          },
-          fetchPolicy: "network-only",
-        })
-        .then((Result) => {
-          console.log("result", Result);
+    axios({
+      method: 'post', 
+      url: db_url+'/users-permissions/getUserDetails',
+      data: {
+        employeeid: userId,
+        password:password
+      }
+    }).then((Result)=>{
+        
           if (Result.data.appUsers[0]?.resetpassword === true) {
             props.navigation.navigate("setPassword", {
               from: "login",
@@ -101,9 +140,37 @@ function login(props, navigation) {
           if (Result.data.appUsers.length === 0) {
             setShowHelperText(true);
             setErrorMsg("Mobile/employee ID not found");
-          }
-        });
-    }
+          } 
+    }).catch((err)=>{ 
+    });
+
+    // if (userId.trim() !== "") {
+    //   apolloClient
+    //     .query({
+    //       query: GetDetailsWithEmployeeId,
+    //       variables: {
+    //         employeeid: userId,
+    //       },
+    //       fetchPolicy: "network-only",
+    //     })
+    //     .then((Result) => {
+    //       console.log("result", Result);
+    //       if (Result.data.appUsers[0]?.resetpassword === true) {
+    //         props.navigation.navigate("setPassword", {
+    //           from: "login",
+    //           userId: Result.data.appUsers[0].id,
+    //         });
+    //         setRegister(false);
+    //       } else {
+    //         setShowHelperText(true);
+    //         setErrorMsg("You are not allowed to reset password");
+    //       }
+    //       if (Result.data.appUsers.length === 0) {
+    //         setShowHelperText(true);
+    //         setErrorMsg("Mobile/employee ID not found");
+    //       }
+    //     });
+    // }
   };
 
   const rendereHeaderText = () => {
@@ -352,7 +419,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    changeLogin: (userId, userType, branch, branchName) =>
+    changeLogin: (userId, userType, branch, branchName, jwtToken) =>
       dispatch({
         type: "CHANGE_LOGIN",
         payload: {
@@ -360,6 +427,7 @@ const mapDispatchToProps = (dispatch) => {
           userType,
           branch,
           branchName,
+          jwtToken
         },
       }),
   };

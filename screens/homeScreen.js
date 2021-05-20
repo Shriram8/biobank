@@ -99,8 +99,7 @@ function homeScreen(props, route) {
   // }
   // if(loading){
   //     //console.log("loading",loading);
-  // }
-
+  // } 
   const { data, refetch } = useQuery(GetUserDataById, {
     fetchPolicy: "network-only",
     variables: {
@@ -248,7 +247,7 @@ function homeScreen(props, route) {
                           process_detail: _data[i].process_details[k].id,
                           branch:props.branch,
                         },
-                        fetchPolicy: "cache-only",
+                        fetchPolicy:"cache-first"
                       })
                       .then((Result) => {
                         _Result.push(Result.data);
@@ -720,6 +719,7 @@ const mapStateToProps = (state) => ({
   userId: state.userId,
   userType: state.userType,
   branch: state.branch,
+  jwtToken:state.jwtToken
 });
 export default connect(mapStateToProps)(withNavigation(homeScreen));
 
