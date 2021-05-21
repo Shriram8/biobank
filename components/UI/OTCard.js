@@ -40,10 +40,11 @@ class OTCard extends Component {
  _headerColor;
  checkPoint = [];
  exitUpdate;
-
+exitUpadteMessage = false;
 
     constructor(props) {
         super(props);
+        const { isFocused } = this.props;
         this.state = {
             resultsFetched: false,
             autoClaveCleared:false,
@@ -76,7 +77,7 @@ class OTCard extends Component {
           fetchPolicy:"network-only"
         })
         .then((Result) => {
-          console.log("AUTOCLAVE DETAILS_____",Result);
+          //console.log("AUTOCLAVE DETAILS_____",Result);
           for(var i=0; i<Result.data.processDetails.length;i++){
             try{
               if(Result.data.processDetails[i].processes_data[0].check_editable.processCleared){
@@ -88,17 +89,18 @@ class OTCard extends Component {
           }
           if(temp == process){
             this.setState({autoClaveCleared: true})
-            console.log("AUTOCLAVE CLEARED");
+            //console.log("AUTOCLAVE CLEARED");
             //setAutoClaveCleared(true);
           }
         })
 
     }
 
-    componentDidMount(){
+
+
+    componentMount(){
       if(this.props.operationTheaterID){
-      console.log("Component did mount")
-        this.checkforAutoclave()
+        //this.checkforAutoclave()
         this.setState({message: null})
         this.processCount =[];
         this.progress = [];
@@ -112,7 +114,10 @@ class OTCard extends Component {
         this.iconValue = [];
         this.checkPoint = [];
         this.moduleLock = false;
+
         this.exitUpdate = false;
+        //console.log("This exit update...",this.exitUpdate)
+        this.setState({resultsFetched:false})
         this.apolloClient
         .query({
           query: GetSurgeryDetails_OTStaff,
@@ -125,7 +130,7 @@ class OTCard extends Component {
           fetchPolicy:"network-only"
         })
         .then((Result) => {
-          console.log("-----Result",Result,this.props.operationTheaterID);
+          //console.log("-----Result",Result,this.props.operationTheaterID);
             for(var i = 0;i<2;i++){
                 this._data.push(Result.data.appResources[i]);
                 
@@ -185,7 +190,7 @@ class OTCard extends Component {
                       .then((Result) => {
                         this._Result.push(Result.data);
                         if(this._Result.length == this._length){
-                          console.log("RESULTS UPDATED______",this.props.title,this._Result)
+                          //console.log("RESULTS UPDATED______",this.props.title,this._Result)
                           this.setState({resultsFetched:true});
                           //setResultsFetched(prevCount => prevCount + 1);
                         }
@@ -197,21 +202,43 @@ class OTCard extends Component {
       }  
     }
 
-
+    
     componentDidUpdate(prevState,prevProps) {
-      // if(prevProps.isFocused !== this.props.isFocused){
-      //   console.log("FOCUSED-------")
-      // }
+
+      if(prevProps.updateExitMessage != this.props.updateExitMessage && this.exitUpadteMessage){
+        if(this.props.updateExitMessage){
+          this.exitUpadteMessage = false;
+          this.setState({resultsFetched:false});
+          //this.exitUpdate = false;
+          //console.log("Update Exit Message");
+        }
+        
+        //
+        //this.componentMount();
+      }
+      
       // Typical usage (don't forget to compare props):
+      if(prevProps.updateMessage !== this.props.updateMessage && !this.exitUpadteMessage){
+        if(this.props.updateMessage){
+          //console.log("Trueeeee");
+          this.exitUpadteMessage = true;
+          this.componentMount();
+        }
+      }
+
+      
       if (this.state.resultsFetched !== prevState.resultsFetched && this.state.resultsFetched) {
+        //console.log("this states results fetched---",this.state.resultsFetched);
+        //console.log("COMP UPDATE______",this.props.title,this._Result.length == this._length,this.exitUpdate)
         if(this._Result.length == this._length && !this.exitUpdate){
         this.exitUpdate = true
-        console.log("COMPONENT DID UPDATE______",this.props.title)
+        //console.log("COMPONENT DID UPDATE______",this.props.title,this._Result.length,this._length)
         if(this._Result.length == this._length){
           for(var k = 0;k<this._Result.length;k++){
                       try{
+                        //console.log("Check editable,,,",this._Result[k])
                             if(this._Result[k].processesData[0].check_editable){
-                              //console.log("instance-----",_Result[k].processesData[0]);
+                              //console.log("instance-----",this._Result[k].processesData[0]);
                               var p = this._Result[k].processesData[0].instance;
                               this.progress[p] = this.progress[p]+1;
                               this.netProgress[p] = this.progress[p]/this.processCount[p];
@@ -265,7 +292,7 @@ class OTCard extends Component {
     }
 
     setHeaderText (){
-      console.log(this.colorValue,this.props.title);
+      //console.log(this.colorValue,this.props.title);
       switch(this.colorValue[this.netProgress.length-1]){
         
         case this.red:
@@ -281,7 +308,7 @@ class OTCard extends Component {
             for(var i = 0; i<this.checkPoint.length;i++){
                 
                 if(this.netProgress.length<=this.checkPoint[i]){
-                  this.setState({message: "Not Cleared for surgery -0"+(checkPoint[i]-1)/2})
+                  this.setState({message: "Not Cleared for surgery -0"+(this.checkPoint[i]-1)/2})
                   //setMessage("Not Cleared for surgery -0"+(checkPoint[i]-1)/2);
                   return;
                 }

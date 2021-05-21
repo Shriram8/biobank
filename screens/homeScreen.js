@@ -85,6 +85,9 @@ function homeScreen(props, route) {
   const [headerColor, setHeaderColor] = useState("");
   const [headerIcon, setHeaderIcon] = useState("");
   const [autoClaveCleared, setAutoClaveCleared] = useState(true);
+  const [updateMessage, setUpdateMessage] = useState(false);
+  const [updateExitMessage, setUpdateExitMessage] = useState(false);
+
 
   const { data, refetch } = useQuery(GetUserDataById, {
     fetchPolicy: "network-only",
@@ -139,7 +142,21 @@ function homeScreen(props, route) {
   }, [renderFlatlistData]);
 
   React.useEffect(() => {
+    const unsubscribe = props.navigation.addListener('blur', () => {
+      // Screen was focused
+      // Do something
+      setUpdateMessage(false);
+      setUpdateExitMessage(true)
+      console.log("OnBLURR");
+    });
+
+    return unsubscribe;
+  }, [props.navigation]);
+
+  React.useEffect(() => {
     const unsubscribe = props.navigation.addListener("focus", () => {
+      setUpdateExitMessage(false)
+      setUpdateMessage(true)
       //console.log("HOME SCREEN")
       setloadingProcessData(false);
       apolloClient
@@ -516,6 +533,8 @@ function homeScreen(props, route) {
           }
           branch = {props.branch}
           operationTheaterID = {item.index > 0 ? item.item.id : null}
+          updateMessage = {updateMessage}
+          updateExitMessage = {updateExitMessage}
           onPress={() => {
             item.item.__typename == "AppResource"
               ? props.navigation.navigate("processScreen", {
