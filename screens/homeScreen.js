@@ -80,26 +80,12 @@ function homeScreen(props, route) {
   const [resultsFetched, setResultsFetched] = useState(0);
 
   const [global_message, setGlobalMessage] = useState([]);
-  const [flatlistrender, setflatlistrender] = useState(false);
+  const [flatlistrender, setflatlistrender] = useState(0);
   const [message, setMessage] = useState(null);
   const [headerColor, setHeaderColor] = useState("");
   const [headerIcon, setHeaderIcon] = useState("");
   const [autoClaveCleared, setAutoClaveCleared] = useState(true);
 
-  // const { loading, error, refetch, data } = useQuery(GetSharedResource_OperationTheaters);
-  // if(data){
-  //   _data = data.appResources.concat(data.operationTheaters);
-  //   // for(var i=0;i<_data.length;i++){
-
-  //   // }
-  //   console.log(_data);
-  // }
-  // if(error){GetSharedResource_OperationTheaters
-  //     //console.log("Error",error);
-  // }
-  // if(loading){
-  //     //console.log("loading",loading);
-  // } 
   const { data, refetch } = useQuery(GetUserDataById, {
     fetchPolicy: "network-only",
     variables: {
@@ -161,7 +147,7 @@ function homeScreen(props, route) {
           query: GetSharedResource_OperationTheaters,
           fetchPolicy: "network-only",
         })
-        .then(async (Result) => {
+        .then( (Result) => {
           ot_data = Result.data.appResources.concat(
             Result.data.operationTheaters
           );
@@ -184,7 +170,7 @@ function homeScreen(props, route) {
             iconValue = [];
             moduleLock = false;
 
-            await apolloClient
+            apolloClient
               .query({
                 query: GetSurgeryDetails_OTStaff,
                 variables: {
@@ -195,7 +181,7 @@ function homeScreen(props, route) {
                 },
                 fetchPolicy: "network-only",
               })
-              .then(async (Result) => {
+              .then((Result) => {
                 //console.log("-----Result",Result);
                 for (var i = 0; i < 2; i++) {
                   _data.push(Result.data.appResources[i]);
@@ -236,7 +222,7 @@ function homeScreen(props, route) {
                   progress[i] = 0;
                   _length = _length + processCount[i];
                   for (var k = 0; k < processCount[i]; k++) {
-                    await apolloClient
+                     apolloClient
                       .query({
                         query: preProcessProgress_OTStaff,
                         variables: {
@@ -247,7 +233,7 @@ function homeScreen(props, route) {
                           process_detail: _data[i].process_details[k].id,
                           branch:props.branch,
                         },
-                        fetchPolicy:"cache-first"
+                        fetchPolicy:"network-only"
                       })
                       .then((Result) => {
                         _Result.push(Result.data);
@@ -320,13 +306,22 @@ function homeScreen(props, route) {
 
           setGlobalMessage(global_process_status);
           global_process_status = [];
-          setflatlistrender(!flatlistrender);
           setloadingProcessData(true);
+          
+          //setflatlistrender(!flatlistrender);
         });
 
       return unsubscribe;
     });
   }, [props.navigation]);
+
+  React.useEffect(() => {
+    if(global_message){
+      setflatlistrender(prevCount => prevCount + 1);
+      console.log(global_message);
+    }
+  },[global_message]);
+
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener("focus", async () => {
       setAutoClaveCleared(false);
@@ -337,7 +332,7 @@ function homeScreen(props, route) {
         color: red,
         icon: minusBox,
       };
-      await apolloClient
+      apolloClient
         .query({
           query: GetAutoClaveDetails,
           variables: {
@@ -514,65 +509,13 @@ function homeScreen(props, route) {
   const renderResources = (item) => {
     return (
       <View style={styles.item}>
-        {/* <TouchableOpacity
-          style={[styles.appButtonContainer, { flex: 1, flexDirection:'row' }]}
-          onPress={() => {
-            item.item.__typename == "AppResource"
-              ? props.navigation.navigate("processScreen", {
-                  userId: props.userId,
-                  userType: props.userType,
-                  resourceID: item.item.id,
-                  operationTheaterID: item.item.id,
-                  resourceName: item.item.name,
-                })
-              : props.navigation.navigate("preProcessScreen", {
-                  userId: props.userId,
-                  userType: props.userType,
-                  operationTheaterID: item.item.id,
-                  operationTheaterName: item.item.name,
-                });
-          }}
-        >
-          <View
-            style={[
-              {
-                
-                //borderRadius:6,
-                height: 60,
-                width: "100%",
-                
-                paddingLeft: 20,
-                margin: 0,
-              },
-              { flex: 1 },
-            ]}
-          >
-            <Text style={[styles.appButtonText, { flex: 1, marginRight: 14 }]}>
-              {item.item.name}
-            </Text>
-            {item.index > 0 && (
-            <MessageComponent
-              message={processMessageData[item.index - 1]}
-              
-            />
-          )}
-          </View> 
-         
-          <View
-              style={{
-                width: 30,
-                height: "100%",
-                alignContent: "center",
-              }}
-            >
-              <MaterialCommunityIcons name="arrow-right" size={30} />
-            </View>
-        </TouchableOpacity> */}
         <OTCard
           title={item.item.name}
-          message={
+          message = {
             item.index > 0 ? global_message[item.index - 1] : autoClavemsg
           }
+          branch = {props.branch}
+          operationTheaterID = {item.item.id}
           onPress={() => {
             item.item.__typename == "AppResource"
               ? props.navigation.navigate("processScreen", {
@@ -696,7 +639,7 @@ function homeScreen(props, route) {
                 marginTop: 10,
               }}
             >
-              {renderFlatlistData && loadingProcessData ? (
+              {renderFlatlistData ? (
                 <FlatList
                   extraData={flatlistrender}
                   style={{ width: "100%", alignSelf: "center" }}
