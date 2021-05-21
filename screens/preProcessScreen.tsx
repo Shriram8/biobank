@@ -227,7 +227,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
 
     const setHeaderText = ()=>{
       
-
+      console.log(colorValue);
       switch(colorValue[netProgress.length-1]){
         case red:
           //console.log("RED")

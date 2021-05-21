@@ -515,7 +515,7 @@ function homeScreen(props, route) {
             item.index > 0 ? global_message[item.index - 1] : autoClavemsg
           }
           branch = {props.branch}
-          operationTheaterID = {item.item.id}
+          operationTheaterID = {item.index > 0 ? item.item.id : null}
           onPress={() => {
             item.item.__typename == "AppResource"
               ? props.navigation.navigate("processScreen", {
