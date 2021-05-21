@@ -99,7 +99,7 @@ exitUpadteMessage = false;
 
     componentMount(){
       if(this.props.operationTheaterID){
-        //this.checkforAutoclave()
+        this.checkforAutoclave()
         this.setState({message: null})
         this.processCount =[];
         this.progress = [];
