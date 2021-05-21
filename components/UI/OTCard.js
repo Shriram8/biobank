@@ -398,13 +398,13 @@ exitUpadteMessage = false;
             <Text style={{fontSize:18,color:'#000',fontWeight:'bold'}}>{this.props.title}</Text>
             <MaterialCommunityIcons name="arrow-right" size={18} />
             </View>
-            {/* {this.props.message&&(
+            {this.props.message && this.props.operationTheaterID ==null?(
                     <MessageComponent message={this.props.message}/>
-            )} */}
-            {this.state.message&&(<View style={{flexDirection:'row',alignItems:'center'}}>
+            ):
+            (this.state.message ? (<View style={{flexDirection:'row',alignItems:'center'}}>
               <MaterialCommunityIcons name={this.state.headerIcon} size={19} color={this.state.headerColor}/>
               <Text style={{marginLeft:8,fontSize:16,color:this.state.headerColor}}>{this.state.message}</Text>
-            </View>)}
+            </View>):<></>)}
             </TouchableOpacity>
         )
     }
