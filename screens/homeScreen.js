@@ -146,12 +146,16 @@ function homeScreen(props, route) {
       // Screen was focused
       // Do something
       setUpdateMessage(false);
-      setUpdateExitMessage(true)
-      console.log("OnBLURR");
     });
 
     return unsubscribe;
   }, [props.navigation]);
+
+  React.useEffect(() => {
+    if(!updateMessage){
+      setUpdateExitMessage(true);
+    }
+  }, [updateMessage]);
 
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener("focus", () => {
@@ -276,9 +280,9 @@ function homeScreen(props, route) {
                                       colorValue[p] = green;
                                       iconValue[p] = check;
                                       lock[p + 1] = false;
-                                      setUpdateMessage(
-                                        (prevCount) => prevCount + 1
-                                      );
+                                      // setUpdateMessage(
+                                      //   (prevCount) => prevCount + 1
+                                      // );
                                     }
                                   }
                                   if (
@@ -335,7 +339,7 @@ function homeScreen(props, route) {
   React.useEffect(() => {
     if(global_message){
       setflatlistrender(prevCount => prevCount + 1);
-      console.log(global_message);
+      //console.log(global_message);
     }
   },[global_message]);
 

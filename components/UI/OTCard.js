@@ -97,7 +97,6 @@ exitUpadteMessage = false;
     }
 
 
-
     componentMount(){
       if(this.props.operationTheaterID){
         //this.checkforAutoclave()
@@ -114,8 +113,8 @@ exitUpadteMessage = false;
         this.iconValue = [];
         this.checkPoint = [];
         this.moduleLock = false;
-
-        this.exitUpdate = false;
+        this.exitUpdate = true;
+        
         //console.log("This exit update...",this.exitUpdate)
         this.setState({resultsFetched:false})
         this.apolloClient
@@ -190,8 +189,10 @@ exitUpadteMessage = false;
                       .then((Result) => {
                         this._Result.push(Result.data);
                         if(this._Result.length == this._length){
-                          //console.log("RESULTS UPDATED______",this.props.title,this._Result)
+                          console.log("RESULTS UPDATED______",this.props.title,this._Result)
+                          this.exitUpdate = false;
                           this.setState({resultsFetched:true});
+                          
                           //setResultsFetched(prevCount => prevCount + 1);
                         }
                                                 
@@ -203,13 +204,14 @@ exitUpadteMessage = false;
     }
 
     
-    componentDidUpdate(prevState,prevProps) {
+  componentDidUpdate(prevState,prevProps) {
 
       if(prevProps.updateExitMessage != this.props.updateExitMessage && this.exitUpadteMessage){
         if(this.props.updateExitMessage){
           this.exitUpadteMessage = false;
-          this.setState({resultsFetched:false});
           //this.exitUpdate = false;
+          this.setState({resultsFetched:false});
+          
           //console.log("Update Exit Message");
         }
         
@@ -220,7 +222,7 @@ exitUpadteMessage = false;
       // Typical usage (don't forget to compare props):
       if(prevProps.updateMessage !== this.props.updateMessage && !this.exitUpadteMessage){
         if(this.props.updateMessage){
-          //console.log("Trueeeee");
+          //console.log("Trueeeee",this.props.title);
           this.exitUpadteMessage = true;
           this.componentMount();
         }
