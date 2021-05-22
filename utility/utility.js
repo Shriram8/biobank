@@ -44,3 +44,27 @@ export const getMonthText = (date) => {
     var yesterday = new Date(date.getTime() -( 24*60*60*1000*prevDateVal));
     return yesterday;
   }
+  export const getTime =(date)=>{
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      let hh = "";
+      let mm="";
+      let meridian = "AM";
+      if(hours >12){
+        hh=Math.floor(hours/2);
+        meridian = "PM"
+      } 
+       if(hh<10){
+        hh = "0"+hours;
+      }else{
+        hh =hours;
+      }
+      console.log("hours is ",hh);
+      if(minutes<10){
+          mm = "0"+minutes
+      }else{
+        mm= minutes;
+      }
+      console.log("hours is ",hh+":"+mm+meridian);
+      return (hh+":"+mm+meridian)
+  }

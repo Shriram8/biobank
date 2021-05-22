@@ -126,22 +126,32 @@ function login(props, navigation) {
         password:password
       }
     }).then((Result)=>{
-        
-          if (Result.data.appUsers[0]?.resetpassword === true) {
-            props.navigation.navigate("setPassword", {
-              from: "login",
-              userId: Result.data.appUsers[0].id,
-            });
-            setRegister(false);
-          } else {
-            setShowHelperText(true);
-            setErrorMsg("You are not allowed to reset password");
+       if(Result.data.appUsers){
+            if (Result.data.appUsers.length>0) {
+              if (Result.data?.appUsers[0]?.resetpassword === true) {
+                props.navigation.navigate("setPassword", {
+                  from: "login",
+                  userId: Result.data.appUsers[0].id,
+                });
+                setRegister(false);
+              } else if(Result.data?.appUsers[0]?.resetpassword === false) {
+                  setShowHelperText(true);
+                  setErrorMsg("You are not allowed to reset password"); 
+              }
+            }
+
+          } else{
+            if(!Result.data.login)
+            {
+              setShowHelperText(true);
+              setErrorMsg("Mobile/employee ID not found");
+            }else{
+              setShowHelperText(true);
+              setErrorMsg("Request failed! Please try later.");
+            }
           }
-          if (Result.data.appUsers.length === 0) {
-            setShowHelperText(true);
-            setErrorMsg("Mobile/employee ID not found");
-          } 
     }).catch((err)=>{ 
+      
     });
 
     // if (userId.trim() !== "") {

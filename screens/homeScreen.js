@@ -88,7 +88,7 @@ function homeScreen(props, route) {
   const [updateMessage, setUpdateMessage] = useState(false);
   const [updateExitMessage, setUpdateExitMessage] = useState(false);
 
-
+  console.log("data",props.userId)
   const { data, refetch } = useQuery(GetUserDataById, {
     fetchPolicy: "network-only",
     variables: {
@@ -98,8 +98,9 @@ function homeScreen(props, route) {
 
   useEffect(() => {
     if (data) {
-      setName(data.appUsers[0].name);
-      setLocation(data.appUsers[0].branch?.name);
+      
+     // setName(data.appUsers[0].name);
+      //setLocation(data.appUsers[0].branch?.name);
     }
   }, [data]);
 
