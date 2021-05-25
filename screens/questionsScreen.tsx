@@ -527,6 +527,22 @@ export default function questionsScreen({
     //             });
   }
 
+
+  const sendProcessOverrideAlert=()=>{
+    getfirebasedb()
+            .ref("override/" + branch)
+            .push( {
+                  createdAt: new Date().toString(),
+                  user:userId,
+                  processName:processName,
+
+                }).then(() => {
+                        //console.log("SUCCESSS")
+                        // getfirebasedb().ref("csServerEvents").push(data);
+                        // callback();
+                });
+  }
+
   const submitEditable = () => {
     //console.log("Process Cleared---",_processCleared)
     setDisableButtons(true);
@@ -546,6 +562,7 @@ export default function questionsScreen({
         }
         setOverride(true);
       }
+      sendProcessOverrideAlert();
     } else {
       mutateEditableFunction({
         variables: {
