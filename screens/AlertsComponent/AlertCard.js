@@ -3,7 +3,8 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import { getTime } from "../../utility/utility";
-let alertColor="#c2c2c2"
+let alertColor="#c2c2c2";
+const to12Hours = require('to12hours');
 const AlertCard = (props) => {
     const title= props.title
     const alertType = props.alertType;
@@ -13,23 +14,38 @@ const AlertCard = (props) => {
     const staff = props.staffName;
     const time = props.timeCreated;
     const pretitle=props.pretitle
-    if(alertType =="notCleared"){
+   
+    if(alertType =="notcleared"){
        alertColor="#f23627"
-    }else if(alertType==="cleared"){
+    } else if(alertType==="overridden"){
+
+    }else if(alertType==="milestone"){
       alertColor="#0fbb5b"
+    }else if(alertType==="delay"){
+      alertColor="#ffad48"
     }
   return (
     <View style={[styles.container]}>
-      <Text>{pretitle}</Text>
+      {
+        alertType==="milestone"&&(
+          <Text>Milstone reached</Text>
+        )
+      }
       <View style={{ flexDirection: "row", alignItems: "center",paddingVertical:12 }}>
-        {alertType!="overridden" &&<MaterialCommunityIcons name={alertType==="cleared"?"checkbox-marked":"alert-box"} size={24} color={alertColor} />}
+        {alertType!="overridden" &&<MaterialCommunityIcons name={alertType==="milestone"?"checkbox-marked":"alert-box"} size={24} color={alertColor} />}
         <Text style={{fontWeight:'bold',fontSize:18}}>{title}</Text>
       </View>
-      <Text style={{fontWeight:'600',fontSize:16}}>{processData}</Text>
-      <Text style={{fontWeight:'500',fontSize:16}}>{processDetail} </Text>
+      {
+        alertType!="milestone" &&(
+          <Text style={{fontWeight:'600',fontSize:16}}>{processData}</Text>
+        )
+      }
+      { 
+alertType!="overridden" && alertType!="milestone" &&<Text style={{fontWeight:'500',fontSize:16}}>{processDetail} </Text>
+      }
      
      {
-       answer &&(
+       alertType!="overridden" && alertType!="milestone" &&(
         <View style={{ flexDirection: "row", justifyContent:'space-between',paddingVertical:8 }}>
         <Button 
         color={answer==="yes"?"#fff":"#959595"}
@@ -50,7 +66,7 @@ const AlertCard = (props) => {
         </View>
         <View style={{flexDirection:'row',alignItems:'center'}}>
         <MaterialCommunityIcons name="clock" size={24} color={"#5d5d5d"} />
-        <Text style={{fontSize:16}}>{getTime(time)}</Text>
+        <Text style={{fontSize:16}}>{to12Hours(getTime(time))}</Text>
         </View>
       </View>
     </View>

@@ -9565,6 +9565,11 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
+to12hours@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/to12hours/-/to12hours-0.1.0.tgz#775fa7f9eaed44424892225c93a3c204b6c338b9"
+  integrity sha512-oHxNctqDR3yBi5mKdyBmTCVr+yuGSWgQkqO+Z7hSU+cLdNMGJQ3dlkuGL7a8SEaMY7/dIAz2FU4NjO9utIks0A==
+
 toidentifier@1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/toidentifier/-/toidentifier-1.0.0.tgz"

@@ -7,3 +7,18 @@ query{
     }
   }
 `
+
+export const GET_ALL_OTS_FOR_ALERTS = gql`
+query($userID:ID!){
+    operationTheaters{
+      id
+      name 
+    }
+    appUser(id:$userID){
+      id
+      branch{
+        id
+      }
+    }
+  } 
+`

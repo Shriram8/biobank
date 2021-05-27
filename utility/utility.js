@@ -55,9 +55,9 @@ export const getMonthText = (date) => {
         meridian = "PM"
       } 
        if(hh<10){
-        hh = "0"+hours;
+        hh = "0"+hh;
       }else{
-        hh =hours;
+        hh =hh;
       }
       console.log("hours is ",hh);
       if(minutes<10){
@@ -66,5 +66,6 @@ export const getMonthText = (date) => {
         mm= minutes;
       }
       console.log("hours is ",hh+":"+mm+meridian);
-      return (hh+":"+mm+meridian)
+      //return (hh+":"+mm+meridian)
+      return (hh+":"+mm)
   }
