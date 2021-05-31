@@ -183,6 +183,7 @@ export const GetProcessDataDetails = gql`
     $branch: ID!
   ) {
     processesData(
+      sort: "created_at:asc",
       where: {
         process_detail: $processID
         operation_theater: $operation_theater
@@ -193,6 +194,7 @@ export const GetProcessDataDetails = gql`
     ) {
       id,
       Answer,
+      created_at,
       app_user {
         id
       },
@@ -220,6 +222,7 @@ export const GetQuestionDetails = gql`
       }
     }
     processesData(
+      sort: "created_at:asc",
       where: {
         process_detail: $processID
         operation_theater: $operation_theater

@@ -91,6 +91,8 @@ var inChargeOverride:Boolean;
 var tempIndex: string;
 var tempValue: any;
 var userVerified: Boolean;
+var processDelayed: Boolean;
+var initialTime;
 var imageAddress = ["../Images/P1.jpg","../Images/P2.jpg"];
 const contentButtons = [
     {
@@ -232,6 +234,8 @@ export default function questionsScreen({
       setIsMe(isProcessUserMe);
       ignoreQuestionsCount = 0;
       userVerified = false;
+      processDelayed = false;
+      initialTime = 0;
       apolloClient
         .query({
           query: GetQuestionDetails,
@@ -272,7 +276,14 @@ export default function questionsScreen({
             questionCount = questionCount - ignoreQuestionsCount;
           }
           if (questions_data.processesData.length == questionCount) {
-           
+            initialTime = questions_data.processesData[0].created_at;
+            var difference  =  Date.parse(new Date().toISOString()) - Date.parse(initialTime)
+            
+            var minutes = Math.floor(difference / 60) % 60;
+            if(minutes > 3){
+              processDelayed = true;
+            }
+            console.log("Testing",difference,minutes);
             if(userType == "OTIncharge" ){
               try{
                 if(!questions_data.processesData[0].check_editable.processCleared){
@@ -363,12 +374,16 @@ export default function questionsScreen({
           fetchPolicy: "network-only",
         })
         .then((Result) => {
+            
+            
+            console.log("RESULT--",Result.data)
             setLoadingCompletedButton(false);
             processDataId = [];
             for(var i=0; i<questionCount;i++)
             {
               processDataId.push(Result.data.processesData[i].id);
-
+              if(i == 0)
+                initialTime = Result.data.processesData[i].created_at;
               if (Result.data.processesData[i].Answer == "False") {
                 if (!_isInitialProcess) {
                   _processCleared = false;
@@ -383,6 +398,7 @@ export default function questionsScreen({
               }
               
             }
+            
             setDisableCompleted(false);
         })
       }
@@ -513,33 +529,35 @@ export default function questionsScreen({
   );
 
   const sendProcessTimeExceedAlert=()=>{
-    // getfirebasedb()
-    //         .ref("timeOver/" + branch)
-    //         .push( {
-    //               createdAt: new Date().toString(),
-    //               user:userId,
-    //               processName:processName,
-
-    //             }).then((response) => {
-    //                     console.log("SUCCESSS")
-    //                     // getfirebasedb().ref("csServerEvents").push(data);
-    //                     // callback();
-    //             });
+    getfirebasedb()
+            .ref(branch+"/ot-"+(operationTheaterID))
+            .push( {
+                  createdAt: new Date().toString(), 
+                  processName:"P10-Sterilization",
+                  processMessage:"Indicator Check 2: Class 5 indicator  has turned to black in Linen bin",
+                  answer:"no",
+                  staff:"Varun",
+                  alertType:"delay",
+                  alertMessage:"Delayed by 10 mins",
+                } ).then(() => {
+            
+                });
   }
 
 
   const sendProcessOverrideAlert=()=>{
     getfirebasedb()
-            .ref("override/" + branch)
+            .ref(branch+"/ot-"+(operationTheaterID))
             .push( {
-                  createdAt: new Date().toString(),
-                  user:userId,
-                  processName:processName,
-
-                }).then(() => {
-                        //console.log("SUCCESSS")
-                        // getfirebasedb().ref("csServerEvents").push(data);
-                        // callback();
+                  createdAt: new Date().toString(), 
+                  processName:"P10-Sterilization",
+                  processMessage:"Indicator Check 2: Class 5 indicator  has turned to black in Linen bin",
+                  answer:"no",
+                  staff:"Varun",
+                  alertType:"delay",
+                  alertMessage:"Process Override",
+                } ).then(() => {
+            
                 });
   }
 
@@ -564,6 +582,13 @@ export default function questionsScreen({
       }
       sendProcessOverrideAlert();
     } else {
+      var difference  =  Date.parse(new Date().toISOString()) - Date.parse(initialTime)
+            
+      var minutes = Math.floor(difference / 60) % 60;
+      if(minutes > 3){
+          processDelayed = true;
+      }
+      console.log()
       mutateEditableFunction({
         variables: {
           processes_data: processDataId.map(Number),
@@ -571,7 +596,8 @@ export default function questionsScreen({
           branch:branch,
         },
       });
-      sendProcessTimeExceedAlert();
+      if(processDelayed)
+        sendProcessTimeExceedAlert();
     }
     setModalVisible(true);
   };
