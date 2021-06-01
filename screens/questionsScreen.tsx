@@ -175,6 +175,14 @@ const contentButtons = [
         title: "P20",
         image: require("../Images/P20.jpg")
     },
+    {
+        title: "P21",
+        image: require("../Images/P21.jpg")
+    },
+    {
+        title: "P22",
+        image: require("../Images/P22.jpg")
+    },
 ]
 export default function questionsScreen({
   route,
@@ -250,6 +258,7 @@ export default function questionsScreen({
         })
         .then((Result) => {
           
+          console.log("Result data---",Result.data);
           questions_data = Result.data;
           if (questions_data.processDetail.id == processNumber_Initial) {
             _isInitialProcess = true;
@@ -354,6 +363,11 @@ export default function questionsScreen({
 
   const [mutateFunction, { data:mutationData,error:mutationError, }] = useMutation(SubmitAnswerForQuestion);
 
+  if(mutationError){
+    console.log("error--",mutationError)
+  }
+
+  
   useEffect(() => {
     if (mutationData) {
       dictId[mutationData.createProcessesDatum.processesDatum.question.id] =
@@ -464,11 +478,12 @@ export default function questionsScreen({
   }
 
   const callQuery =  (index: any, value: any) => {
+    //console.log("Operation theater id--",operationTheaterID)
     temp.push(index);
     dictId[index]; 
     if(UserData){
        if(isMe){
-        
+          console.log("Operation theater id---------",operationTheaterID,)
           mutateFunction({
             variables: {
               operation_theater: parseInt(operationTheaterID),

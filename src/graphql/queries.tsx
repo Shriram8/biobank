@@ -146,6 +146,35 @@ export const GetAutoClaveDetails = gql`
     }
   }
 `;
+
+export const GetWeeklyChecklistDetails = gql`
+  query ($Date: String, $branch: ID!) {
+    processDetails(where: { id: [22] }) {
+      id
+      processes_data(where: { Date: $Date, branch: $branch }) {
+        Date
+        check_editable {
+          processCleared
+        }
+      }
+    }
+  }
+`;
+
+export const GetMonthlyChecklistDetails = gql`
+  query ($Date: String, $branch: ID!) {
+    processDetails(where: { id: [23] }) {
+      id
+      processes_data(where: { Date: $Date, branch: $branch }) {
+        Date
+        check_editable {
+          processCleared
+        }
+      }
+    }
+  }
+`;
+
 export const GetProcessesDetails = gql`
   query ($resourceID: ID!) {
     appResource(id: $resourceID) {
@@ -160,6 +189,8 @@ export const GetProcessesDetails = gql`
     }
   }
 `;
+
+
 
 export const GetGaDetails = gql`
   query ($Date: String, $branch: ID!) {
@@ -285,12 +316,27 @@ export const GetSharedResource_OperationTheaters = gql`
       id
       name
     }
-    operationTheaters {
+    operationTheaters (limit: 2){
       id
       name
     }
   }
 `;
+
+export const GetWeeklySheduledResources = gql`
+  query {
+    scheduledResources(where: { resourceType: "weekly" }) {
+      id
+      name
+      questions(sort: "questionSequenceNumber:asc") {
+        id
+        Question
+        type
+      }
+    }
+  }
+`;
+
 
 export const autoClaveProgress = gql`
   query (

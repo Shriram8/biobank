@@ -18,6 +18,7 @@ import {
   GetResourcesDetails,
   GetSurgeryDetails_OTStaff,
   preProcessProgress_OTStaff,
+  GetWeeklySheduledResources,
 } from "../src/graphql/queries";
 import {
   GetSharedResource_OperationTheaters,
@@ -25,6 +26,8 @@ import {
   GetSurgeryDetails,
   GetUserDataById,
   Check_Process_Progress,
+  GetMonthlyChecklistDetails,
+  GetWeeklyChecklistDetails
 } from "../src/graphql/queries";
 import { Divider, Button, ActivityIndicator } from "react-native-paper";
 import { FlatList } from "react-native";
@@ -70,6 +73,9 @@ var _Result = [];
 var _length;
 var _headerColor;
 let autoClavemsg = {};
+let weeklyChecklistmsg = {};
+let monthlyChecklistmsg = {};
+
 function homeScreen(props, route) {
   const [renderFlatlistData, setRenderFlatlistData] = useState();
   const [processMessageData, setProcessMessageData] = useState([]);
@@ -88,7 +94,7 @@ function homeScreen(props, route) {
   const [updateMessage, setUpdateMessage] = useState(false);
   const [updateExitMessage, setUpdateExitMessage] = useState(false);
 
-  console.log("data",props.userId)
+  //console.log("data",props.userId)
   const { data, refetch } = useQuery(GetUserDataById, {
     fetchPolicy: "network-only",
     variables: {
@@ -164,15 +170,27 @@ function homeScreen(props, route) {
       setUpdateMessage(true)
       //console.log("HOME SCREEN")
       setloadingProcessData(false);
+
       apolloClient
         .query({
           query: GetSharedResource_OperationTheaters,
           fetchPolicy: "network-only",
         })
         .then( (Result) => {
-          ot_data = Result.data.appResources.concat(
-            Result.data.operationTheaters
-          );
+
+          var today = new Date();
+          //console.log("Today Get Day",today.getDay());
+          
+            ot_data = Result.data.appResources.concat(
+                Result.data.operationTheaters
+            );
+            //console.log("date---",today.getDate())
+          if(today.getDate()>7){
+            ot_data.splice(2, 1);
+          }
+          if(!(today.getDay() == 5 || today.getDay() == 6)){
+            ot_data.splice(1, 1);
+          }
 
           setRenderFlatlistData(Result.data);
 
@@ -387,6 +405,99 @@ function homeScreen(props, route) {
     });
     return unsubscribe;
   }, [props.navigation]);
+
+  React.useEffect(() => {
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      var today = new Date();
+      if(today.getDay() == 6){
+      var process = 1;
+      var temp = 0
+      weeklyChecklistmsg = {
+        message: "Weeklychecklist not cleared",
+        color: red,
+        icon: minusBox,
+      };
+      apolloClient
+        .query({
+          query: GetWeeklyChecklistDetails,
+          variables:{
+            Date:new Date().toISOString().slice(0, 10),
+            branch:props.branch,
+          },
+          fetchPolicy:"network-only"
+        })
+        .then((Result) => {
+          for(var i=0; i<Result.data.processDetails.length;i++){
+            try{
+              if(Result.data.processDetails[i].processes_data[0].check_editable.processCleared){
+                temp = temp+1;
+              }
+            }catch{
+
+            }
+          }
+          if(temp == process){
+            weeklyChecklistmsg = {
+              message: "Weeklychecklist cleared",
+              color: green,
+              icon: check,
+            };
+          }
+        })
+      }
+      });
+      return unsubscribe;
+  }, [props.navigation]);
+
+
+  React.useEffect(() => {
+    const unsubscribe = props.navigation.addListener('focus', () => {
+      var today = new Date();
+      if(today.getDate()<7){
+      var process = 1;
+      var temp = 0;
+      monthlyChecklistmsg = {
+        message: "Monthly checklist not cleared",
+        color: red,
+        icon: minusBox,
+      };
+      apolloClient
+        .query({
+          query: GetMonthlyChecklistDetails,
+          variables:{
+            Date:new Date().toISOString().slice(0, 10),
+            branch:props.branch,
+          },
+          fetchPolicy:"network-only"
+        })
+        .then((Result) => {
+          for(var i=0; i<Result.data.processDetails.length;i++){
+            try{
+              if(Result.data.processDetails[i].processes_data[0].check_editable.processCleared){
+                temp = temp+1;
+              }
+            }catch{
+
+            }
+          }
+          if(temp == process){
+            monthlyChecklistmsg = {
+              message: "Monthly checklist cleared",
+              color: green,
+              icon: check,
+            };
+          }
+        })
+      }
+      
+      });
+      return unsubscribe;
+  }, [props.navigation]);
+
+
+
+
+
   const setHeaderText = () => {
     //console.log("NET PROGRESS LENGTH--",netProgress.length,).
     let icon = "play-box";
@@ -534,10 +645,10 @@ function homeScreen(props, route) {
         <OTCard
           title={item.item.name}
           message = {
-            item.index > 0 ? global_message[item.index - 1] : autoClavemsg
+            item.item.name == "AutoClave" ? autoClavemsg : (item.item.name == "Weekly Check" ? weeklyChecklistmsg :item.item.name == "Monthly Check" ? monthlyChecklistmsg:global_message[item.index - 1]) 
           }
           branch = {props.branch}
-          operationTheaterID = {item.index > 0 ? item.item.id : null}
+          operationTheaterID = {item.item.name == "AutoClave" ? null : (item.item.name == "Weekly Check" ? null :item.item.name == "Monthly Check" ? null:item.item.id)}
           updateMessage = {updateMessage}
           updateExitMessage = {updateExitMessage}
           onPress={() => {

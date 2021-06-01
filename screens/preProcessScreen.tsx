@@ -3,7 +3,7 @@ import { StyleSheet,ScrollView, Keyboard, Text,TouchableWithoutFeedback, StatusB
   TextInput, TouchableOpacity ,Image} from 'react-native';
 import { useQuery, gql } from '@apollo/client';
 import {client} from '../src/graphql/ApolloClientProvider';
-import {GetAutoClaveDetails,GetSurgeryDetails_OTStaff,preProcessProgress_OTStaff} from '../src/graphql/queries';
+import {GetAutoClaveDetails,GetSurgeryDetails_OTStaff,preProcessProgress_OTStaff,GetWeeklyChecklistDetails,GetMonthlyChecklistDetails} from '../src/graphql/queries';
 import { ProgressBar } from 'react-native-paper';
 import { FlatList } from "react-native";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'; 
@@ -40,6 +40,8 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
     const [headerColor,setHeaderColor] = useState("")
     const [headerIcon,setHeaderIcon]= useState("");
     const [autoClaveCleared,setAutoClaveCleared]= useState(false);
+    const [weeklyChecklistCleared,setWeeklyChecklistCleared] = useState(true);
+    const [monthlyChecklistCleared,setMonthlyChecklistCleared] = useState(true);
     const [resultsFetched,setResultsFetched] = useState(0);
     const jewelStyle = (item: number | undefined)=>{
       return (item == 1)?{backgroundColor:"white"}:{backgroundColor:"#b6b6b6"}
@@ -176,6 +178,79 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
       return unsubscribe;
   }, [navigation]);
 
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      var today = new Date();
+      if(today.getDay() == 6){
+      setWeeklyChecklistCleared(false);
+      var process = 1;
+      var temp = 0
+      apolloClient
+        .query({
+          query: GetWeeklyChecklistDetails,
+          variables:{
+            Date:new Date().toISOString().slice(0, 10),
+            branch:branch,
+          },
+          fetchPolicy:"network-only"
+        })
+        .then((Result) => {
+          for(var i=0; i<Result.data.processDetails.length;i++){
+            try{
+              if(Result.data.processDetails[i].processes_data[0].check_editable.processCleared){
+                temp = temp+1;
+              }
+            }catch{
+
+            }
+          }
+          if(temp == process){
+            setWeeklyChecklistCleared(true);
+          }
+        })
+      }
+      });
+      return unsubscribe;
+  }, [navigation]);
+
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      var today = new Date();
+      if(today.getDay() == 1 || today.getDay() == 6){
+      setMonthlyChecklistCleared(false);
+      var process = 1;
+      var temp = 0
+      apolloClient
+        .query({
+          query: GetMonthlyChecklistDetails,
+          variables:{
+            Date:new Date().toISOString().slice(0, 10),
+            branch:branch,
+          },
+          fetchPolicy:"network-only"
+        })
+        .then((Result) => {
+          for(var i=0; i<Result.data.processDetails.length;i++){
+            try{
+              if(Result.data.processDetails[i].processes_data[0].check_editable.processCleared){
+                temp = temp+1;
+              }
+            }catch{
+
+            }
+          }
+          if(temp == process){
+            setMonthlyChecklistCleared(true);
+          }
+        })
+      }
+      });
+      return unsubscribe;
+  }, [navigation]);
+
+
+
 
   React.useEffect(()=>{
       if(_Result.length == _length){
@@ -227,7 +302,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
 
     const setHeaderText = ()=>{
       
-      console.log(colorValue);
+      //console.log(colorValue);
       switch(colorValue[netProgress.length-1]){
         case red:
           //console.log("RED")
@@ -275,7 +350,17 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
           }
           
           if(netProgress.length == preSurgeryProcessCount){
-            if(!autoClaveCleared){
+            if(!weeklyChecklistCleared){
+              lock[preSurgeryProcessCount] = true;
+              setHeaderColor(red);
+              setHeaderIcon(minusBox);
+              setMessage("Weekly checklist not cleared");
+            }else if(!monthlyChecklistCleared){
+              lock[preSurgeryProcessCount] = true;
+              setHeaderColor(red);
+              setHeaderIcon(minusBox);
+              setMessage("Monthly checklist not cleared");
+            }else if(!autoClaveCleared){
               lock[preSurgeryProcessCount] = true;
               setHeaderColor(red);
               setHeaderIcon(minusBox);

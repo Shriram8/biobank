@@ -400,7 +400,7 @@ exitUpadteMessage = false;
             <Text style={{fontSize:18,color:'#000',fontWeight:'bold'}}>{this.props.title}</Text>
             <MaterialCommunityIcons name="arrow-right" size={18} />
             </View>
-            {this.props.message && this.props.operationTheaterID ==null?(
+            {this.props.message && this.props.operationTheaterID == null?(
                     <MessageComponent message={this.props.message}/>
             ):
             (this.state.message ? (<View style={{flexDirection:'row',alignItems:'center'}}>

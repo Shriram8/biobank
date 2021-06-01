@@ -19,7 +19,7 @@ const initialProcessQuestionIndex = 2;
 const processBackgroundColor = ['#00a79d','#27aae2','#f25a29',
 '#f25a29','#00a79d','#f25a29','#27aae2','#f25a29','#00a79d','#27aae2',
 '#f25a29','#019cb2','#27aae2','#f25a29','#00a79d','#27aae2','#f25a29',
-'#019cb2','#27aae2','#f25a29']
+'#019cb2','#27aae2','#f25a29','#00a79d','#00a79d']
 var isProcessUserMe: any [] = [];
 export default function processScreen({route, navigation}: {navigation: any, route:any}) {
     const { userId,operationTheaterID,resourceID, resourceName,instance,userType,branch } = route.params;
