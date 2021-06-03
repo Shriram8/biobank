@@ -217,7 +217,7 @@ export default function preProcessScreen({route, navigation}: {navigation: any, 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       var today = new Date();
-      if(today.getDay() == 1 || today.getDay() == 6){
+      if(today.getDate() == 7){
       setMonthlyChecklistCleared(false);
       var process = 1;
       var temp = 0
