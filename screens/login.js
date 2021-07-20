@@ -17,6 +17,7 @@ import { client } from "../src/graphql/ApolloClientProvider";
 import {
   GetUserDetails,
   GetDetailsWithEmployeeId,
+  GetDActues,
 } from "../src/graphql/queries";
 import { Divider, HelperText, Button } from "react-native-paper";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -24,9 +25,15 @@ import { connect } from "react-redux";
 import { changeUserLogin } from "../src/Actions/UserLogin";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { db_url } from "../src/Constants/login";
+import CsvDownload from 'react-json-to-csv'
+import {
+  JsonToCsv,
+  useJsonToCsv
+} from 'react-json-csv';
 
 const apolloClient = client;
 const LoginRootStack = createStackNavigator();
+
 function login(props, navigation) {
   const [userId, setUserId] = useState("");
   const [EmpIdFocus, setEmpIdFocus] = useState(false);
@@ -35,87 +42,55 @@ function login(props, navigation) {
   const [errorMsg, setErrorMsg] = useState("");
   const [showHelperText, setShowHelperText] = useState(false);
   const [register, setRegister] = useState(false);
+  const [mockData, setmockData] = useState(
+    [
+      {
+        "age": 51,
+        "record_id": "CoBIO-A0100"
+      },
+      {
+        "age": 61,
+        "record_id": "CoBIO-A0101 "
+      },
+      {
+        "age": 64,
+        "record_id": "CoBIO-A0102"
+      },
+    ]
+  );
   const [forgot, setForgot] = useState(false);
   const axios = require('axios').default;
+  
   const verifyLogin = () => {
     if (password.trim().length != "" && userId.trim().length != "") {
-
-      axios({
-        method: 'post', 
-        url: db_url+'/users-permissions/customlogin',
-        data: {
-          employeeid: userId,
-          password:password
-        }
-      }).then((response)=>{
-         
-         if (response.data.login=== true) {
-                  props.changeLogin(
-                    response.data.id,
-                    response.data.userType,
-                    response.data.branch,
-                    response.data.branchName,
-                    response.data.token
-                  );
-                  navigation.navigate("homeScreen", {
-                    userId: userId,
-                    userType:  response.data.userType.userType,
-                  });
-                } else {
-                  console.log("failed");
-                  setShowHelperText(true);
-                  setErrorMsg(response.data.message);
-                  if(response.data.message === "invalid password"){
-                    setErrorMsg("Username and password didn’t match.")
-                  }else if(response.data.message === "no user found"){
-                    setErrorMsg("No user found!")
-                  }
-                  setTimeout(()=>{
-                    setErrorMsg("")
-                  },2000)
-                }
-      }).catch((err)=>{
-        console.log("*********Response **********", err)
-      });
-
-    //   apolloClient
-    //     .query({
-    //       query: GetDetailsWithEmployeeId,
+      apolloClient
+        .query({
+          query: GetDetailsWithEmployeeId,
           
-    //       variables: {
-    //         employeeid: userId,
-    //         // userID: userId,
-    //       },
-    //       fetchPolicy: "network-only",
-    //     })
-    //     .then((Result) => {
-    //       console.log("result", Result.data.appUsers[0].branch);
-    //       if (Result.data.appUsers[0].password === password) {
-    //         props.changeLogin(
-    //           Result.data.appUsers[0].id,
-    //           Result.data.appUsers[0].userType,
-    //           Result.data.appUsers[0].branch?.id
-    //         );
-    //         navigation.navigate("homeScreen", {
-    //           userId: userId,
-    //           userType: Result.data.appUsers[0].userType,
-    //         });
-    //       } else {
-    //         console.log("failed");
-    //         setShowHelperText(true);
-    //         setErrorMsg("Username and password didn’t match.");
-    //       }
-    //     })
-    //     .catch(() => {
-    //       setShowHelperText(true);
-    //       setErrorMsg("Username and password didn’t match.");
-    //     });
-    } else {
-      setShowHelperText(true);
-      setErrorMsg("Please fill all the fields.");
-    }
-    
+          fetchPolicy: "network-only",
+        })
+        .then((Result) => {
+          // setmockData(Result.data.dAcutes);
+          if (Result.data.appUsers[0].password === password) {
+            props.changeLogin(
+              Result.data.appUsers[0].id,
+              Result.data.appUsers[0].userType,
+            );
+            navigation.navigate("homeScreen", {
+              userId: userId,
+              userType: Result.data.appUsers[0].userType,
+            });
+          } else {
+            setShowHelperText(true);
+            setErrorMsg("Username and password didn’t match.");
+          }
+        })
+        .catch(() => {
+          setShowHelperText(true);
+          setErrorMsg("Username and password didn’t match.");
+        });
   };
+}
 
   const getUserDetails = () => {
     axios({
@@ -191,9 +166,9 @@ function login(props, navigation) {
 
   return (
     <>
-      <StatusBar animated={true} backgroundColor="#006bcc" hidden={false} />
+      <StatusBar animated={true} backgroundColor="#3c7d4d" hidden={false} />
       <ScrollView
-        contentContainerStyle={{ backgroundColor: "#006bcc", flexGrow: 1 }}
+        contentContainerStyle={{ backgroundColor: "#3c7d4d", flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.header}>
@@ -208,7 +183,7 @@ function login(props, navigation) {
             <Text style={styles.headerTextStyle}>{rendereHeaderText()}</Text>
           </View>
           <View style={styles.textLabel}>
-            <Text style={styles.textStyle}>Mobile No/Employee ID</Text>
+            <Text style={styles.textStyle}>Login ID</Text>
           </View>
           <View style={styles.inputView}>
             <TextInput
@@ -261,7 +236,7 @@ function login(props, navigation) {
           </TouchableOpacity> */}
           <Button
             mode="contained"
-            color={"#006bcc"}
+            color={"#3c7d4d"}
             uppercase={false}
             style={styles.reset}
             labelStyle={{ fontSize: 16 }}
@@ -307,6 +282,19 @@ function login(props, navigation) {
           )}
         </View>
         {/* <Divider style={{ width: "80%", height: 1, borderColor: "black" }} /> */}
+      <CsvDownload 
+        data={mockData}
+        filename="good_expo_data.csv"
+      >
+        Good Data ✨
+      </CsvDownload>
+      {/* <JsonToCsv
+  data={data}
+  filename={filename}
+  fields={fields}
+  style={style}
+  text={text}
+/> */}
       </ScrollView>
     </>
   );
@@ -315,7 +303,7 @@ function login(props, navigation) {
 const styles = StyleSheet.create({
   header: {
     marginTop: StatusBar.currentHeight,
-    backgroundColor: "#006bcc",
+    backgroundColor: "#3c7d4d",
     alignItems: "center",
     justifyContent: "center",
     flex: 1,
@@ -328,13 +316,13 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
   },
   tinyLogo: {
-    height: 48,
-    width: 208,
+    height: 96,
+    width: 416,
     marginTop: 75,
   },
   headerTextLabel: {
-    width: "80%",
-    height: 25,
+    width: "40%",
+    height: 32,
     marginTop: 32,
     justifyContent: "center",
   },
@@ -355,14 +343,14 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   textLabel: {
-    width: "80%",
+    width: "40%",
     height: 20,
     marginTop: 25,
     justifyContent: "center",
     marginBottom: 8,
   },
   inputView: {
-    width: "80%",
+    width: "40%",
     borderColor: "#979797",
     height: 50,
     justifyContent: "center",
@@ -401,7 +389,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   reset: {
-    width: "80%",
+    width: "12%",
     height: 40,
     marginBottom: 20,
     justifyContent: "center",

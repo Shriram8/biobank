@@ -13,777 +13,148 @@ export const GetUserDetails = gql`
 export const GetDetailsWithEmployeeId = gql`
   query ($employeeid: String) {
     appUsers(
-      where: { _or: [{ employeeid: $employeeid }, { uid: $employeeid }] }
+      where: { uid: $employeeid }
     ) {
       id
       name
       userType
       password
-      resetpassword
-      branch {
-        id
-        name
-      }
     }
   }
 `;
 
-export const GetResourcesDetails = gql`
-  query {
-    appResources {
-      id
-      name
-    }
-  }
-`;
-
-export const GetDrugList = gql`
-  query {
-    druglists {
-      id
-      name
-      quantity
-      type
-    }
-  }
-`;
-
-export const GetUsers = gql`
-  query ($branch: ID!) {
-    appUsers(where: { branch: $branch, active: true }) {
-      id
-      name
-      userType
-      active
-    }
-  }
-`;
-
-export const GetUserDataById = gql`
-  query ($userId: ID!) {
-    appUsers(where: { id: $userId }) {
-      id
-      name
-      userType
-      employeeid
-      gender
-      uid
-      branch {
-        id
-        name
-      }
-    }
-  }
-`;
-
-export const GetPassword = gql`
-  query ($userId: ID!) {
-    appUsers(where: { id: $userId }) {
-      id
-      password
-    }
-  }
-`;
-
-export const UpdatePassword = gql`
-  mutation ($userId: ID!, $password: String!, $resetpassword: Boolean!) {
-    updateAppUser(
-      input: {
-        where: { id: $userId }
-        data: { password: $password, resetpassword: $resetpassword }
-      }
-    ) {
-      appUser {
-        id
-        name
-      }
-    }
-  }
-`;
-
-export const DeactivateUser = gql`
-  mutation ($userId: ID!, $active: Boolean!) {
-    updateAppUser(
-      input: { where: { id: $userId }, data: { active: $active } }
-    ) {
-      appUser {
-        id
-        name
-        branch {
-          id
-          name
-        }
-      }
-    }
-  }
-`;
-
-export const ResetPassword = gql`
-  mutation ($userId: ID!, $resetpassword: Boolean!) {
-    updateAppUser(
-      input: { where: { id: $userId }, data: { resetpassword: $resetpassword } }
-    ) {
-      appUser {
-        id
-        name
-        branch {
-          id
-        }
-      }
-    }
-  }
-`;
-export const GetAutoClaveDetails = gql`
-  query ($Date: String, $branch: ID!) {
-    processDetails(where: { id: [4, 5, 6] }) {
-      id
-      processes_data(where: { Date: $Date, branch: $branch }) {
-        Date
-        check_editable {
-          processCleared
-        }
-      }
-    }
-  }
-`;
-
-export const GetWeeklyChecklistDetails = gql`
-  query ($Date: String, $branch: ID!) {
-    processDetails(where: { id: [22] }) {
-      id
-      processes_data(where: { Date: $Date, branch: $branch }) {
-        Date
-        check_editable {
-          processCleared
-        }
-      }
-    }
-  }
-`;
-
-export const GetMonthlyChecklistDetails = gql`
-  query ($Date: String, $branch: ID!) {
-    processDetails(where: { id: [23] }) {
-      id
-      processes_data(where: { Date: $Date, branch: $branch }) {
-        Date
-        check_editable {
-          processCleared
-        }
-      }
-    }
-  }
-`;
-
-export const GetProcessesDetails = gql`
-  query ($resourceID: ID!) {
-    appResource(id: $resourceID) {
-      process_details {
-        id
-        Number
-        process_name
-        questions {
-          id
-        }
-      }
-    }
-  }
-`;
-
-
-
-export const GetGaDetails = gql`
-  query ($Date: String, $branch: ID!) {
-    processDetails(where: { id: [4, 5, 6] }) {
-      id
-      processes_data(where: { Date: $Date, branch: $branch }) {
-        Date
-        check_editable {
-          processCleared
-        }
-      }
-    }
-  }
-`;
-export const GetProcessDataDetails = gql`
-  query (
-    $processID: ID!
-    $operation_theater: ID!
-    $instance: Int
-    $Date: String
-    $branch: ID!
-  ) {
-    processesData(
-      sort: "created_at:asc",
-      where: {
-        process_detail: $processID
-        operation_theater: $operation_theater
-        instance: $instance
-        Date: $Date
-        branch: $branch
-      }
-    ) {
+export const GetDActues= gql`
+  query{
+    dControls{
       id,
-      Answer,
-      created_at,
-      app_user {
-        id
-      },
-      question {
-        id
-      }
+      record_id,
+      disease,
+      age,
+      sex,
+      age_range,
+      date_of_birth,
+      race_or_ethnicity,
+      height_mts,
+      Weight_in_pounds,
+      BMI   
     }
   }
 `;
 
-export const GetQuestionDetails = gql`
-  query (
-    $processID: ID!
-    $operation_theater: ID!
-    $instance: Int
-    $Date: String
-    $branch: ID!
-  ) {
-    processDetail(id: $processID) {
-      id
-      questions(sort: "questionSequenceNumber:asc") {
-        id
-        Question
-        type
-      }
-    }
-    processesData(
-      sort: "created_at:asc",
-      where: {
-        process_detail: $processID
-        operation_theater: $operation_theater
-        instance: $instance
-        Date: $Date
-        branch: $branch
-      }
-    ) {
-      id
-      check_editable {
-        id
-        processCleared
-      }
-      question {
-        id
-      }
-      Answer
-      created_at
-      Date
-    }
+export const GetQuestions = gql`
+query{
+  quetions{
+    id,
+    question
   }
-`;
-
-export const GetAnswersProgress = gql`
-  query (
-    $operation_theater: ID!
-    $processID: ID!
-    $instance: Int
-    $Date: Date
-    $branch: ID!
-  ) {
-    processesData(
-      where: {
-        process_detail: $processID
-        operation_theater: $operation_theater
-        instance: $instance
-        Date: $Date
-        branch: $branch
-      }
-    ) {
-      id,
-      app_user {
-        id
-      }
-      Answer
-      check_editable {
-        id
-        processCleared
-      }
-      process_detail {
-        id
-      }
-    }
-  }
-`;
-
-export const GetSharedResource_OperationTheaters = gql`
-  query {
-    appResources(where: { resourceType: "SharedResource" }) {
-      id
-      name
-    }
-    operationTheaters (limit: 2){
-      id
-      name
-    }
-  }
-`;
-
-export const GetWeeklySheduledResources = gql`
-  query {
-    scheduledResources(where: { resourceType: "weekly" }) {
-      id
-      name
-      questions(sort: "questionSequenceNumber:asc") {
-        id
-        Question
-        type
-      }
-    }
-  }
-`;
+}`;
 
 
-export const autoClaveProgress = gql`
-  query (
-    $operation_theater: ID!
-    $Date: Date
-    $instance: Int
-    $process_detail: ID!
-  ) {
-    processesData(
-      where: {
-        operation_theater: $operation_theater
-        Date: $Date
-        instance: $instance
-        process_detail: $process_detail
-        check_editable_null: false
-      }
-    ) {
-      id
-      Answer
-      check_editable {
-        id
-        processCleared
-      }
-    }
-  }
-`;
-
-export const preProcessProgress_OTStaff = gql`
-  query (
-    $operation_theater: ID!
-    $Date: Date
-    $instance: Int
-    $process_detail: ID!
-    $branch: ID!
-  ) {
-    processesData(
-      where: {
-        operation_theater: $operation_theater
-        Date: $Date
-        instance: $instance
-        process_detail: $process_detail
-        check_editable_null: false
-        branch: $branch
-      }
-    ) {
-      id
-      Answer
-      Date
-      process_detail {
-        id
-      }
-      check_editable {
-        id
-        processCleared
-      }
-      instance
-      operation_theater {
-        id
-        name
-      }
-    }
-  }
-`;
-
-export const preProcessProgress = gql`
-  query (
-    $operation_theater: ID!
-    $app_user: ID!
-    $Date: Date
-    $instance: Int
-    $process_detail: ID!
-  ) {
-    processesData(
-      where: {
-        operation_theater: $operation_theater
-        app_user: $app_user
-        Date: $Date
-        instance: $instance
-        process_detail: $process_detail
-        check_editable_null: false
-      }
-    ) {
-      id
-      Answer
-      Date
-      process_detail {
-        id
-      }
-      check_editable {
-        id
-        processCleared
-      }
-      instance
-      operation_theater {
-        id
-        name
-      }
-    }
-  }
-`;
-
-export const GetSurgeryDetails_OTStaff = gql`
-  query ($operation_theater: ID!, $Date: Date, $branch: ID!) {
-    appResources(
-      sort: "processOrder:asc"
-      where: { resourceType: "OperationTheater" }
-    ) {
-      id
-      name
-      processOrder
-      process_details {
-        id
-      }
-    }
-    questions(where: { id: 6 }) {
-      processes_data(
-        where: {
-          operation_theater: $operation_theater
-          Date: $Date
-          branch: $branch
-        }
-      ) {
-        id
-        Answer
-        Date
-        operation_theater {
-          id
-        }
-      }
-    }
-    processesData(
-      where: {
-        operation_theater: $operation_theater
-        Date: $Date
-        check_editable_null: false
-      }
-    ) {
-      id
-      Answer
-      Date
-      process_detail {
-        id
-      }
-      check_editable {
-        id
-        processCleared
-      }
-      instance
-      operation_theater {
-        id
-        name
-      }
-    }
-  }
-`;
-
-export const GetSurgeryDetails = gql`
-  query ($operation_theater: ID!, $app_user: ID!, $Date: Date) {
-    appResources(
-      sort: "processOrder:asc"
-      where: { resourceType: "OperationTheater" }
-    ) {
-      id
-      name
-      processOrder
-      process_details {
-        id
-      }
-    }
-    questions(where: { id: 6 }) {
-      processes_data(
-        where: {
-          operation_theater: $operation_theater
-          app_user: $app_user
-          Date: $Date
-        }
-      ) {
-        id
-        Answer
-        Date
-        operation_theater {
-          id
-        }
-      }
-    }
-  }
-`;
-export const Check_Process_Progress = gql`
-  query ($otID: ID!, $date: String) {
-    appResources(
-      sort: "processOrder:asc"
-      where: { resourceType: "OperationTheater" }
-    ) {
-      name
-      processOrder
-      process_details {
-        id
-        Number
-        process_name
-        processes_data(
-          sort: "id:asc"
-          where: { operation_theater: { id: $otID }, Date: $date }
-        ) {
-          Date
-          id
-          Answer
-          operation_theater {
-            id
-            name
-          }
-          instance
-          question {
-            Question
-          }
-          check_editable {
-            id
-            processCleared
-          }
-        }
-      }
-    }
-  }
-`;
-// query($otID: ID!, $date: String, $userId: ID!) {
-//   appResources(
-//     sort: "processOrder:asc"
-//     where: { resourceType: "OperationTheater" }
-//   ) {
-//     name
-//     processOrder
-//     process_details {
-//       id
-//       Number
-//       process_name
-//       processes_data(
-//         sort: "id:asc"
-//         where: {
-//           app_user: $userId
-//           operation_theater: { id: $otID }
-//           Date: $date
-//         }
-//       ) {
-//         Date
-//         id
-//         Answer
-//         operation_theater {
-//           id
-//           name
-//         }
-//         instance
-//         question {
-//           Question
-//         }
-//         check_editable {
-//           id
-//         }
-//       }
-//     }
+// Question 1
+// query{
+//   sAcute1s(where:{visit_count_gt:1}){
+//    id,
 //   }
 // }
-// export const GetPreProcessDetails = gql`
-// query($operationTheaterID:ID!){
+
+// Question 2
+// query{
+//   noCoCoBioBloods(where:{pbmc_null:true}){
+//    id,
+//     pbmc,
+//     record_id,
+    
+//   }
+// }
+
+//Question 3
+// query{
+//   dAcutes(where:{sex_0_is_male_and_1_is_female:0,disease_severity_category_null:false}){
+//    	id,
+//     disease_severity_category
+//   }
+// }
+
+//Question 4
+
+// nocoCobioSalivas(where: { saliva_pcr_results: "POS"} ){
+//   record_id
+//   saliva_pcr_results
 
 // }
-// `;
 
-export enum ENUM_RESOURCE_TYPE {
-  SharedResource,
-  OperationTheater,
-}
+// nocoCobioStools(where:{ddPCR_RNA_StoolCarol_Lab : "POS"}){
+//   ddPCR_RNA_StoolCarol_Lab
+//   record_id
+// } 
+// nocoCobioNasalpharygenals(where : {np_pcr_result : "POS"})
+// {
+//   record_id
+//   np_pcr_result
+// }
 
-export const SubmitAnswerForQuestion = gql`
-  mutation (
-    $operation_theater: ID!
-    $question: ID!
-    $app_user: ID!
-    $process_detail: ID!
-    $Date: Date
-    $Answer: String
-    $instance: Int
-    $branch: ID!
-  ) {
-    createProcessesDatum(
-      input: {
-        data: {
-          operation_theater: $operation_theater
-          Answer: $Answer
-          question: $question
-          app_user: $app_user
-          process_detail: $process_detail
-          Date: $Date
-          instance: $instance
-          branch: $branch
-        }
-      }
-    ) {
-      processesDatum {
-        id
-        Answer
-        check_editable {
-          id
-        }
-        question {
-          id
-        }
-        operation_theater {
-          id
-        }
-        created_at
-        process_detail {
-          id
-        }
-      }
-    }
-  }
-`;
+// Question 5
 
-export const SubmitCompleted = gql`
-  mutation ($processes_data: [ID], $processCleared: Boolean, $branch: ID!) {
-    createCheckEditable(
-      input: {
-        data: {
-          editable: true
-          processes_data: $processes_data
-          processCleared: $processCleared
-          branch: $branch
-        }
-      }
-    ) {
-      checkEditable {
-        id
-        editable
-        processCleared
-      }
-    }
-  }
-`;
+// nocoCobioStools(where: { ddPCR_RNA_StoolCarol_Lab: "POS" }) {
+//   visit_number
+//   ddPCR_RNA_StoolCarol_Lab
+//   record_id
+// }
+// dControls{
+//   BMI
+//   record_id
+//   sex
+// }
 
-export const UpdateSubmitCompleted = gql`
-  mutation ($checkEditable_Id: ID!) {
-    updateCheckEditable(
-      input: {
-        where: { id: $checkEditable_Id }
-        data: { processCleared: true }
-      }
-    ) {
-      checkEditable {
-        id
-        editable
-        processCleared
-      }
-    }
-  }
-`;
 
-export const UpdateSubmittedAnswerForQuestion = gql`
-  mutation ($question_Id: ID!, $Answer: String) {
-    updateProcessesDatum(
-      input: { where: { id: $question_Id }, data: { Answer: $Answer } }
-    ) {
-      processesDatum {
-        id
-        Answer
-      }
-    }
-  }
-`;
+// Question 6
 
-export const addNewUser = gql`
-  mutation (
-    $name: String!
-    $password: String!
-    $uid: String!
-    $userType: ENUM_APPUSERS_USERTYPE
-    $gender: ENUM_APPUSERS_GENDER
-    $employeeid: String
-    $active: Boolean!
-    $resetpassword: Boolean!
-    $branch: ID!
-  ) {
-    createAppUser(
-      input: {
-        data: {
-          name: $name
-          password: $password
-          uid: $uid
-          userType: $userType
-          gender: $gender
-          employeeid: $employeeid
-          active: $active
-          resetpassword: $resetpassword
-          branch: $branch
-        }
-      }
-    ) {
-      appUser {
-        id
-        name
-        branch {
-          id
-        }
-      }
-    }
-  }
-`;
+// nocoCobioStools(where: { stool_sample_ne: null }) {
+//   visit_number
+//   stool_sample
+//   record_id
+// }
+// }
 
-export const UpdateUser = gql`
-  mutation (
-    $userId: ID!
-    $name: String!
-    $userType: ENUM_APPUSERS_USERTYPE
-    $gender: ENUM_APPUSERS_GENDER
-    $uid: String!
-  ) {
-    updateAppUser(
-      input: {
-        where: { id: $userId }
-        data: { name: $name, userType: $userType, uid: $uid, gender: $gender }
-      }
-    ) {
-      appUser {
-        id
-        name
-        branch {
-          id
-        }
-      }
-    }
-  }
-`;
+//Question 9
 
-export const addNewBranch = gql`
-  mutation ($name: String!) {
-    createBranch(input: { data: { name: $name } }) {
-      branch {
-        id
-        name
-      }
-    }
-  }
-`;
+// {
+//   noCoCoBioBloods(where: { pbmc_ne: null }) {
+//     record_id
+//     pbmc
+//     date_visit
+//   }
+//   nocoCobioStools(where: { stool_sample_ne: null }) {
+//     record_id
+//     stool_sample
+//     date_visit
+//   }
+// }
 
-export const getBranchDetails = gql`
-  query {
-    branches(sort: "name") {
-      id
-      name
-    }
-  }
-`;
+
+//Question 10
+
+// {
+//   nocoCobioSalivas(where: { saliva_pcr_results: "POS" }) {
+//     saliva_pcr_results
+//     record_id
+//   }
+//   nocoCobioStools(where: { ddPCR_RNA_StoolCarol_Lab: "POS" }) {
+//     record_id
+//     ddPCR_RNA_StoolCarol_Lab
+//   }
+
+//   dAcutes {
+//     record_id
+//     BMI
+//     age
+//     sex_0_is_male_and_1_is_female
+//   }
+
+//   dConvalescent1s {
+//     record_id
+//     age
+//     BMI
+//     sex_male_is_0_and_female_is_1
+//   }
+// }

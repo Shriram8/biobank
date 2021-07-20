@@ -245,7 +245,7 @@ const MainStackNavigator = (props) => {
             title: "",
             headerStyle: {
               elevation: 0,
-              backgroundColor: "#006bcc",
+              backgroundColor: "#3c7d4d",
             },
             headerLeft: () => (
               <Button
