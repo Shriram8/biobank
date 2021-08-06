@@ -176,8 +176,22 @@ query{
    id,
     pbmc,
     record_id,
-    
-    
+    visit_count,
+    date_visit,
+    blood_sample1,
+    tubes,
+    tubes_comment,
+    pbmc,
+    pbmc_location,
+    pbmc_comment,
+    plasma_in_ml,
+    plasma_comment,
+    serum,
+    serum_comment,
+    cell_count_per_tube_per_million,
+    cell_count_per_million,
+    cell_count_comment
+  
   }
 }` ;
 
@@ -187,7 +201,47 @@ export const Question3 =gql`
 query{
   dAcutes(where:{sex_0_is_male_and_1_is_female:0,disease_severity_category_null:false}){
    	id,
-    disease_severity_category
+    disease_severity_category,
+    consent_date,
+    date_of_positive_SARS_CoV2_PCR,
+    end_date,
+    disease_severity_category,
+    no_PASC_is_0_and_PASC_is_1,
+    age,
+    age_range,
+    date_of_birth,
+    sex_0_is_male_and_1_is_female,
+    race_or_ethnicity,
+    height_in_mt,
+    weight_in_kg,
+    BMI,
+    BMI_in_range,
+    employed,
+    tobacco_use_if_yes_how_much,
+    how_many_other_individuals_are_in_the_participants_household,
+    zipcode,
+    Notes_for_date_of_positive_SARSCoV2_PCR,
+    date_of_first_collection,
+    number_of_days_between_PCR_plus_and_first_collection,
+    date_of_second_collection,
+    number_of_days_between_PCR_plus_and_second_collection,
+    date_of_third_collection,
+    number_of_days_between_PCR_plus_and_third_collection,
+    date_of_fourth_collection,
+    number_of_days_between_PCR_plus_and_fourth_collection,
+    hospitalized,
+    diagnosed_with_DVT_or_PE_clot_after_diagnosis,
+    oxygen_used_at_hospital,
+    intubation,
+    past_medical_history,
+    other_complications,
+    can_we_follow_up_with_you_in_6_months,
+    comments,
+    initial_COVID_symptoms,
+    record_id,
+    if_yes_how_much_oxygen,
+    medications_taking_at_time_of_COVID19_diagnosis
+
   }
 }`;
 
