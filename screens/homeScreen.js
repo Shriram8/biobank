@@ -15,7 +15,7 @@ import { useQuery, gql, useLazyQuery } from "@apollo/client";
 import { client } from "../src/graphql/ApolloClientProvider";
 import { Picker } from "@react-native-picker/picker";
 import {
-  GetDActues, GetQuestions
+  GetDActues, GetQuestions,Question1,Question2,Question3,Question4,Question5,Question6,Question9,Question10
 } from "../src/graphql/queries";
 
 import { Divider, Button, ActivityIndicator } from "react-native-paper";
@@ -28,23 +28,69 @@ import { fontSizes } from "../components/UI/Theme";
 import OTCard from "../components/UI/OTCard";
 import Branches from "./Branches";
 import CsvDownload from 'react-json-to-csv'
+import CsvViewer from "react-csv-viewer";
+import { JsonToTable } from "react-json-to-table";
+// import CSVReader from 'react-csv-reader'
+import CSVReader1 from './CSVReader1'
+// import CSVReader1 from './CSVReader1';
+
 
 const apolloClient = client;
 const date = new Date();
-
+var csvData;
 
 function homeScreen(props, route) {
   const [renderFlatlistData, setRenderFlatlistData] = useState();
+  const [renderQuestionResult, setrenderQuestionResult] = useState();
   const [selectedInstrument, setSelectedInstrument] = useState(0);
   const [selectTableData,setSelectTableData] = useState(null);
   const [selectTable,setSelectTable] = useState(0);
-  const [renderQuestionResult, setrenderQuestionResult] = useState();
-  const [name, setName] = useState("");
-  const [location, setLocation] = useState("");
+  const [sendQueryLoad, setSendQueryLoad] = useState(false);
+  const [questionData,setQuestionData] = useState();
+  const [questionNumber,setQuestionNumber] = useState(1);
+  
 
   const [mockData, setmockData] = useState(
     null
   );
+
+  const getQuestionInfo = () => {
+    apolloClient
+      .query({
+        query: getQueryQuestion(),
+        fetchPolicy: "network-only",
+      })
+      .then((Result) => {
+        setSendQueryLoad(false);
+        setQuestionData(Result.data);
+        setmockData(Result.data);
+        // console.log("--------------",Result.data.sAcute1s.length);
+      })
+  }
+
+  const getQueryQuestion = () =>{
+    console.log("Question NUmber--",questionNumber)
+    switch(questionNumber){
+
+      case 1: 
+      console.log(questionNumber)
+      return Question1;
+      case 2: 
+      console.log(questionNumber)
+      return Question2;
+      case 3: 
+      console.log(questionNumber)
+      return Question3;
+      case 4: 
+      console.log(questionNumber)
+      return Question4;
+      case 5: return Question5;
+      case 6: return Question6;
+      case 9: return Question9;
+      case 10: return Question10;
+      default: return Question2;
+    }
+  }
   
   const tempData = [
     {
@@ -93,16 +139,7 @@ function homeScreen(props, route) {
       }
 
     ]
-  
 
-  React.useEffect(() => {
-    if (renderFlatlistData) {
-      
-    }
-  }, [renderFlatlistData]);
-
-  
-  
 
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener("focus", () => {
@@ -145,18 +182,10 @@ function homeScreen(props, route) {
     });
 
   }
-  
-  const renderResources = (item) => {
-    return(
-    
-    <View style={{marginVertical: 16,padding: 2,width: "100%",height:40,backgroundColor:"red"}}>
-      <Text style={[styles.appButtonText, { flex: 1, marginBottom: 16 }]}>
-            {item.item.question}
-      </Text>
-        {console.log('questions',item.item.question)}
-    </View>)
-  };
 
+  const uploadData = (data) => {
+    console.log("Upload data--",data)
+  }
 
   return (
     <>
@@ -214,6 +243,7 @@ function homeScreen(props, route) {
           </View>
         </View>
         <View
+        
           style={{ flex: 1, backgroundColor: "white", borderTopLeftRadius: 30 }}
         >
           <View
@@ -224,19 +254,76 @@ function homeScreen(props, route) {
               marginTop: 26,
             }}
           >
-          {/* <Button
+            <View>
+            </View>
+           </View>
+
+           
+
+          <View style={{width:"100%",alignItems:"center"}}>
+            <View style={{width:"60%"}}>
+                <CSVReader1/>
+            </View>
+           </View>
+          {renderQuestionResult?
+          <>
+          <Picker
+            // selectedValue={dict[item.id]}
+            // enabled={!disableButtons}
+            mode='dropdown'
+            style={{
+              height: 40,
+              borderRadius: 7,
+              backgroundColor: "white",
+              borderColor: "#959595",
+              borderWidth: 1,
+              fontSize: 16,
+              color: "#959595",
+              fontWeight: "bold",
+              margin:20
+            }}
+            onValueChange={(itemValue, itemIndex) =>{
+              // console.log(itemValue+1)
+              setQuestionData(null);
+              setQuestionNumber(parseInt(itemValue)+1)
+            }
+            }
+          >
+            <Picker.Item label="Select Question" value="0" />
+            {renderQuestionResult.map((item, index) => {
+              return (
+              <Picker.Item label={renderQuestionResult[index].question} value={index} />
+            );
+            })}
+          </Picker>
+          <Button
             mode="contained"
             color={"#3c7d4d"}
+            loading = {sendQueryLoad}
             uppercase={false}
-            style={[styles.appButtonQuestions, { flex: 1, marginBottom: 16 }]}
+            style={[styles.reset,{marginHorizontal:20,marginVertical:10}]}
             labelStyle={{ fontSize: 16 }}
-            onPress={getQuestions}
+            onPress={()=>{
+              setSendQueryLoad(true)
+              getQuestionInfo()
+            }}
           >
-            Questioneries
-          </Button> */}
-            
-          </View>
-          {/* {props.userType === "OTSuperUser" ? (
+            Send Query
+          </Button>
+          {questionData?
+          <JsonToTable json={questionData} />:<></>
+          }
+          {questionData?<CsvDownload 
+              data={questionData}
+              filename="Demographics_Control_data.csv" 
+          >
+            Download Data ✨
+          </CsvDownload>:<></>
+          }
+        </>
+     : <></>
+          }
+          {props.userType === "OTSuperUser" ? (
             <Branches navigation={props.navigation} />
           ) : (
             <View
@@ -272,6 +359,7 @@ function homeScreen(props, route) {
                 fontSize: 16,
                 color: "#959595",
                 fontWeight: "bold",
+                marginHorizontal:50,
               }}
 
               onValueChange={(itemValue, itemIndex) =>{
@@ -345,22 +433,21 @@ function homeScreen(props, route) {
             Download Data ✨
           </CsvDownload>:<></>
           }
-
           
-            </View>
-          )} */}
-          {renderQuestionResult?
-          <FlatList
-            style={{ width:"100%", alignSelf: "center",backgroundColor:"pink"}}
-            data={renderQuestionResult}
-            keyExtractor={(item, index)=> index.toString()}
-            renderItem={renderResources}
-            /> : <></>
-          }
+            
+            {/* <CSVReader onFileLoaded={(data, fileInfo) => {
+                uploadData(data)
+              }
+            } /> */}
+          </View>
+          )} 
         </View>
+        
       </View>
     </>
   );
+
+  
 }
 
 const mapStateToProps = (state) => ({
