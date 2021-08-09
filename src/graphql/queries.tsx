@@ -249,17 +249,39 @@ query{
 export const Question4 =gql`
 query{
   nocoCobioSalivas(where: { saliva_pcr_results: "POS"} ){
-  record_id
+  record_id,
+  id,
+  visit_count,
+  date_visit,
+  saliva_sample_in_ml,
+  saliva_sample_comments,
+  filtered_saliva_pcr_results,
+  saliva_vtm,
   saliva_pcr_results
+
 }
 
 nocoCobioStools(where:{ddPCR_RNA_StoolCarol_Lab : "POS"}){
-  ddPCR_RNA_StoolCarol_Lab
-  record_id
+  ddPCR_RNA_StoolCarol_Lab,
+  id,
+  record_id,
+  visit_number,
+  date_visit,
+  stool_sample,
+  stool_tube_number,
+  stool_labels_rna_or_dna,
+  stool_rna_pcr_ebbel_lab,
+  ddPCR_RNA_StoolCarol_Lab,
+  stool_comments
 } 
 nocoCobioNasalpharygenals(where : {np_pcr_result : "POS"}){
-  record_id
-  np_pcr_result
+  record_id,
+  id,
+  visit_count,
+  date_visit,
+  np_sample,
+  np_pcr_result,
+  np_comments
   }
 }`;
 
@@ -267,13 +289,46 @@ nocoCobioNasalpharygenals(where : {np_pcr_result : "POS"}){
 export const Question5 =gql`
 query{
 nocoCobioStools(where: { ddPCR_RNA_StoolCarol_Lab: "POS" }) {
-  visit_number
-  ddPCR_RNA_StoolCarol_Lab
-  record_id
+  ddPCR_RNA_StoolCarol_Lab,
+  id,
+  record_id,
+  visit_number,
+  date_visit,
+  stool_sample,
+  stool_tube_number,
+  stool_labels_rna_or_dna,
+  stool_rna_pcr_ebbel_lab,
+  ddPCR_RNA_StoolCarol_Lab,
+  stool_comments
 }
 dControls{
-  BMI
-  record_id
+  disease,
+  age,
+  age_range,
+  date_of_birth,
+  race_or_ethnicity,
+  height_mts,
+  Weight_in_pounds,
+  BMI,
+  BMI_text,
+  date_of_positive_SARS_CoV2_PCR,
+  date_of_first_collection,
+  hospitalized,
+  diagnosed_with_DVT_or_PE_clot_after_diagnosis,
+  oxygen_used_at_hospital,
+  If_yes_how_much_oxygen,
+  Intubation,
+  past_medical_history,
+  Medications_Taking_at_Time_of_COVID19_diagnosis,
+  employed,
+  Tobacco_Use_If_yes_how_much,
+  how_many_other_individuals_are_in_the_participants_household,
+  other_complications,
+  consent_date,
+  end_date,
+  county_zip_code,
+  comments,
+  record_id,
   sex
 }
 }`;
@@ -284,9 +339,19 @@ export const Question6 =gql`
 query{
 
 nocoCobioStools(where: { stool_sample_ne: null }) {
-  visit_number
-  stool_sample
-  record_id
+  ddPCR_RNA_StoolCarol_Lab,
+  id,
+  record_id,
+  visit_number,
+  date_visit,
+  stool_sample,
+  stool_tube_number,
+  stool_labels_rna_or_dna,
+  stool_rna_pcr_ebbel_lab,
+  ddPCR_RNA_StoolCarol_Lab,
+  stool_comments
+
+
 }
 }`;
 
@@ -295,14 +360,39 @@ export const Question9 =gql`
 query
 {
   noCoCoBioBloods(where: { pbmc_ne: null }) {
-    record_id
-    pbmc
-    date_visit
+
+    id,
+    pbmc,
+    record_id,
+    visit_count,
+    date_visit,
+    blood_sample1,
+    tubes,
+    tubes_comment,
+    pbmc,
+    pbmc_location,
+    pbmc_comment,
+    plasma_in_ml,
+    plasma_comment,
+    serum,
+    serum_comment,
+    cell_count_per_tube_per_million,
+    cell_count_per_million,
+    cell_count_comment
+    
+
   }
   nocoCobioStools(where: { stool_sample_ne: null }) {
-    record_id
-    stool_sample
-    date_visit
+  id,
+  record_id,
+  visit_number,
+  date_visit,
+  stool_sample,
+  stool_tube_number,
+  stool_labels_rna_or_dna,
+  stool_rna_pcr_ebbel_lab,
+  ddPCR_RNA_StoolCarol_Lab,
+  stool_comments
   }
 }`;
 
@@ -311,25 +401,126 @@ export const Question10 =gql`
 
  query {
    nocoCobioSalivas(where: { saliva_pcr_results: "POS" }) {
-     saliva_pcr_results
-    record_id
+    record_id,
+    id,
+    visit_count,
+    date_visit,
+    saliva_sample_in_ml,
+    saliva_sample_comments,
+    filtered_saliva_pcr_results,
+    saliva_vtm,
+    saliva_pcr_results
+     
    }
    nocoCobioStools(where: { ddPCR_RNA_StoolCarol_Lab: "POS" }) {
-     record_id
-     ddPCR_RNA_StoolCarol_Lab
+    id,
+    record_id,
+    visit_number,
+    date_visit,
+    stool_sample,
+    stool_tube_number,
+    stool_labels_rna_or_dna,
+    stool_rna_pcr_ebbel_lab,
+    ddPCR_RNA_StoolCarol_Lab,
+    stool_comments
+
    }
 
   dAcutes {
-     record_id
-     BMI
-     age
-     sex_0_is_male_and_1_is_female
+    id,
+    disease_severity_category,
+    consent_date,
+    date_of_positive_SARS_CoV2_PCR,
+    end_date,
+    disease_severity_category,
+    no_PASC_is_0_and_PASC_is_1,
+    age,
+    age_range,
+    date_of_birth,
+    sex_0_is_male_and_1_is_female,
+    race_or_ethnicity,
+    height_in_mt,
+    weight_in_kg,
+    BMI,
+    BMI_in_range,
+    employed,
+    tobacco_use_if_yes_how_much,
+    how_many_other_individuals_are_in_the_participants_household,
+    zipcode,
+    Notes_for_date_of_positive_SARSCoV2_PCR,
+    date_of_first_collection,
+    number_of_days_between_PCR_plus_and_first_collection,
+    date_of_second_collection,
+    number_of_days_between_PCR_plus_and_second_collection,
+    date_of_third_collection,
+    number_of_days_between_PCR_plus_and_third_collection,
+    date_of_fourth_collection,
+    number_of_days_between_PCR_plus_and_fourth_collection,
+    hospitalized,
+    diagnosed_with_DVT_or_PE_clot_after_diagnosis,
+    oxygen_used_at_hospital,
+    intubation,
+    past_medical_history,
+    other_complications,
+    can_we_follow_up_with_you_in_6_months,
+    comments,
+    initial_COVID_symptoms,
+    record_id,
+    if_yes_how_much_oxygen,
+    medications_taking_at_time_of_COVID19_diagnosis
+
+
+
    }
 
    dConvalescent1s {
-     record_id
-     age
-     BMI
-     sex_male_is_0_and_female_is_1
+     
+
+    at_least_two_weeks_out_from_PCR,
+    consent_date,
+    end_date,
+    requirement_yale_imapct,
+    no_PASC_is_0_and_PASC_is_1,
+    at_least_2_weeks_out_from_acute_phase,
+    age,
+    age_range,
+    sex_male_is_0_and_female_is_1,
+    race_or_ethnicity,
+    height_m,
+    weight_is_kg,
+    BMI,
+    BMI_T,
+    employed_full_time_student_retired_on_disablity_not_employed,
+    still_employed,
+    tobacco_use_neversmoked_0_pastsmoker_1_or_currentsmoker_2,
+    packs_per_day,
+    number_of_years,
+    how_many_other_individuals_are_in_the_participants_household,
+    zipcode,
+    other_complications,
+    record_id,
+    date_of_positive_SARSCoV2_PCR,
+    date_of_first_collection,
+    number_of_days_between_PCR_plus_and_first_collection,
+    date_of_second_collection,
+    number_of_days_between_PCR__and_second_collection,
+    date_of_third_collection,
+    number_of_days_between_PCR_and_third_collection,
+    date_of_fourth_collection,
+    number_of_days_between_PCR_and_fourth_collection,
+    Intubation,
+    oxygen_used_at_hospital,
+    if_yes_how_much_oxygen,
+    diagnosed_with_DVT_or_PE_clot_after_diagnosis,
+    if_yes_to_VTE_was_it_a_PE_or_DVT,
+    if_yes_to_DVT_locations_RLE_RUE_LLE_and_LUE,
+    medications_used_to_treat_COVID19,
+    past_medical_history,
+    medications_taking_at_time_of_COVID19_diagnosis,
+    can_we_follow_up_with_you_in_6_months,
+    Comments,
+    hospitalized,
+    date_of_birth
+
    }
  }`;
