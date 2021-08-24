@@ -25,7 +25,9 @@ import { connect } from "react-redux";
 import { changeUserLogin } from "../src/Actions/UserLogin";
 import { AnyAction, bindActionCreators, Dispatch } from "redux";
 import { db_url } from "../src/Constants/login";
-import CsvDownload from 'react-json-to-csv'
+import CsvDownload from 'react-json-to-csv';
+import { Linking} from 'react-native';
+
 import {
   JsonToCsv,
   useJsonToCsv
@@ -171,14 +173,56 @@ function login(props, navigation) {
         contentContainerStyle={{ backgroundColor: "#3c7d4d", flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.header}>
-          <Image
+        
+
+      <View style={styles.header}>
+        <View style={{ flex: 1,
+                alignItems: "center",
+                justifyContent: "center",
+                borderColor:"#a0a39d"}}><Image
             resizeMode={"contain"}
             style={styles.tinyLogo}
-            source={require("../Images/logo.png")}
-          />
+            source={require("../Images/logo.png")}/>
+          </View>
+          <View style={{alignItems: 'center',
+              justifyContent: 'flex-end',
+              }}>
+            <Text style={{fontSize: 70,
+            fontWeight:'bold',
+            color: "#ffffff",
+            marginVertical: 16}}>NoCo CoBIO</Text>
+            <Text style={{fontSize: 25,
+            fontWeight:'bold',
+            color: "#ffffff",
+            marginVertical: 16}}>Northern Colorado Coronavirus Biobank</Text>
+          </View>
+
+        <View style={{ flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 'bold',
+                marginStart:10}}>
+         {/* <Button
+            mode="contained"
+            color={"#2d6b9e"}
+            uppercase={false}
+            style={styles.reset1}
+            labelStyle={{ fontSize: 12,marginRight:25}}
+            onPress={() => {
+             // <a href="https://google.com" target="_blank">CSV</a>
+              Linking.openURL('https://clinicaltrials.gov/');
+            }}
+          >  </Button> */}
+          <Text style={{fontSize: 40,
+            color: "blue",
+            }}>NCT04603677</Text>
+          <Text style={{textDecorationLine: 'underline', color: 'blue', fontSize:30, fontWeight: 'bold'}}
+            onPress={() => Linking.openURL('https://clinicaltrials.gov/')}>
+           https://clinicaltrials.gov/
+          </Text>
         </View>
-        <View style={styles.container}>
+      </View>
+     <View style={styles.container}>
           <View style={styles.headerTextLabel}>
             <Text style={styles.headerTextStyle}>{rendereHeaderText()}</Text>
           </View>
@@ -234,11 +278,12 @@ function login(props, navigation) {
           >
             <Text style={styles.loginText}>Continue</Text>
           </TouchableOpacity> */}
+
           <Button
             mode="contained"
             color={"#3c7d4d"}
             uppercase={false}
-            style={styles.reset}
+            style={styles.reset1}
             labelStyle={{ fontSize: 16 }}
             onPress={forgot || register ? getUserDetails : verifyLogin}
           >
@@ -302,12 +347,20 @@ function login(props, navigation) {
 
 const styles = StyleSheet.create({
   header: {
-    marginTop: StatusBar.currentHeight,
+    marginTop: 40,
+    // marginTop: StatusBar.currentHeight,
     backgroundColor: "#3c7d4d",
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "row",
     flex: 1,
   },
+  // topHeader:{
+  //   alignItems: "center",
+  //   justifyContent: 'flex-end',
+  //   flex: 1,
+  // },
+
   container: {
     marginTop: 75,
     backgroundColor: "#ffffff",
@@ -388,9 +441,18 @@ const styles = StyleSheet.create({
     color: "#9e9e9e",
     fontSize: 16,
   },
+  reset1: {
+    width: "12%",
+    height: 40,
+    textAlign:"left",
+    marginRight: 20,
+    justifyContent: "center",
+  },
+  
   reset: {
     width: "12%",
     height: 40,
+   
     marginBottom: 20,
     justifyContent: "center",
   },
