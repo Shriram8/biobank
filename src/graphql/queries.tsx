@@ -67,6 +67,25 @@ mutation(
 }
 `;
 
+export const UploadPatient_metadata = gql`
+mutation(
+  $Record_ID:String
+  $Consent_date:Date
+  $Date_of_Positive_SARSCOV2_PCR: Date
+  $End_Date : Date
+ 
+ 
+){
+  createPatientMetadatum(input:{data:{Record_ID:$Record_ID,Consent_date:$Consent_date,
+    Date_of_Positive_SARSCOV2_PCR: $Date_of_Positive_SARSCOV2_PCR,End_Date : $End_Date}}){
+      patientMetadatum{
+
+      Record_ID
+    } 
+  }   
+}
+`;
+
 export const UploadSConvalscent1= gql`
 mutation(
   $record_id:String
@@ -211,7 +230,7 @@ query{
 
 
 
-export const GetSActute1s = gql`
+export const GetSAcute1s = gql`
 query{
   sAcute1s{
    id,

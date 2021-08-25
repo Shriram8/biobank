@@ -7,7 +7,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { client } from "../src/graphql/ApolloClientProvider";
 import {
-  UploadSAcute1
+  UploadSAcute1,UploadPatient_metadata
 } from "../src/graphql/queries";
 
 import { useMutation } from "@apollo/client";
@@ -16,7 +16,9 @@ const apolloClient = client;
 var temp;
 export default function CSVReader1 (){
 
-  const [addSAcute1, { data, loading, error }] = useMutation(UploadSAcute1);
+  //const [addSAcute1, { data, loading, error }] = useMutation(UploadSAcute1);
+  const [addPatient_metadata, { data, loading, error }] = useMutation(UploadPatient_metadata)
+
 
   if(data){
     console.log("Dataaaaa---",data)
@@ -50,13 +52,13 @@ export default function CSVReader1 (){
         visit_date = null
       }
       
-      addSAcute1({
+      addPatient_metadata({
         variables: {
-          record_id:temp[0],
-          visit_count:parseInt(temp[1]),
-          pcr_plus_date: pcr_plus_date,
-          visit_date : visit_date,
-          days_post_pcr_plus : parseInt(temp[4])
+          Record_ID:temp[0],
+          Consent_date:pcr_plus_date,
+          Date_of_Positive_SARSCOV2_PCR: pcr_plus_date,
+          End_Date : visit_date,
+         // days_post_pcr_plus : parseInt(temp[4])
         },
       });
       

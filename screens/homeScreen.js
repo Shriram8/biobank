@@ -10,7 +10,7 @@ import { useQuery, gql, useLazyQuery } from "@apollo/client";
 import { client } from "../src/graphql/ApolloClientProvider";
 import { Picker } from "@react-native-picker/picker";
 import {
-  GetDActues, GetPatient_Inventories,GetQuestions,Question1,Question2,Question3,Question4,Question5,Question6,Question9,Question10,GetSActute1s
+  GetDActues, GetPatient_Inventories,GetPatient_metadata,Uninfected_Inventories,Uninfected_Metadata,GetQuestions,Question1,Question2,Question3,Question4,Question5,Question6,Question9,Question10,GetSActute1s
 } from "../src/graphql/queries";
 
 import { Divider, Button, ActivityIndicator } from "react-native-paper";
@@ -44,11 +44,7 @@ function homeScreen(props, route) {
   const [sendQueryLoad, setSendQueryLoad] = useState(false);
   const [questionData,setQuestionData] = useState();
   const [questionNumber,setQuestionNumber] = useState(1);
-  
-
-  const [mockData, setmockData] = useState(
-    null
-  );
+  const [mockData, setmockData] = useState(null);
 
   const getQuestionInfo = () => {
     apolloClient
@@ -88,21 +84,32 @@ function homeScreen(props, route) {
     }
   }
   
-  const tempData = [
-    {
-      "age": 51,
-      "record_id": "CoBIO-A0100"
-    },
-    {
-      "age": 61,
-      "record_id": "CoBIO-A0101 "
-    },
-    {
-      "age": 64,
-      "record_id": "CoBIO-A0102"
-    },
-  ]
 
+  const allData = 
+    [
+      {
+        "name": "Choose Filename",
+        "value": " Instrument"
+      },
+      {
+        "name": "Patient_Metadata",
+        "value": "Patient_metadata"
+      },
+      {
+        "name": "Uninfected_Metadata",
+        "value": "Uninfected_Metadata"
+      },
+      {
+        "name": "Patient_Inventory",
+        "value": "Patient_Inventory"
+      },
+      {
+        "name": "Uninfected_Inventory",
+        "value":"Uninfected_Inventory"
+      }
+     
+    ]
+  
   const instrumentData = 
     [
       {
@@ -118,10 +125,12 @@ function homeScreen(props, route) {
         "value": "Symptoms"
       },
       {
-        "name": "nocoTestSamples",
+        "name": "NoCo COBIO Inventory TestSamples",
         "value":"nocoTestSamples"
       }
     ]
+
+
 
     const Demographics = 
     [
@@ -130,7 +139,7 @@ function homeScreen(props, route) {
         "value": "Choose Table"
       },
       {
-        "name": "Acute",
+        "name": "Acute1",
         "value": "Acute"
       },
       {
@@ -142,7 +151,27 @@ function homeScreen(props, route) {
         "value": "Control"
       }
 
-    ]
+     ]
+    // const Demographics = 
+    // [
+    //   {
+    //     "name": "Choose Table",
+    //     "value": "Choose Table"
+    //   },
+    //   {
+    //     "name": "Acute",
+    //     "value": "Acute"
+    //   },
+    //   {
+    //     "name": "Convoluscent",
+    //     "value": "Convolucsent"
+    //   },
+    //   {
+    //     "name": "Control",
+    //     "value": "Control"
+    //   }
+
+    // ]
 
     const DemographicsSubTable = 
     [
@@ -373,8 +402,6 @@ function homeScreen(props, route) {
   }, [props.navigation]);
 
   
-
-  
   const getData = () => {
         apolloClient
           .query({
@@ -425,7 +452,7 @@ function homeScreen(props, route) {
                 style={{
                   fontSize: 30,
                   color: "#ffffff",
-                  marginVertical: 16,
+                  marginVertical: 18,
                 }}
               >
                 Hello,{" "}
@@ -466,7 +493,7 @@ function homeScreen(props, route) {
           </View>
         </View>
         <View
-          style={{ flex: 1, backgroundColor: "white", borderTopLeftRadius: 30 }}
+          style={{ flex: 1, backgroundColor: "#FFE77AFF", borderTopLeftRadius: 30 }}
         >
           <View
             style={{
@@ -486,7 +513,7 @@ function homeScreen(props, route) {
                 borderColor:"#a0a39d"
               }}>
               <Text style={{fontSize: 50,
-    fontWeight: "bold"}}>NoCo COBIO Inventory and Metadata</Text>
+    fontWeight: "bold",color:"#2C5f2DFF"}}>NoCo COBIO Inventory and Metadata</Text>
             </View>
            </View>
            
@@ -512,7 +539,8 @@ function homeScreen(props, route) {
                   fontSize: 30,
                   color: "black",
                   marginVertical: 16,
-                  textAlign:"center"
+                  textAlign:"center",
+                  fontWeight: "bold",
                 }}
               >
                 Upload Data
@@ -521,9 +549,7 @@ function homeScreen(props, route) {
             </View>
 
 
-
-
-              <View style={{
+              {/* <View style={{
                 flexDirection:"row",
                 alignItems: "center",
                 justifyContent: "center",
@@ -531,7 +557,7 @@ function homeScreen(props, route) {
                 marginVertical: 10,
               }}>
                 <Text style={[styles.appButtonText, { flex: 1, marginBottom: 16 ,textAlign:"center"}]}>
-                upload data:
+                uploading:
               </Text>
               
             <Picker
@@ -559,6 +585,47 @@ function homeScreen(props, route) {
               
             >
                {instrumentData.map((data) => (
+                  <Picker.Item label={data.name} value={data.value} />
+              ))}
+            </Picker>
+          </View> */}
+
+          <View style={{
+                flexDirection:"row",
+                alignItems: "center",
+                justifyContent: "center",
+                marginHorizontal:50,
+                marginVertical: 10,
+              }}>
+                <Text style={[styles.appButtonText, { flex: 1, marginBottom: 16 ,textAlign:"center"}]}>
+                Uploading Inventory and metadata:
+              </Text>
+              
+            <Picker
+              selectedValue={selectedUploadInstrument}
+              enabled={true}
+              style={{
+                height: 40,
+                borderRadius: 7,
+                backgroundColor: "white",
+                borderColor: "#959595",
+                borderWidth: 1,
+                fontSize: 16,
+                color: "#959595",
+                fontWeight: "bold",
+                marginHorizontal:50,
+              }}
+
+              onValueChange={(itemValue, itemIndex) =>{
+                setSelectedUploadInstrument(itemValue);
+                setSelectUploadTableData(allData);
+
+              }
+                
+              }
+              
+            >
+               {allData.map((data) => (
                   <Picker.Item label={data.name} value={data.value} />
               ))}
             </Picker>
@@ -728,7 +795,7 @@ function homeScreen(props, route) {
                 marginVertical: 10,
               }}>
                 <Text style={[styles.appButtonText, { flex: 1, marginBottom: 16 }]}>
-                Download Data1
+                Download DataV1.1
               </Text>
               
             <Picker
