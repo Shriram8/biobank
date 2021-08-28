@@ -24,120 +24,7 @@ export const GetDetailsWithEmployeeId = gql`
 `;
 
 
-
-
-
-     
-
-
-
-
-export const UploadPatient_Inventories = gql`
-mutation(
-
-  $record_id : String
-  $visit_count : Int
-  $Date_of_positive_SARS_COV2_PCR : Date
-  $date_of_first_collection : Date
-  $number_of_days_betwen_PCR_plus_and_first_collection : Int
-  $platelet_panel_1 : Int
-  $platelet_panel_2 : Int
-  $platelet_panel_3 : Int
-  $whole_blood_panel : Int
-  $PBMC_panel : Int
-  $plasma : Int
-  $plasma_tubes : Int
-  $plasma_ul_per_tube : Int
-  $serum : Int
-  $serum_tubes : Int
-  $serum_ul_per_tube : Int
-  $PBMC_tubes : Int
-  $PBMC_location : String
-  $cell_count_per_tube : Int
-  $cell_count_total : Int
-  $NP_tubes : Int
-  $NP_storage : Int
-  $NP_PCR_Result: Int
-  $NP_CT_value : Float
-  $NP_Plaque_Assay_Titer_PFU_per_ml: Int
-  $NP_Plaque_Assay_Ct_Value : Float
-  $Saliva_sample_No : Int
-  $saliva_sample_No_VTM_number_of_tubes : Int
-  $Saliva_Sample_No_VTM_ul_amount_per_tube: Int
-  $Saliva_sample_with_VTM: Int
-  $Saliva_plus_VTM_tubes : Int
-  $Saliva_plus_VTM_storage_box :Int
-  $Saliva_PCR_Results: Int
-  $Saliva_CT_value: FLoat
-  $Saliva_Plaque_Assay_Titer_PFU_per_ml: Int
-  $Saliva_Plaque_Assay_Ct_Value: Float
-  $Stool_Sample : Int
-  $Stool_Tube_number : Int
-  $Stool_deidentification_number : String
-  $Stool_RNA_PCR : Int
-  $Stool_RNA_CT_value : Float
-  $Stool_RNA_ddPCR: Int
-  $Stool_RNA_ddPCR_value : Float
-)
-{
-  createPatientInventory(input:{data:{
-
-    record_id:$record_id,
-    visit_count$visit_count,
-    Date_of_positive_SARS_COV2_PCR :$Date_of_positive_SARS_COV2_PCR ,
-    date_of_first_collection:$date_of_first_collection ,
-    number_of_days_betwen_PCR_plus_and_first_collection: $number_of_days_betwen_PCR_plus_and_first_collection,
-    platelet_panel_1:$platelet_panel_1 ,
-    platelet_panel_2:$platelet_panel_2 ,
-    platelet_panel_3:$platelet_panel_3 ,
-    whole_blood_panel:$whole_blood_panel ,
-    PBMC_panel:$PBMC_panel ,
-    plasma:$plasma ,
-    plasma_tubes:$plasma_tubes ,
-    plasma_tubes:$plasma_ul_per_tube ,
-    serum:$serum ,
-    serum_tubes:$serum_tubes ,
-    serum_tubes:$serum_ul_per_tube ,
-    PBMC_tubes:$PBMC_tubes ,
-    PBMC_location:$PBMC_location,
-    cell_count_per_tube:$cell_count_per_tube ,
-    cell_count_total:$cell_count_total ,
-    NP_tubes:$NP_tubes ,
-    NP_storage:$NP_storage ,
-    NP_PCR_Result:$NP_PCR_Result,
-    NP_CT_value:$NP_CT_value,
-    NP_Plaque_Assay_Titer_PFU_per_ml:$NP_Plaque_Assay_Titer_PFU_per_ml,
-    NP_Plaque_Assay_Ct_Value:$NP_Plaque_Assay_Ct_Value ,
-    Saliva_sample_No:$Saliva_sample_No ,
-    saliva_sample_No_VTM_number_of_tubes : $saliva_sample_No_VTM_number_of_tubes ,
-    Saliva_Sample_No_VTM_ul_amount_per_tube :$Saliva_Sample_No_VTM_ul_amount_per_tube,
-    Saliva_sample_with_VTM :$Saliva_sample_with_VTM,
-    Saliva_plus_VTM_tubes :$Saliva_plus_VTM_tubes ,
-    Saliva_plus_VTM_storage_box :$Saliva_plus_VTM_storage_box ,
-    Saliva_PCR_Results :$Saliva_PCR_Results,
-    Saliva_CT_value :$Saliva_CT_value,
-    Saliva_Plaque_Assay_Titer_PFU_per_ml :$Saliva_Plaque_Assay_Titer_PFU_per_ml,
-    Saliva_Plaque_Assay_Ct_Value :$Saliva_Plaque_Assay_Ct_Value,
-    Stool_Sample :$Stool_Sample ,
-    Stool_Tube_number :$Stool_Tube_number ,
-    Stool_deidentification_number :$Stool_deidentification_number ,
-    Stool_RNA_PCR :$Stool_RNA_PCR ,
-    Stool_RNA_CT_value :$Stool_RNA_CT_value, 
-    Stool_RNA_ddPCR :$Stool_RNA_ddPCR,
-    Stool_RNA_ddPCR_value :$Stool_RNA_ddPCR_value 
-
-    
-    }
-  }
-  )
-  {
-    patientInventory{
-    record_id
-  }
-  }
-  
-}`;
-
+///Table1 uploading.........
 
 export const UploadPatient_metadata = gql`
 mutation(
@@ -400,6 +287,111 @@ mutation(
   }   
 }
 `;
+
+////Table2 uploading .........
+export const UploadPatient_Inventories = gql`
+mutation(
+  $record_id:String
+  $visit_count : Int
+  $Date_of_positive_SARS_COV2_PCR : Date
+  $date_of_first_collection : Date
+  $number_of_days_betwen_PCR_plus_and_first_collection : Int
+  $platelet_panel_1 : Int
+  $platelet_panel_2 : Int
+  $platelet_panel_3 : Int
+  $whole_blood_panel : Int
+  $PBMC_panel : Int
+  $plasma : Int
+  $plasma_tubes : Int
+  $plasma_ul_per_tube : Int
+  $serum : Int
+  $serum_tubes : Int
+  $serum_ul_per_tube : Int
+  $PBMC_tubes : Int
+  $PBMC_location : String
+  $cell_count_per_tube : Int
+  $cell_count_total : Int
+  $NP_tubes : Int
+  $NP_storage : Int
+  $NP_PCR_Result: Int
+  $NP_CT_value : Float
+  $NP_Plaque_Assay_Titer_PFU_per_ml: Int
+  $NP_Plaque_Assay_Ct_Value : Float
+  $Saliva_sample_No : Int
+  $saliva_sample_No_VTM_number_of_tubes : Int
+  $Saliva_Sample_No_VTM_ul_amount_per_tube: Int
+  $Saliva_sample_with_VTM: Int
+  $Saliva_plus_VTM_tubes : Int
+  $Saliva_plus_VTM_storage_box :Int
+  $Saliva_PCR_Results: Int
+  $Saliva_CT_value: FLoat
+  $Saliva_Plaque_Assay_Titer_PFU_per_ml: Int
+  $Saliva_Plaque_Assay_Ct_Value: Float
+  $Stool_Sample : Int
+  $Stool_Tube_number : Int
+  $Stool_deidentification_number : String
+  $Stool_RNA_PCR : Int
+  $Stool_RNA_CT_value : Float
+  $Stool_RNA_ddPCR: Int
+  $Stool_RNA_ddPCR_value : Float
+)
+{
+  createPatientInventory(input:{data:{
+
+    record_id:$record_id,
+    visit_count:$visit_count,
+    Date_of_positive_SARS_COV2_PCR :$Date_of_positive_SARS_COV2_PCR ,
+    date_of_first_collection:$date_of_first_collection ,
+    number_of_days_betwen_PCR_plus_and_first_collection: $number_of_days_betwen_PCR_plus_and_first_collection,
+    platelet_panel_1:$platelet_panel_1 ,
+    platelet_panel_2:$platelet_panel_2 ,
+    platelet_panel_3:$platelet_panel_3 ,
+    whole_blood_panel:$whole_blood_panel ,
+    PBMC_panel:$PBMC_panel ,
+    plasma:$plasma ,
+    plasma_tubes:$plasma_tubes ,
+    plasma_tubes:$plasma_ul_per_tube ,
+    serum:$serum ,
+    serum_tubes:$serum_tubes ,
+    serum_tubes:$serum_ul_per_tube ,
+    PBMC_tubes:$PBMC_tubes ,
+    PBMC_location:$PBMC_location,
+    cell_count_per_tube:$cell_count_per_tube ,
+    cell_count_total:$cell_count_total ,
+    NP_tubes:$NP_tubes ,
+    NP_storage:$NP_storage ,
+    NP_PCR_Result:$NP_PCR_Result,
+    NP_CT_value:$NP_CT_value,
+    NP_Plaque_Assay_Titer_PFU_per_ml:$NP_Plaque_Assay_Titer_PFU_per_ml,
+    NP_Plaque_Assay_Ct_Value:$NP_Plaque_Assay_Ct_Value ,
+    Saliva_sample_No:$Saliva_sample_No ,
+    saliva_sample_No_VTM_number_of_tubes : $saliva_sample_No_VTM_number_of_tubes ,
+    Saliva_Sample_No_VTM_ul_amount_per_tube :$Saliva_Sample_No_VTM_ul_amount_per_tube,
+    Saliva_sample_with_VTM :$Saliva_sample_with_VTM,
+    Saliva_plus_VTM_tubes :$Saliva_plus_VTM_tubes ,
+    Saliva_plus_VTM_storage_box :$Saliva_plus_VTM_storage_box ,
+    Saliva_PCR_Results :$Saliva_PCR_Results,
+    Saliva_CT_value :$Saliva_CT_value,
+    Saliva_Plaque_Assay_Titer_PFU_per_ml :$Saliva_Plaque_Assay_Titer_PFU_per_ml,
+    Saliva_Plaque_Assay_Ct_Value :$Saliva_Plaque_Assay_Ct_Value,
+    Stool_Sample :$Stool_Sample ,
+    Stool_Tube_number :$Stool_Tube_number ,
+    Stool_deidentification_number :$Stool_deidentification_number ,
+    Stool_RNA_PCR :$Stool_RNA_PCR ,
+    Stool_RNA_CT_value :$Stool_RNA_CT_value, 
+    Stool_RNA_ddPCR :$Stool_RNA_ddPCR,
+    Stool_RNA_ddPCR_value :$Stool_RNA_ddPCR_value 
+    }
+  }
+  )
+  {
+    patientInventory{
+    record_id
+  }
+  }
+  
+}`;
+
 ////Table 3 Uploading...
 export const UploadUninfected_Metadata = gql`
 mutation(
@@ -425,12 +417,11 @@ mutation(
   $number_of_other_individuals_in_participant_household : Int
   $Zipcode : Int
   $Comments : String
-
   ){
     createUninfectedMetadatum(
       input:{data:{
         Record_ID:$Record_ID,
-        Disease_severity_category
+        Disease_severity_category : $Disease_severity_category,
         Age : $Age,
         Age_range : $Age_range,
         Date_of_Birth: $Date_of_Birth,
@@ -456,6 +447,7 @@ mutation(
         Record_ID
       }}}`;
 
+  //// Table4 uploading .....
 
   export const UploadUninfected_Inventory = gql`
 mutation(
@@ -561,10 +553,7 @@ query{
   }
 }`;
 
-
 /////THE FOUR TABLES 
-
-
   // 1) patient_Metadata
 
   export const GetPatient_metadata = gql`
@@ -744,12 +733,9 @@ query{
     Stool_RNA_ddPCR, 
     Stool_RNA_ddPCR_value
   }}`;
-
-
-
 // 3) uninfected metadata
 
-export const Uninfected_Metadata = gql`
+export const GetUninfected_Metadata = gql`
 query{
   uninfectedMetadata {
     id
@@ -779,7 +765,7 @@ query{
 
 // 4) unifected inventories
 
-export const Uninfected_Inventories = gql`
+export const GetUninfected_Inventories = gql`
 query{
   uninfectedInventories{  
   	id, 
@@ -829,9 +815,7 @@ query{
   }
 }`;
 
-
-
-
+//////////////Queries Part////////////////////////////////////////
 
 // Question 1
 export const Question1 = gql`
