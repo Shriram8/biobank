@@ -50,6 +50,13 @@ export const GetDActues= gql`
 //     $instance: Int
 //     $branch: ID!
 
+//##################//
+/*  */
+
+
+      //###########################
+
+     
 export const UploadSAcute1= gql`
 mutation(
   $record_id:String
@@ -67,17 +74,372 @@ mutation(
 }
 `;
 
+
+
+export const UploadPatient_Inventories = gql`
+mutation(
+
+  $record_id : String
+  $visit_count : Int
+  $Date_of_positive_SARS_COV2_PCR : Date
+  $date_of_first_collection : Date
+  $number_of_days_betwen_PCR_plus_and_first_collection : Int
+  $platelet_panel_1 : Int
+  $platelet_panel_2 : Int
+  $platelet_panel_3 : Int
+  $whole_blood_panel : Int
+  $PBMC_panel : Int
+  $plasma : Int
+  $plasma_tubes : Int
+  $plasma_ul_per_tube : Int
+  $serum : Int
+  $serum_tubes : Int
+  $serum_ul_per_tube : Int
+  $PBMC_tubes : Int
+  $PBMC_location : String
+  $cell_count_per_tube : Int
+  $cell_count_total : Int
+  $NP_tubes : Int
+  $NP_storage : Int
+  $NP_PCR_Result: Int
+  $NP_CT_value : Float
+  $NP_Plaque_Assay_Titer_PFU_per_ml: Int
+  $NP_Plaque_Assay_Ct_Value : Float
+  $Saliva_sample_No : Int
+  $saliva_sample_No_VTM_number_of_tubes : Int
+  $Saliva_Sample_No_VTM_ul_amount_per_tube: Int
+  $Saliva_sample_with_VTM: Int
+  $Saliva_plus_VTM_tubes : Int
+  $Saliva_plus_VTM_storage_box :Int
+  $Saliva_PCR_Results: Int
+  $Saliva_CT_value: FLoat
+  $Saliva_Plaque_Assay_Titer_PFU_per_ml: Int
+  $Saliva_Plaque_Assay_Ct_Value: Float
+  $Stool_Sample : Int
+  $Stool_Tube_number : Int
+  $Stool_deidentification_number : String
+  $Stool_RNA_PCR : Int
+  $Stool_RNA_CT_value : Float
+  $Stool_RNA_ddPCR: Int
+  $Stool_RNA_ddPCR_value : Float
+
+
+
+)
+{
+  createPatientInventory(input:{data:{
+
+    record_id:$record_id,
+    visit_count$visit_count,
+    Date_of_positive_SARS_COV2_PCR :$Date_of_positive_SARS_COV2_PCR ,
+    date_of_first_collection:$date_of_first_collection ,
+    number_of_days_betwen_PCR_plus_and_first_collection: $number_of_days_betwen_PCR_plus_and_first_collection,
+    platelet_panel_1:$platelet_panel_1 ,
+    platelet_panel_2:$platelet_panel_2 ,
+    platelet_panel_3:$platelet_panel_3 ,
+    whole_blood_panel:$whole_blood_panel ,
+    PBMC_panel:$PBMC_panel ,
+    plasma:$plasma ,
+    plasma_tubes:$plasma_tubes ,
+    plasma_tubes:$plasma_ul_per_tube ,
+    serum:$serum ,
+    serum_tubes:$serum_tubes ,
+    serum_tubes:$serum_ul_per_tube ,
+    PBMC_tubes:$PBMC_tubes ,
+    PBMC_location:$PBMC_location,
+    cell_count_per_tube:$cell_count_per_tube ,
+    cell_count_total:$cell_count_total ,
+    NP_tubes:$NP_tubes ,
+    NP_storage:$NP_storage ,
+    NP_PCR_Result:$NP_PCR_Result,
+    NP_CT_value:$NP_CT_value,
+    NP_Plaque_Assay_Titer_PFU_per_ml:$NP_Plaque_Assay_Titer_PFU_per_ml,
+    NP_Plaque_Assay_Ct_Value:$NP_Plaque_Assay_Ct_Value ,
+    Saliva_sample_No:$Saliva_sample_No ,
+    saliva_sample_No_VTM_number_of_tubes : $saliva_sample_No_VTM_number_of_tubes ,
+    Saliva_Sample_No_VTM_ul_amount_per_tube :$Saliva_Sample_No_VTM_ul_amount_per_tube,
+    Saliva_sample_with_VTM :$Saliva_sample_with_VTM,
+    Saliva_plus_VTM_tubes :$Saliva_plus_VTM_tubes ,
+    Saliva_plus_VTM_storage_box :$Saliva_plus_VTM_storage_box ,
+    Saliva_PCR_Results :$Saliva_PCR_Results,
+    Saliva_CT_value :$Saliva_CT_value,
+    Saliva_Plaque_Assay_Titer_PFU_per_ml :$Saliva_Plaque_Assay_Titer_PFU_per_ml,
+    Saliva_Plaque_Assay_Ct_Value :$Saliva_Plaque_Assay_Ct_Value,
+    Stool_Sample :$Stool_Sample ,
+    Stool_Tube_number :$Stool_Tube_number ,
+    Stool_deidentification_number :$Stool_deidentification_number ,
+    Stool_RNA_PCR :$Stool_RNA_PCR ,
+    Stool_RNA_CT_value :$Stool_RNA_CT_value, 
+    Stool_RNA_ddPCR :$Stool_RNA_ddPCR,
+    Stool_RNA_ddPCR_value :$Stool_RNA_ddPCR_value 
+
+    
+    }
+  }
+  )
+  {
+    patientInventory{
+    record_id
+  }
+  }
+  
+}`;
+
+
 export const UploadPatient_metadata = gql`
 mutation(
-  $Record_ID:String
-  $Consent_date:Date
-  $Date_of_Positive_SARSCOV2_PCR: Date
-  $End_Date : Date
- 
+      $Record_ID:String
+      $Consent_date:Date
+      $Date_of_Positive_SARSCOV2_PCR: Date
+      $End_Date : Date
+      $Disease_Severity_Category : Int
+      $Age: Int
+      $Age_range: Int
+      $Date_of_Birth: Date
+      $Sex:Int
+      $Race_or_Ethnicity:String
+      $Height_in_mts: Float
+      $Weight_in_kg: Float
+      $BMI: Float
+      $BMI_Range_in_Text:String
+      $Employed: Int
+      $Tobacco_Use:Int
+      $packs_per_day:Float
+      $number_of_years:Int 
+      $How_many_other_individuals_are_in_the_participants_household: Int
+      $Zipcode:Int
+      $Date_of_first_collection:Date
+      $Number_of_days_between_PCR_plus_and_first_collection: Int
+      $Date_of_second_collection:Date
+      $Number_of_days_between_PCR_plus_and_second_collection: Int
+      $Date_of_third_collection:Date
+      $Number_of_days_between_PCR_plus_and_third_collection:Int
+      $Date_of_fourth_collection:Date
+      $Number_of_days_between_PCR_plus_and_fourth_collection:Int
+      $Date_of_fifth_collection:Date
+      $Number_of_days_between_PCR_plus_and_fifth_collection: Int
+      $Hospitalized: Int
+      $Intubation: Int
+      $Oxygen_used_at_hospital: Float
+      $If_yes_how_much_oxygen: Float
+      $Diagnosed_with_DVT_or_PE_clot_after_diagnosis: Int
+      $If_yes_to_VTE_was_it_a_PE_or_DVT: String
+      $If_yes_to_DVT_locations_RLE_RUE_LLE_and_LUE: String
+      $Medications_Taking_at_Time_of_COVID19_diagnosis:String
+      $Past_Medical_History: String
+      $Other_Complications: String
+      $convalescent_plasma:Int
+      $first_dose_conval_plasma: Date
+      $Initial_COVID_Symptoms:String
+      $visit_count:Int
+      $Visit_date:Date
+      $days_post_PCR:Int
+      $No_PASC_is_0_PASC_is_1:Int
+      $any_symptoms:Int
+      $headache:Int
+      $dizziness:Int
+      $loss_of_consciousness:Int
+      $deafness:Int
+      $numbness_in_extremities:Int 
+      $tingling_inextremities:Int
+      $burning_sensation_in_extremities:Int
+      $loss_of_taste_if_yes_for_how_long: Int
+      $loss_of_smell_if_yes_for_how_long:Int
+      $change_in_taste:Int
+      $forgetful_or_absent_minded:Int
+      $confusion:Int
+      $difficulty_concentrating:Int
+      $eye_pain:Int
+      $eye_redness: Int
+      $eye_tearing:Int
+      $light_sensitivity:Int
+      $floaters :Int
+      $loss_of_vision:Int 
+      $blurry_vision:Int
+      $flashes_of_light: Int
+      $eye_burning : Int
+      $sore_throat:Int
+      $runny_nose_or_congestestion:Int
+      $sinusitis:Int
+      $facial_pressure:Int 
+      $neck_pain:Int
+      $mouth_sores: Int
+      $palpitations:Int
+      $chest_pain :Int
+      $lower_extremity_swelling:Int 
+      $chest_burning:Int
+      $chest_pressure:Int
+      $rapid_heart_rate:Int
+      $difficulty_breathing_dyspnea:Int 
+      $cough:Int
+      $phlegm_in_back_of_throat:Int 
+      $wheezing :Int
+      $abdominal_pain:Int 
+      $diarrhea:Int
+      $nausea:Int
+      $reflux:Int
+      $constipation:Int
+      $vomiting:Int
+      $rash:Int
+      $easy_bruising:Int
+      $dry_skin:Int
+      $itching :Int
+      $jaundice:Int
+      $muscleor_body_aches_myalgia:Int
+      $exercise_intolerance:Int
+      $joint_pain :Int
+      $weakness :Int
+      $back_pain :Int
+      $erectile_dysfunction:Int
+      $amenorrhea :Int
+      $fevers : Int
+      $fatigue :Int
+      $appetite_loss:Int
+      $anxiety :Int
+      $depression: Int
+      $difficulty_sleeping:Int
+      $bleeding:Int
+      $clot: Int
+      $hair_loss:Int
+      $night_sweats:Int
+      $Other :Int
+      $Other_text: String
+      $Are_you_seeing_a_physician_for_these_symptoms: String
+      $What_medications_are_you_taking_for_these_symptoms:String
+      $Have_you_received_the_vaccine:Int
+      $Pfizer1_Moderna2_astrazenaca3_other4:Int
+      $date_of_first_vaccine:Date
+      $Did_you_receive_the_second_dose:Int
+      $date_of_second_vaccine:Date
+      
  
 ){
-  createPatientMetadatum(input:{data:{Record_ID:$Record_ID,Consent_date:$Consent_date,
-    Date_of_Positive_SARSCOV2_PCR: $Date_of_Positive_SARSCOV2_PCR,End_Date : $End_Date}}){
+  createPatientMetadatum(input:{data:{
+    Record_ID:$Record_ID,
+    Consent_date:$Consent_date,
+    Date_of_Positive_SARSCOV2_PCR: $Date_of_Positive_SARSCOV2_PCR,
+    End_Date : $End_Date,
+    Disease_Severity_Category:$Disease_Severity_Category, 
+    Age:$Age,
+    Age_range:$Age_range,
+    Date_of_Birth:$Date_of_Birth, 
+    Sex: $Sex,
+    Race_or_Ethnicity:$Race_or_Ethnicity,
+    Height_in_mts:$Height_in_mts,
+    Weight_in_kg:$Weight_in_kg,
+    BMI:$BMI,
+    BMI_Range_in_Text:$BMI_Range_in_Text,
+    Employed:$Employed,
+    Tobacco_Use:$Tobacco_Use, 
+    packs_per_day:$packs_per_day, 
+    number_of_years:$number_of_years, 
+    How_many_other_individuals_are_in_the_participants_household:$How_many_other_individuals_are_in_the_participants_household,
+    Zipcode:$Zipcode,
+    Date_of_first_collection:$Date_of_first_collection,
+    Number_of_days_between_PCR_plus_and_first_collection:$Number_of_days_between_PCR_plus_and_first_collection,
+    Date_of_second_collection:$Date_of_second_collection, 
+    Number_of_days_between_PCR_plus_and_second_collection:$Number_of_days_between_PCR_plus_and_second_collection,
+    Date_of_third_collection:$Date_of_third_collection, 
+    Number_of_days_between_PCR_plus_and_third_collection:$Number_of_days_between_PCR_plus_and_third_collection,
+    Date_of_fourth_collection:$Date_of_fourth_collection, 
+    Number_of_days_between_PCR_plus_and_fourth_collection:$Number_of_days_between_PCR_plus_and_fourth_collection,
+    Date_of_fifth_collection:$Date_of_fifth_collection, 
+    Number_of_days_between_PCR_plus_and_fifth_collection:$Number_of_days_between_PCR_plus_and_fifth_collection, 
+    Hospitalized:$Hospitalized,
+    Intubation:$Intubation,
+    Oxygen_used_at_hospital:$Oxygen_used_at_hospital,
+    If_yes_how_much_oxygen: $If_yes_how_much_oxygen,
+    Diagnosed_with_DVT_or_PE_clot_after_diagnosis:$Diagnosed_with_DVT_or_PE_clot_after_diagnosis,
+    If_yes_to_VTE_was_it_a_PE_or_DVT:$If_yes_to_VTE_was_it_a_PE_or_DVT,
+    If_yes_to_DVT_locations_RLE_RUE_LLE_and_LUE:$If_yes_to_DVT_locations_RLE_RUE_LLE_and_LUE,
+    Medications_Taking_at_Time_of_COVID19_diagnosis:$Medications_Taking_at_Time_of_COVID19_diagnosis,
+    Past_Medical_History: $Past_Medical_History, 
+    Other_Complications:$Other_Complications, 
+    convalescent_plasma:$convalescent_plasma, 
+    first_dose_conval_plasma:$first_dose_conval_plasma, 
+    Initial_COVID_Symptoms:$Initial_COVID_Symptoms,
+    visit_count:$visit_count, 
+    Visit_date:$Visit_date, 
+    days_post_PCR:$days_post_PCR,
+    No_PASC_is_0_PASC_is_1:$No_PASC_is_0_PASC_is_1,
+    any_symptoms:$any_symptoms, 
+    headache: $headache,
+    dizziness:$dizziness, 
+    loss_of_consciousness: $loss_of_consciousness,
+    deafness:$deafness,
+    numbness_in_extremities:$numbness_in_extremities, 
+    tingling_inextremities:$tingling_inextremities,
+    burning_sensation_in_extremities:$burning_sensation_in_extremities,
+    loss_of_taste_if_yes_for_how_long:$loss_of_taste_if_yes_for_how_long, 
+    loss_of_smell_if_yes_for_how_long:$loss_of_smell_if_yes_for_how_long,
+    change_in_taste:$change_in_taste, 
+    forgetful_or_absent_minded:$forgetful_or_absent_minded,
+    confusion:$confusion, 
+    difficulty_concentrating:$difficulty_concentrating,
+    eye_pain:$eye_pain,
+    eye_redness:$eye_redness, 
+    eye_tearing:$eye_tearing,
+    light_sensitivity:$light_sensitivity,
+    floaters:$floaters, 
+    loss_of_vision:$loss_of_vision, 
+    blurry_vision:$blurry_vision,
+    flashes_of_light:$flashes_of_light,
+    eye_burning:$eye_burning, 
+    sore_throat:$sore_throat,
+    runny_nose_or_congestestion:$runny_nose_or_congestestion,
+    sinusitis:$sinusitis,
+    facial_pressure:$facial_pressure, 
+    neck_pain:$neck_pain,
+    mouth_sores:$mouth_sores, 
+    palpitations:$palpitations,
+    chest_pain:$chest_pain, 
+    lower_extremity_swelling:$lower_extremity_swelling, 
+    chest_burning:$chest_burning,
+    chest_pressure:$chest_pressure,
+    rapid_heart_rate:$rapid_heart_rate,
+    difficulty_breathing_dyspnea:$difficulty_breathing_dyspnea, 
+    cough:$cough,
+    phlegm_in_back_of_throat:$phlegm_in_back_of_throat, 
+    wheezing:$wheezing, 
+    abdominal_pain:$abdominal_pain, 
+    diarrhea:$diarrhea,
+    nausea: $nausea,
+    reflux:$reflux,
+    constipation:$constipation,
+    vomiting:$vomiting,
+    rash:$rash,
+    easy_bruising:$easy_bruising,
+    dry_skin:$dry_skin,
+    itching:$itching, 
+    jaundice:$jaundice,
+    muscleor_body_aches_myalgia:$muscleor_body_aches_myalgia,
+    exercise_intolerance:$exercise_intolerance,
+    joint_pain:$joint_pain, 
+    weakness:$weakness, 
+    back_pain:$back_pain, 
+    erectile_dysfunction:$erectile_dysfunction,
+    amenorrhea:$amenorrhea, 
+    fevers: $fevers, 
+    fatigue:$fatigue, 
+    appetite_loss:$appetite_loss,
+    anxiety:$anxiety, 
+    depression:$depression, 
+    difficulty_sleeping:$difficulty_sleeping,
+    bleeding:$bleeding,
+    clot:$clot, 
+    hair_loss:$hair_loss,
+    night_sweats:$night_sweats,
+    Other:$Other, 
+    Other_text:$Other_text,
+    Are_you_seeing_a_physician_for_these_symptoms: $Are_you_seeing_a_physician_for_these_symptoms,
+    What_medications_are_you_taking_for_these_symptoms:$What_medications_are_you_taking_for_these_symptoms,
+    Have_you_received_the_vaccine: $Have_you_received_the_vaccine,
+    Pfizer1_Moderna2_astrazenaca3_other4: $Pfizer1_Moderna2_astrazenaca3_other4,
+    date_of_first_vaccine: $date_of_first_vaccine,
+    Did_you_receive_the_second_dose:$Did_you_receive_the_second_dose,
+    date_of_second_vaccine: $date_of_second_vaccine
+    
+  }}){
       patientMetadatum{
 
       Record_ID
@@ -85,137 +447,291 @@ mutation(
   }   
 }
 `;
-
-export const UploadSConvalscent1= gql`
+////Table 3 Uploading...
+export const UploadUninfected_Metadata = gql`
 mutation(
-  $record_id:String
-  $visit_count:Int
-  $pcr_plus_date: Date
-  $visit_date : Date
-  $days_post_pcr_plus : Int
-){
-  createSConvalscent1(input:{data:{record_id:$record_id,visit_count:$visit_count,
-    pcr_plus_date: $pcr_plus_date,visit_date : $visit_date,days_post_pcr_plus:$days_post_pcr_plus}}){
-    sConvalscent1{
-      id
-    } 
-  } 
-}
-`;
-
-export const UploadDAcute1= gql`
-mutation(
-  $record_id:String
-  $age:Int
-  $pcr_plus_date: Date
-  $date_of_positive_SARS_CoV2_PCR : Date
-  $days_post_pcr_plus : Int
-){
-  createDAcute1(input:{data:{record_id:$record_id,age:$age,
-    pcr_plus_date: $pcr_plus_date,date_of_positive_SARS_CoV2_PCR : $date_of_positive_SARS_CoV2_PCR,days_post_pcr_plus:$days_post_pcr_plus}}){
-    dAcute1{
-      id
-    } 
-  } 
-}
-`;
-export const UploadDConvalescent1= gql`
-mutation(
-  $record_id:String
-  $visit_count:Int
-  $pcr_plus_date: Date
-  $date_of_positive_SARSCoV2_PCR : Date
-  $age : Int
-){
-  createDConvalescent1(input:{data:{record_id:$record_id,visit_count:$visit_count,
-    pcr_plus_date: $pcr_plus_date,date_of_positive_SARSCoV2_PCR : $date_of_positive_SARSCoV2_PCR,age:$age}}){
-      dConvalescent1{
-      id
-    } 
-  } 
-}
-`;
-export const UploadDcontrols1= gql`
-mutation(
-  $record_id:String
-  $visit_count:Int
-  $pcr_plus_date: Date
-  $date_of_positive_SARSCoV2_PCR : Date
-  $age : Int
-){
-  createDcontrol1(input:{data:{record_id:$record_id,visit_count:$visit_count,
-    pcr_plus_date: $pcr_plus_date,date_of_positive_SARSCoV2_PCR : $date_of_positive_SARSCoV2_PCR,age:$age}}){
-    dControl1{
-      id
-    } 
-  } 
-}
-`;
-
-export const UploadNoco_Cobio_Control_Blood1= gql`
-mutation(
-  $record_id:String
-  $visit_count:Int
-  $date_visit: Date
-  $tubes : Int
-  $pbmc_location : String
-){
-  createNoco_Cobio_Control_Blood1(input:{data:{record_id:$record_id,visit_count:$visit_count,
-    date_visit: $date_visit,tubes : $tubes,pbmc_location:$pbmc_location}}){
-    d1{
-      id
-    } 
-  } 
-}
-`;
-export const UploadNoco_Cobio_Control_Nasalpharygenal1= gql`
-mutation(
-  $record_id:String
-  $visit_count:Int
-  $date_visit: Date
-  $np_pcr_result : String
-  $np_sample : Int
-){
-  createNoco_Cobio_Control_Nasalpharygenal(input:{data:{record_id:$record_id,visit_count:$visit_count,
-    date_visit: $date_visit,np_pcr_result : $np_pcr_result,np_sample:$np_sample}}){
-      Noco_Cobio_Control_Nasalpharygenal{
-      id
-    } 
-  } 
-}
-`;
-export const UploadNoCo_Cobio_Control_Saliva= gql`
-mutation(
-  $record_id:String
-  $visit_count:Int
-  $date_visit: Date
-  $saliva_vtm : String
-){
-  createNoCo_Cobio_Control_Saliva(input:{data:{record_id:$record_id,visit_count:$visit_count,
-    date_visit: $date_visit,saliva_vtm : $saliva_vtm}}){
-      NoCo_Cobio_Control_Saliva{
-      id
-    } 
-  } 
-}
-`;
-
-export const UploadNoco_Cobio_Control_Stool1= gql`
-mutation(
-  $record_id:String
-  $visit_count:Int
-  $pcr_plus_date: Date
-  $stool_rna_pcr_ebbel_lab : String
   
-){
-  createNoco_Cobio_Control_Stool(input:{data:{record_id:$record_id,visit_count:$visit_count,
-    pcr_plus_date: $pcr_plus_date,stool_rna_pcr_ebbel_lab : $stool_rna_pcr_ebbel_lab}}){
-      Noco_Cobio_Control_Stool{
-      id
-    } 
-  } 
-}
-`;
+  $Record_ID : String
+  $Disease_severity_category : String
+  $Age : Int
+  $Age_range :Int
+  $Date_of_Birth : Date
+  $Sex : Int
+  $Race_or_Ethnicity : String
+  $Height : Float
+  $Weight_in_kg : Float
+  $BMI : Float
+  $BMI_range : String
+  $Date_of_positive_SARS_COV2_PCR : Date
+  $Date_of_first_collection : Date
+  $Past_medical_history : String
+  $Employed : Int
+  $Tobacco_use : Int
+  $packs_per_day : Float
+  $number_of_years : Int
+  $number_of_other_individuals_in_participant_household : Int
+  $Zipcode : Int
+  $Comments : String
+
+  ){
+    createUninfectedMetadatum(
+      input:{data:{
+        Record_ID:$Record_ID,
+        Disease_severity_category
+        Age : $Age,
+        Age_range : $Age_range,
+        Date_of_Birth: $Date_of_Birth,
+        Sex : $Sex,
+        Race_or_Ethnicity : $Race_or_Ethnicity,
+        Height : $Height,
+        Weight_in_kg :$Weight_in_kg,
+        BMI : $BMI,
+        BMI_range :$BMI_range,
+        Date_of_positive_SARS_COV2_PCR :$Date_of_positive_SARS_COV2_PCR,
+        Date_of_first_collection :$Date_of_first_collection,
+        Past_medical_history :$Past_medical_history,
+        Employed :$Employed,
+        Tobacco_use:$Tobacco_use,
+        packs_per_day:$packs_per_day,
+        number_of_years:$number_of_years,
+        number_of_other_individuals_in_participant_household:$number_of_other_individuals_in_participant_household,
+        Zipcode:$Zipcode,
+        Comments :$Comments
+
+      }}){
+      UninfectedMetadatum{
+        Record_ID
+      }}}`;
+
+////Change to be done table 4 uploading
+  export const UploadUninfected_Inventory = gql`
+mutation(
+  $Record_ID : String
+  $visit_count : Int
+  $Date_of_Positive_SARS_COV2_PCR : Date
+  $Date_of_first_collection :Date
+  $number_of_days_between_PCR_plus_and_first_collection :Int
+  $platelet_panel_1 : Int
+  $platelet_panel_2 : Int
+  $platelet_panel_3 : Int
+  $whole_blood_panel : Int
+  $PBMC_panel : Int
+  $Plasma : Int
+  $Plasma_tubes : Int
+  $plasma_ul_per_tube : Int
+  $Serum : Int
+  $Serum_tubes :Int 
+  $Serum_ul_per_tube:Int
+  $PBMC_tubes : Int
+  $PBMC_location : String
+  $Cell_count_per_tube : Int
+  $Cell_count_total : Int
+  $NP_tubes : Int 
+  $NP_storage_box : Int
+  $NP_PCR_Result : Int 
+  $NP_CT_value : Int
+  $NP_Plaque_Assay_Titer_PFU_per_ml : Int
+  $NP_Plaque_Assay_Ct_Value : Int
+  $Saliva_Sample_No_VTM : Int
+  $Saliva_Sample_No_VTM_number_of_tubes : Int
+  $Saliva_sample_No_VTM_ul_amount_per_tube : Int 
+  $Saliva_Sample_with_VTM :Int
+  $Saliva_plus_VTM_tubes: Int
+  $Saliva_plus_VTM_Storage_box : Int
+  $Saliva_PCR_results : Int
+  $Saliva_CT_value : Int
+  $Saliva_Plaque_Assay_Titer_PFU_per_ml : Int
+  $Saliva_Plaque_Assay_Ct_value : Int
+  $Stool_Sample : Int
+  $Stool_Tube_number : Int
+  $Stool_deidentification_number : String                              
+  $Stool_RNA_PCR : Int
+  $stool_RNA_CT_value : Int
+  $Stool_RNA_ddPCR : Int
+  $Stool_RNA_ddPCR_value : Int
+
+  ){
+    createUninfectedInventory(input:{data:{  
+  	
+    Record_ID : $Record_ID,
+    visit_count : $visit_count,
+    Date_of_Positive_SARS_COV2_PCR : $Date_of_Positive_SARS_COV2_PCR,
+		Date_of_first_collection : $Date_of_first_collection,
+    number_of_days_between_PCR_plus_and_first_collection : $number_of_days_between_PCR_plus_and_first_collection,
+		platelet_panel_1 : $platelet_panel_1,
+    platelet_panel_2 : $platelet_panel_2,
+    platelet_panel_3 : $platelet_panel_3,
+    whole_blood_panel :$whole_blood_panel,
+    PBMC_panel :$PBMC_panel,
+		Plasma :$Plasma,
+    Plasma_tubes :$Plasma_tubes,
+    plasma_ul_per_tube:$plasma_ul_per_tube,
+    Serum :$Serum,
+    Serum_tubes :$Serum_tubes,
+    Serum_ul_per_tube :$Serum_ul_per_tube,
+		PBMC_tubes : $PBMC_tubes,
+    PBMC_location : $PBMC_location,
+    Cell_count_per_tube : $Cell_count_per_tube,
+    Cell_count_total :$Cell_count_total, 
+    NP_tubes :$NP_tubes, 
+    NP_storage_box :$NP_storage_box,
+		NP_PCR_Result :$NP_PCR_Result,
+    NP_CT_value :$NP_CT_value,
+    NP_Plaque_Assay_Titer_PFU_per_ml :$NP_Plaque_Assay_Titer_PFU_per_ml,
+    NP_Plaque_Assay_Ct_Value :$NP_Plaque_Assay_Ct_Value,
+    Saliva_Sample_No_VTM :$Saliva_Sample_No_VTM ,
+		Saliva_Sample_No_VTM_number_of_tubes :$Saliva_Sample_No_VTM_number_of_tubes,
+    Saliva_sample_No_VTM_ul_amount_per_tube :$Saliva_sample_No_VTM_ul_amount_per_tube,
+    Saliva_Sample_with_VTM :$Saliva_Sample_with_VTM,
+    Saliva_plus_VTM_tubes :$Saliva_plus_VTM_tubes,
+		Saliva_plus_VTM_Storage_box :$Saliva_plus_VTM_Storage_box,
+    Saliva_PCR_results:$Saliva_PCR_results, 
+    Saliva_CT_value :$Saliva_CT_value, 
+    Saliva_Plaque_Assay_Titer_PFU_per_ml :$Saliva_Plaque_Assay_Titer_PFU_per_ml,
+    Saliva_Plaque_Assay_Ct_value :$Saliva_Plaque_Assay_Ct_value, 
+		Stool_Sample :$Stool_Sample, 
+    Stool_Tube_number :$Stool_Tube_number, 
+    Stool_deidentification_number :$Stool_deidentification_number, 
+    Stool_RNA_PCR :$Stool_RNA_PCR, 
+    stool_RNA_CT_value:$stool_RNA_CT_value, 
+    Stool_RNA_ddPCR :$Stool_RNA_ddPCR, 
+    Stool_RNA_ddPCR_value :$Stool_RNA_ddPCR_value
+    }
+  })
+}`;
+
+
+
+// export const UploadSConvalscent1= gql`
+// mutation(
+//   $record_id:String
+//   $visit_count:Int
+//   $pcr_plus_date: Date
+//   $visit_date : Date
+//   $days_post_pcr_plus : Int
+// ){
+//   createSConvalscent1(input:{data:{record_id:$record_id,visit_count:$visit_count,
+//     pcr_plus_date: $pcr_plus_date,visit_date : $visit_date,days_post_pcr_plus:$days_post_pcr_plus}}){
+//     sConvalscent1{
+//       id
+//     } 
+//   } 
+// }
+// `;
+
+// export const UploadDAcute1= gql`
+// mutation(
+//   $record_id:String
+//   $age:Int
+//   $pcr_plus_date: Date
+//   $date_of_positive_SARS_CoV2_PCR : Date
+//   $days_post_pcr_plus : Int
+// ){
+//   createDAcute1(input:{data:{record_id:$record_id,age:$age,
+//     pcr_plus_date: $pcr_plus_date,date_of_positive_SARS_CoV2_PCR : $date_of_positive_SARS_CoV2_PCR,days_post_pcr_plus:$days_post_pcr_plus}}){
+//     dAcute1{
+//       id
+//     } 
+//   } 
+// }
+// `;
+// export const UploadDConvalescent1= gql`
+// mutation(
+//   $record_id:String
+//   $visit_count:Int
+//   $pcr_plus_date: Date
+//   $date_of_positive_SARSCoV2_PCR : Date
+//   $age : Int
+// ){
+//   createDConvalescent1(input:{data:{record_id:$record_id,visit_count:$visit_count,
+//     pcr_plus_date: $pcr_plus_date,date_of_positive_SARSCoV2_PCR : $date_of_positive_SARSCoV2_PCR,age:$age}}){
+//       dConvalescent1{
+//       id
+//     } 
+//   } 
+// }
+// `;
+// export const UploadDcontrols1= gql`
+// mutation(
+//   $record_id:String
+//   $visit_count:Int
+//   $pcr_plus_date: Date
+//   $date_of_positive_SARSCoV2_PCR : Date
+//   $age : Int
+// ){
+//   createDcontrol1(input:{data:{record_id:$record_id,visit_count:$visit_count,
+//     pcr_plus_date: $pcr_plus_date,date_of_positive_SARSCoV2_PCR : $date_of_positive_SARSCoV2_PCR,age:$age}}){
+//     dControl1{
+//       id
+//     } 
+//   } 
+// }
+// `;
+
+// export const UploadNoco_Cobio_Control_Blood1= gql`
+// mutation(
+//   $record_id:String
+//   $visit_count:Int
+//   $date_visit: Date
+//   $tubes : Int
+//   $pbmc_location : String
+// ){
+//   createNoco_Cobio_Control_Blood1(input:{data:{record_id:$record_id,visit_count:$visit_count,
+//     date_visit: $date_visit,tubes : $tubes,pbmc_location:$pbmc_location}}){
+//     d1{
+//       id
+//     } 
+//   } 
+// }
+// `;
+// export const UploadNoco_Cobio_Control_Nasalpharygenal1= gql`
+// mutation(
+//   $record_id:String
+//   $visit_count:Int
+//   $date_visit: Date
+//   $np_pcr_result : String
+//   $np_sample : Int
+// ){
+//   createNoco_Cobio_Control_Nasalpharygenal(input:{data:{record_id:$record_id,visit_count:$visit_count,
+//     date_visit: $date_visit,np_pcr_result : $np_pcr_result,np_sample:$np_sample}}){
+//       Noco_Cobio_Control_Nasalpharygenal{
+//       id
+//     } 
+//   } 
+// }
+// `;
+// export const UploadNoCo_Cobio_Control_Saliva= gql`
+// mutation(
+//   $record_id:String
+//   $visit_count:Int
+//   $date_visit: Date
+//   $saliva_vtm : String
+// ){
+//   createNoCo_Cobio_Control_Saliva(input:{data:{record_id:$record_id,visit_count:$visit_count,
+//     date_visit: $date_visit,saliva_vtm : $saliva_vtm}}){
+//       NoCo_Cobio_Control_Saliva{
+//       id
+//     } 
+//   } 
+// }
+// `;
+
+// export const UploadNoco_Cobio_Control_Stool1= gql`
+// mutation(
+//   $record_id:String
+//   $visit_count:Int
+//   $pcr_plus_date: Date
+//   $stool_rna_pcr_ebbel_lab : String
+  
+// ){
+//   createNoco_Cobio_Control_Stool(input:{data:{record_id:$record_id,visit_count:$visit_count,
+//     pcr_plus_date: $pcr_plus_date,stool_rna_pcr_ebbel_lab : $stool_rna_pcr_ebbel_lab}}){
+//       Noco_Cobio_Control_Stool{
+//       id
+//     } 
+//   } 
+// }
+// `;
 
 export const GetQuestions = gql`
 query{
@@ -325,12 +841,11 @@ query{
 
 /////THE FOUR TABLES 
 
-// 1) Patient_Inventories
+// 2) Patient_Inventories
 
 export const GetPatient_Inventories = gql`
 query{
   patientInventories{
-    id,
     record_id, 
     visit_count,
     Date_of_positive_SARS_COV2_PCR, 
@@ -375,7 +890,7 @@ query{
     Stool_RNA_ddPCR_value
   }}`;
 
-  // 2) patient_Metadata
+  // 1) patient_Metadata
 
   export const GetPatient_metadata = gql`
   query{
@@ -506,7 +1021,7 @@ query{
     }
   }`;
 
-// 3) unifected inventories
+// 4) unifected inventories
 
 export const Uninfected_Inventories = gql`
 query{
@@ -558,7 +1073,7 @@ query{
   }
 }`;
 
-// 4) uninfected metada
+// 3) uninfected metadata
 
 export const Uninfected_Metadata = gql`
 query{
