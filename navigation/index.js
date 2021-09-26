@@ -1,20 +1,3 @@
-// import * as React from 'react';
-// import { Button, View } from 'react-native';
-// import { createDrawerNavigator } from '@react-navigation/drawer';
-// import { NavigationContainer } from '@react-navigation/native';
-
-// const Drawer = createDrawerNavigator();
-
-// export default function Navigation() {
-//   return (
-//     <NavigationContainer>
-//       <Drawer.Navigator initialRouteName="Home">
-//         <Drawer.Screen name="Home" component={HomeScreen} />
-//         <Drawer.Screen name="Notifications" component={NotificationsScreen} />
-//       </Drawer.Navigator>
-//     </NavigationContainer>
-//   );
-// }
 import {
   NavigationContainer,
   DefaultTheme,
@@ -29,13 +12,9 @@ import * as React from "react";
 import { ColorSchemeName, Image, Text, View } from "react-native";
 import LoginScreen from "../screens/login";
 import HomeScreen from "../screens/homeScreen";
-import ProcessScreen from "../screens/processScreen";
-import PreProcessScreen from "../screens/preProcessScreen";
-import QuestionsScreen from "../screens/questionsScreen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { connect } from "react-redux";
-import MenuDrawer from "react-native-side-drawer";
-import { useState } from "react";
+
 import {
   createDrawerNavigator,
   DrawerContentScrollView,
@@ -43,14 +22,8 @@ import {
   DrawerItem,
 } from "@react-navigation/drawer";
 import { Button } from "react-native-paper";
-import Alerts from "../screens/Alerts";
-import HistoryScreen from "../screens/HistoryScreen";
-import Users from "../screens/Users";
-import AddUser from "../screens/AddUser";
-import Profile from "../screens/Profile";
-import ProfilePassword from "../screens/ProfilePassword";
-import Branches from "../screens/Branches";
-import AddBranch from "../screens/AddBranch";
+
+
 
 const Drawer = createDrawerNavigator();
 const Navigation = (props) => {
@@ -130,69 +103,10 @@ const Navigation = (props) => {
             name="Home"
             component={MainStackNavigator}
           />
-          {props.userType !== "OTStaff" && props.userType !== "OTSuperUser" && (
-            <Drawer.Screen
-              headerShown={true}
-              options={{
-                headerShown: true,
-                drawerIcon: () => (
-                  <MaterialCommunityIcons
-                    name={"alert-box"}
-                    size={30}
-                    color="#010101"
-                  />
-                ),
-              }}
-              name="Alerts"
-              component={Alerts}
-            />
-          )}
-          {props.userType === "OTAdmin" && (
-            <Drawer.Screen
-              headerShown={true}
-              options={{
-                headerShown: true,
-                drawerIcon: () => (
-                  <Image
-                    style={{ height: 30, width: 30 }}
-                    source={require("./../assets/screenIcons/history.svg")}
-                  />
-                ),
-              }}
-              name="History"
-              component={HistoryScreen}
-            />
-          )}
-          <Drawer.Screen
-            headerShown={true}
-            options={{
-              // headerShown: true,
-              drawerIcon: () => (
-                <Image
-                  style={{ height: 30, width: 30 }}
-                  source={require("./../assets/screenIcons/profile.png")}
-                />
-              ),
-            }}
-            name="Profile"
-            component={ProfileStackNavigator}
-          />
-          {(props.userType === "OTAdmin" || props.userType === "OTDoctor") && (
-            <Drawer.Screen
-              headerShown={true}
-              options={{
-                // headerShown: true,
-                drawerIcon: () => (
-                  <Image
-                    style={{ height: 30, width: 30 }}
-                    source={require("./../assets/screenIcons/group.png")}
-                  />
-                ),
-              }}
-              name="Users"
-              component={UserStackNavigator}
-            />
-          )}
+          
+          
+          
+         
         </Drawer.Navigator>
       ) : (
         <MainStack.Navigator initialRouteName="login">
@@ -201,17 +115,7 @@ const Navigation = (props) => {
             component={LoginScreen}
             options={{ headerShown: false }}
           />
-          <MainStack.Screen
-            name="setPassword"
-            component={ProfilePassword}
-            options={({ route }) => ({
-              title: "Set Password",
-              headerTitleAlign: "center",
-              headerStyle: {
-                backgroundColor: "white",
-              },
-            })}
-          />
+         
         </MainStack.Navigator>
       )}
     </NavigationContainer>
@@ -266,63 +170,10 @@ const MainStackNavigator = (props) => {
             ),
           }}
         />
-        <MainStack.Screen
-          name="preProcessScreen"
-          component={PreProcessScreen}
-          initialParams={{ operationTheaterName: "" }}
-          options={({ route }) => ({
-            title: route.params.operationTheaterName,
-            headerTitleAlign: "center",
-            headerStyle: {
-              backgroundColor: "white",
-            },
-            headerTitleStyle: {
-              fontSize: 18,
-              fontWeight: "bold",
-            },
-          })}
-        />
-        <MainStack.Screen
-          name="processScreen"
-          component={ProcessScreen}
-          initialParams={{ resourceName: "" }}
-          options={({ route }) => ({
-            title: route.params.resourceName,
-            headerTitleAlign: "center",
-            headerStyle: {
-              backgroundColor: "white",
-            },
-            headerTitleStyle: {
-              fontSize: 18,
-              fontWeight: "bold",
-            },
-          })}
-        />
-        <MainStack.Screen
-          name="questionsScreen"
-          component={QuestionsScreen}
-          initialParams={{ resourceName: "" }}
-          options={({ route }) => ({
-            headerShown: true,
-            title: route.params.resourceName,
-            headerTitleAlign: "center",
-            headerStyle: {
-              elevation: 0,
-              backgroundColor: route.params.backgroundColor,
-            },
-            headerTitleStyle: {
-              fontSize: 18,
-              fontWeight: "bold",
-            },
-          })}
-        />
-        <MainStack.Screen
-          name="userManagement"
-          component={UserStackNavigator}
-          options={({ route }) => ({
-            headerShown: false,
-          })}
-        />
+        
+       
+        
+        
       </>
     </MainStack.Navigator>
   );
@@ -334,78 +185,6 @@ const UserStackNavigator = (props) => {
     <UserStack.Navigator
     // initialRouteName={type === "OTSuperUser" ? "branches" : "users"}
     >
-      <UserStack.Screen
-        name="users"
-        component={Users}
-        options={({ route }) => ({
-          headerShown: false,
-        })}
-        // options={({ route }) => ({
-        //   title: "Users",
-        //   headerTitleAlign: type === "OTSuperUser" ? "center" : "left",
-        //   headerLeft: () => (
-        //     <Button
-        //       onPress={() => {
-        //         if (type === "OTSuperUser") {
-        //           props.navigation.goBack();
-        //         } else {
-        //           props.navigation.openDrawer();
-        //         }
-        //       }}
-        //       icon={() => (
-        //         <MaterialCommunityIcons
-        //           name={type === "OTSuperUser" ? "arrow-left" : "menu"}
-        //           size={25}
-        //           color="black"
-        //           style={{ marginLeft: 2 }}
-        //         />
-        //       )}
-        //     ></Button>
-        //   ),
-        // })}
-      />
-      <UserStack.Screen
-        name="branches"
-        component={Branches}
-        options={({ route }) => ({
-          headerShown: false,
-        })}
-        // options={({ route }) => ({
-        //   title: "User Management",
-        //   headerLeft: () => (
-        //     <Button
-        //       onPress={() => {
-        //         props.navigation.openDrawer();
-        //       }}
-        //       icon={() => (
-        //         <MaterialCommunityIcons
-        //           name="menu"
-        //           size={25}
-        //           color="black"
-        //           style={{ marginLeft: 2 }}
-        //         />
-        //       )}
-        //     ></Button>
-        //   ),
-        // })}
-      />
-      <UserStack.Screen
-        name="adduser"
-        component={AddUser}
-        options={({ route }) => ({
-          headerShown: false,
-          title: "Add a new user",
-          headerTitleAlign: "center",
-        })}
-      />
-      <UserStack.Screen
-        name="addbranch"
-        component={AddBranch}
-        options={({ route }) => ({
-          title: "Add a new branch",
-          headerTitleAlign: "center",
-        })}
-      />
     </UserStack.Navigator>
   );
 };
@@ -414,36 +193,8 @@ const ProfileStack = createStackNavigator();
 const ProfileStackNavigator = (props) => {
   return (
     <ProfileStack.Navigator initialRouteName="profile">
-      <ProfileStack.Screen
-        name="profile"
-        component={Profile}
-        options={({ route }) => ({
-          title: "Profile",
-          headerLeft: () => (
-            <Button
-              onPress={() => {
-                props.navigation.openDrawer();
-              }}
-              icon={() => (
-                <MaterialCommunityIcons
-                  name="menu"
-                  size={25}
-                  color="black"
-                  style={{ marginLeft: 2 }}
-                />
-              )}
-            ></Button>
-          ),
-        })}
-      />
-      <ProfileStack.Screen
-        name="profilepassword"
-        component={ProfilePassword}
-        options={({ route }) => ({
-          title: "Change Password",
-          headerTitleAlign: "center",
-        })}
-      />
+      
+      
     </ProfileStack.Navigator>
   );
 };

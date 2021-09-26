@@ -291,6 +291,8 @@ mutation(
 ////Table2 uploading .........
 export const UploadPatient_Inventories = gql`
 mutation(
+
+
   $record_id:String
   $visit_count : Int
   $Date_of_positive_SARS_COV2_PCR : Date
@@ -309,8 +311,8 @@ mutation(
   $serum_ul_per_tube : Int
   $PBMC_tubes : Int
   $PBMC_location : String
-  $cell_count_per_tube : Int
-  $cell_count_total : Int
+  $cell_count_per_tube : Long
+  $cell_count_total : Long
   $NP_tubes : Int
   $NP_storage : Int
   $NP_PCR_Result: Int
@@ -324,23 +326,29 @@ mutation(
   $Saliva_plus_VTM_tubes : Int
   $Saliva_plus_VTM_storage_box :Int
   $Saliva_PCR_Results: Int
-  $Saliva_CT_value: FLoat
-  $Saliva_Plaque_Assay_Titer_PFU_per_ml: Int
-  $Saliva_Plaque_Assay_Ct_Value: Float
+  $Saliva_CT_value: Float
+  $Saliva_Plaque_Assay_Titer_PFU_per_ml: Long
+  $Saliva_Plaque_Assay_Ct_Value : Float
   $Stool_Sample : Int
-  $Stool_Tube_number : Int
+  $Stool_Tube_number : Int  
   $Stool_deidentification_number : String
   $Stool_RNA_PCR : Int
   $Stool_RNA_CT_value : Float
-  $Stool_RNA_ddPCR: Int
+  $Stool_RNA_ddPCR : Int
   $Stool_RNA_ddPCR_value : Float
+
+
+  
+
+
+  
 )
 {
   createPatientInventory(input:{data:{
 
     record_id:$record_id,
     visit_count:$visit_count,
-    Date_of_positive_SARS_COV2_PCR :$Date_of_positive_SARS_COV2_PCR ,
+    Date_of_positive_SARS_COV2_PCR :$Date_of_positive_SARS_COV2_PCR,
     date_of_first_collection:$date_of_first_collection ,
     number_of_days_betwen_PCR_plus_and_first_collection: $number_of_days_betwen_PCR_plus_and_first_collection,
     platelet_panel_1:$platelet_panel_1 ,
@@ -350,14 +358,14 @@ mutation(
     PBMC_panel:$PBMC_panel ,
     plasma:$plasma ,
     plasma_tubes:$plasma_tubes ,
-    plasma_tubes:$plasma_ul_per_tube ,
+    plasma_ul_per_tube:$plasma_ul_per_tube ,
     serum:$serum ,
     serum_tubes:$serum_tubes ,
-    serum_tubes:$serum_ul_per_tube ,
+    serum_ul_per_tube:$serum_ul_per_tube ,
     PBMC_tubes:$PBMC_tubes ,
     PBMC_location:$PBMC_location,
     cell_count_per_tube:$cell_count_per_tube ,
-    cell_count_total:$cell_count_total ,
+    cell_count_total:$cell_count_total,
     NP_tubes:$NP_tubes ,
     NP_storage:$NP_storage ,
     NP_PCR_Result:$NP_PCR_Result,
@@ -380,7 +388,10 @@ mutation(
     Stool_RNA_PCR :$Stool_RNA_PCR ,
     Stool_RNA_CT_value :$Stool_RNA_CT_value, 
     Stool_RNA_ddPCR :$Stool_RNA_ddPCR,
-    Stool_RNA_ddPCR_value :$Stool_RNA_ddPCR_value 
+    Stool_RNA_ddPCR_value :$Stool_RNA_ddPCR_value
+
+
+    
     }
   }
   )
@@ -399,7 +410,6 @@ mutation(
   $Record_ID : String
   $Disease_severity_category : String
   $Age : Int
-  $Age_range :Int
   $Date_of_Birth : Date
   $Sex : Int
   $Race_or_Ethnicity : String
@@ -417,13 +427,14 @@ mutation(
   $number_of_other_individuals_in_participant_household : Int
   $Zipcode : Int
   $Comments : String
+  $Age_range :Int
+
   ){
     createUninfectedMetadatum(
       input:{data:{
         Record_ID:$Record_ID,
         Disease_severity_category : $Disease_severity_category,
         Age : $Age,
-        Age_range : $Age_range,
         Date_of_Birth: $Date_of_Birth,
         Sex : $Sex,
         Race_or_Ethnicity : $Race_or_Ethnicity,
@@ -440,16 +451,17 @@ mutation(
         number_of_years:$number_of_years,
         number_of_other_individuals_in_participant_household:$number_of_other_individuals_in_participant_household,
         Zipcode:$Zipcode,
-        Comments :$Comments
+        Comments :$Comments,
+        Age_range : $Age_range
 
       }}){
-      UninfectedMetadatum{
+        uninfectedMetadatum{
         Record_ID
       }}}`;
 
   //// Table4 uploading .....
 
-  export const UploadUninfected_Inventory = gql`
+export const UploadUninfected_Inventory = gql`
 mutation(
   $Record_ID : String
   $visit_count : Int
@@ -469,14 +481,14 @@ mutation(
   $Serum_ul_per_tube:Int
   $PBMC_tubes : Int
   $PBMC_location : String
-  $Cell_count_per_tube : Int
-  $Cell_count_total : Int
+  $Cell_count_per_tube : Long
+  $Cell_count_total : Long
   $NP_tubes : Int 
   $NP_storage_box : Int
   $NP_PCR_Result : Int 
-  $NP_CT_value : Int
-  $NP_Plaque_Assay_Titer_PFU_per_ml : Int
-  $NP_Plaque_Assay_Ct_Value : Int
+  $NP_CT_value : Float
+  $NP_Plaque_Assay_Titer_PFU_per_ml : Float
+  $NP_Plaque_Assay_Ct_Value : Float
   $Saliva_Sample_No_VTM : Int
   $Saliva_Sample_No_VTM_number_of_tubes : Int
   $Saliva_sample_No_VTM_ul_amount_per_tube : Int 
@@ -484,16 +496,16 @@ mutation(
   $Saliva_plus_VTM_tubes: Int
   $Saliva_plus_VTM_Storage_box : Int
   $Saliva_PCR_results : Int
-  $Saliva_CT_value : Int
-  $Saliva_Plaque_Assay_Titer_PFU_per_ml : Int
-  $Saliva_Plaque_Assay_Ct_value : Int
-  $Stool_Sample : Int
-  $Stool_Tube_number : Int
+  $Saliva_CT_value : Float
+  $Saliva_Plaque_Assay_Titer_PFU_per_ml : Float
+  $Saliva_Plaque_Assay_Ct_value : Float
+  $Stool_Sample : Float
+  $Stool_Tube_number : Float
   $Stool_deidentification_number : String                              
-  $Stool_RNA_PCR : Int
-  $stool_RNA_CT_value : Int
+  $Stool_RNA_PCR : Float
+  $stool_RNA_CT_value : Float
   $Stool_RNA_ddPCR : Int
-  $Stool_RNA_ddPCR_value : Int
+  $Stool_RNA_ddPCR_value : Float
 
   ){
     createUninfectedInventory(input:{data:{  
@@ -541,9 +553,10 @@ mutation(
     stool_RNA_CT_value:$stool_RNA_CT_value, 
     Stool_RNA_ddPCR :$Stool_RNA_ddPCR, 
     Stool_RNA_ddPCR_value :$Stool_RNA_ddPCR_value
-    }
-  })
-}`;
+    }})
+  {uninfectedInventory{
+    Record_ID
+  }}}`;
 
 export const GetQuestions = gql`
 query{
@@ -559,7 +572,6 @@ query{
   export const GetPatient_metadata = gql`
   query{
     patientMetadata{
-      id,
       Record_ID, 
       Consent_date, 
       Date_of_Positive_SARSCOV2_PCR, 
@@ -738,7 +750,6 @@ query{
 export const GetUninfected_Metadata = gql`
 query{
   uninfectedMetadata {
-    id
     Record_ID
     Disease_severity_category
     Age
@@ -768,7 +779,6 @@ query{
 export const GetUninfected_Inventories = gql`
 query{
   uninfectedInventories{  
-  	id, 
     Record_ID, 
     visit_count, 
     Date_of_Positive_SARS_COV2_PCR, 
