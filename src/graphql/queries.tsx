@@ -49,108 +49,110 @@ mutation(
       $How_many_other_individuals_are_in_the_participants_household: Int
       $Zipcode:Int
       $Date_of_first_collection:Date
-      $Number_of_days_between_PCR_plus_and_first_collection: Int
-      $Date_of_second_collection:Date
-      $Number_of_days_between_PCR_plus_and_second_collection: Int
-      $Date_of_third_collection:Date
-      $Number_of_days_between_PCR_plus_and_third_collection:Int
-      $Date_of_fourth_collection:Date
-      $Number_of_days_between_PCR_plus_and_fourth_collection:Int
-      $Date_of_fifth_collection:Date
-      $Number_of_days_between_PCR_plus_and_fifth_collection: Int
-      $Hospitalized: Int
-      $Intubation: Int
-      $Oxygen_used_at_hospital: Float
-      $If_yes_how_much_oxygen: Float
-      $Diagnosed_with_DVT_or_PE_clot_after_diagnosis: Int
-      $If_yes_to_VTE_was_it_a_PE_or_DVT: String
-      $If_yes_to_DVT_locations_RLE_RUE_LLE_and_LUE: String
-      $Medications_Taking_at_Time_of_COVID19_diagnosis:String
-      $Past_Medical_History: String
-      $Other_Complications: String
-      $convalescent_plasma:Int
-      $first_dose_conval_plasma: Date
-      $Initial_COVID_Symptoms:String
-      $visit_count:Int
-      $Visit_date:Date
-      $days_post_PCR:Int
-      $No_PASC_is_0_PASC_is_1:Int
-      $any_symptoms:Int
-      $headache:Int
-      $dizziness:Int
-      $loss_of_consciousness:Int
-      $deafness:Int
-      $numbness_in_extremities:Int 
-      $tingling_inextremities:Int
-      $burning_sensation_in_extremities:Int
-      $loss_of_taste_if_yes_for_how_long: Int
-      $loss_of_smell_if_yes_for_how_long:Int
-      $change_in_taste:Int
-      $forgetful_or_absent_minded:Int
-      $confusion:Int
-      $difficulty_concentrating:Int
-      $eye_pain:Int
-      $eye_redness: Int
-      $eye_tearing:Int
-      $light_sensitivity:Int
-      $floaters :Int
-      $loss_of_vision:Int 
-      $blurry_vision:Int
-      $flashes_of_light: Int
-      $eye_burning : Int
-      $sore_throat:Int
-      $runny_nose_or_congestestion:Int
-      $sinusitis:Int
-      $facial_pressure:Int 
-      $neck_pain:Int
-      $mouth_sores: Int
-      $palpitations:Int
-      $chest_pain :Int
-      $lower_extremity_swelling:Int 
-      $chest_burning:Int
-      $chest_pressure:Int
-      $rapid_heart_rate:Int
-      $difficulty_breathing_dyspnea:Int 
-      $cough:Int
-      $phlegm_in_back_of_throat:Int 
-      $wheezing :Int
-      $abdominal_pain:Int 
-      $diarrhea:Int
-      $nausea:Int
-      $reflux:Int
-      $constipation:Int
-      $vomiting:Int
-      $rash:Int
-      $easy_bruising:Int
-      $dry_skin:Int
-      $itching :Int
-      $jaundice:Int
-      $muscleor_body_aches_myalgia:Int
-      $exercise_intolerance:Int
-      $joint_pain :Int
-      $weakness :Int
-      $back_pain :Int
-      $erectile_dysfunction:Int
-      $amenorrhea :Int
-      $fevers : Int
-      $fatigue :Int
-      $appetite_loss:Int
-      $anxiety :Int
-      $depression: Int
-      $difficulty_sleeping:Int
-      $bleeding:Int
-      $clot: Int
-      $hair_loss:Int
-      $night_sweats:Int
-      $Other :Int
-      $Other_text: String
-      $Are_you_seeing_a_physician_for_these_symptoms: String
-      $What_medications_are_you_taking_for_these_symptoms:String
-      $Have_you_received_the_vaccine:Int
-      $Pfizer1_Moderna2_astrazenaca3_other4:Int
-      $date_of_first_vaccine:Date
-      $Did_you_receive_the_second_dose:Int
-      $date_of_second_vaccine:Date
+     $Number_of_days_between_PCR_plus_and_first_collection: Int
+     $Date_of_second_collection:Date
+     $Number_of_days_between_PCR_plus_and_second_collection: Int
+     $Date_of_third_collection:Date
+     $Number_of_days_between_PCR_plus_and_third_collection:Int
+     $Date_of_fourth_collection:Date
+     $Number_of_days_between_PCR_plus_and_fourth_collection:Int
+     $Date_of_fifth_collection:Date
+     $Number_of_days_between_PCR_plus_and_fifth_collection: Int
+     $Hospitalized: Int
+     $Intubation: Int
+     $Oxygen_used_at_hospital: Float
+     $If_yes_how_much_oxygen: Float
+     $Diagnosed_with_DVT_or_PE_clot_after_diagnosis: Int
+     $If_yes_to_VTE_was_it_a_PE_or_DVT: String
+     $If_yes_to_DVT_locations_RLE_RUE_LLE_and_LUE: String
+     $Medications_Taking_at_Time_of_COVID19_diagnosis:String
+     $Past_Medical_History: String
+     $Other_Complications: String
+     $convalescent_plasma:Int
+     $first_dose_conval_plasma: Date
+     $Initial_COVID_Symptoms:String
+     $visit_count:Int
+     $Visit_date:Date
+     $days_post_PCR:Int
+     $No_PASC_is_0_PASC_is_1:Int
+     $any_symptoms:Int
+     $headache:Int
+     $dizziness:Int
+     $loss_of_consciousness:Int
+     $deafness:Int
+     $numbness_in_extremities:Int
+     $tingling_inextremities:Int
+     $burning_sensation_in_extremities:Int
+     $loss_of_taste_if_yes_for_how_long: Int
+     $loss_of_smell_if_yes_for_how_long:Int
+     $change_in_taste:Int
+     $forgetful_or_absent_minded:Int
+     $confusion:Int
+     $difficulty_concentrating:Int
+     $eye_pain:Int
+     $eye_redness: Int
+     $eye_tearing:Int
+     $light_sensitivity:Int
+     $floaters :Int
+     $loss_of_vision:Int
+     $blurry_vision:Int
+     $flashes_of_light: Int
+     $eye_burning : Int
+     $sore_throat:Int
+     $runny_nose_or_congestestion:Int
+     $sinusitis:Int
+     $facial_pressure:Int
+     $neck_pain:Int
+     $mouth_sores: Int
+     $palpitations:Int
+     $chest_pain :Int
+     $lower_extremity_swelling:Int
+     $chest_burning:Int
+     $chest_pressure:Int
+     $rapid_heart_rate:Int
+     $difficulty_breathing_dyspnea:Int
+     $cough:Int
+     $phlegm_in_back_of_throat:Int
+     $wheezing :Int
+     $abdominal_pain:Int
+     $diarrhea:Int
+     $nausea:Int
+     $reflux:Int
+     $constipation:Int
+     $vomiting:Int
+     $rash:Int
+     $easy_bruising:Int
+     $dry_skin:Int
+     $itching :Int
+     $jaundice:Int
+     $muscleor_body_aches_myalgia:Int
+     $exercise_intolerance:Int
+     $joint_pain :Int
+     $weakness :Int
+     $back_pain :Int
+     $erectile_dysfunction:Int
+     $amenorrhea :Int
+     $fevers : Int
+     $fatigue :Int
+     $appetite_loss:Int
+     $anxiety :Int
+     $depression: Int
+     $difficulty_sleeping:Int
+     $bleeding:Int
+     $clot: Int
+     $hair_loss:Int
+     $night_sweats:Int
+     $Other :Int
+     $Other_text: String
+     $Are_you_seeing_a_physician_for_these_symptoms: String
+     $What_medications_are_you_taking_for_these_symptoms:String
+     $Have_you_received_the_vaccine:Int
+     $Pfizer1_Moderna2_astrazenaca3_other4:Int
+     $date_of_first_vaccine:Date
+     $Did_you_receive_the_second_dose:Int
+     $date_of_second_vaccine:Date
+
+      
       
  
 ){
@@ -176,108 +178,112 @@ mutation(
     How_many_other_individuals_are_in_the_participants_household:$How_many_other_individuals_are_in_the_participants_household,
     Zipcode:$Zipcode,
     Date_of_first_collection:$Date_of_first_collection,
-    Number_of_days_between_PCR_plus_and_first_collection:$Number_of_days_between_PCR_plus_and_first_collection,
-    Date_of_second_collection:$Date_of_second_collection, 
-    Number_of_days_between_PCR_plus_and_second_collection:$Number_of_days_between_PCR_plus_and_second_collection,
-    Date_of_third_collection:$Date_of_third_collection, 
-    Number_of_days_between_PCR_plus_and_third_collection:$Number_of_days_between_PCR_plus_and_third_collection,
-    Date_of_fourth_collection:$Date_of_fourth_collection, 
-    Number_of_days_between_PCR_plus_and_fourth_collection:$Number_of_days_between_PCR_plus_and_fourth_collection,
-    Date_of_fifth_collection:$Date_of_fifth_collection, 
-    Number_of_days_between_PCR_plus_and_fifth_collection:$Number_of_days_between_PCR_plus_and_fifth_collection, 
-    Hospitalized:$Hospitalized,
-    Intubation:$Intubation,
-    Oxygen_used_at_hospital:$Oxygen_used_at_hospital,
-    If_yes_how_much_oxygen: $If_yes_how_much_oxygen,
-    Diagnosed_with_DVT_or_PE_clot_after_diagnosis:$Diagnosed_with_DVT_or_PE_clot_after_diagnosis,
-    If_yes_to_VTE_was_it_a_PE_or_DVT:$If_yes_to_VTE_was_it_a_PE_or_DVT,
-    If_yes_to_DVT_locations_RLE_RUE_LLE_and_LUE:$If_yes_to_DVT_locations_RLE_RUE_LLE_and_LUE,
-    Medications_Taking_at_Time_of_COVID19_diagnosis:$Medications_Taking_at_Time_of_COVID19_diagnosis,
-    Past_Medical_History: $Past_Medical_History, 
-    Other_Complications:$Other_Complications, 
-    convalescent_plasma:$convalescent_plasma, 
-    first_dose_conval_plasma:$first_dose_conval_plasma, 
-    Initial_COVID_Symptoms:$Initial_COVID_Symptoms,
-    visit_count:$visit_count, 
-    Visit_date:$Visit_date, 
-    days_post_PCR:$days_post_PCR,
-    No_PASC_is_0_PASC_is_1:$No_PASC_is_0_PASC_is_1,
-    any_symptoms:$any_symptoms, 
-    headache: $headache,
-    dizziness:$dizziness, 
-    loss_of_consciousness: $loss_of_consciousness,
-    deafness:$deafness,
-    numbness_in_extremities:$numbness_in_extremities, 
-    tingling_inextremities:$tingling_inextremities,
-    burning_sensation_in_extremities:$burning_sensation_in_extremities,
-    loss_of_taste_if_yes_for_how_long:$loss_of_taste_if_yes_for_how_long, 
-    loss_of_smell_if_yes_for_how_long:$loss_of_smell_if_yes_for_how_long,
-    change_in_taste:$change_in_taste, 
-    forgetful_or_absent_minded:$forgetful_or_absent_minded,
-    confusion:$confusion, 
-    difficulty_concentrating:$difficulty_concentrating,
-    eye_pain:$eye_pain,
-    eye_redness:$eye_redness, 
-    eye_tearing:$eye_tearing,
-    light_sensitivity:$light_sensitivity,
-    floaters:$floaters, 
-    loss_of_vision:$loss_of_vision, 
-    blurry_vision:$blurry_vision,
-    flashes_of_light:$flashes_of_light,
-    eye_burning:$eye_burning, 
-    sore_throat:$sore_throat,
-    runny_nose_or_congestestion:$runny_nose_or_congestestion,
-    sinusitis:$sinusitis,
-    facial_pressure:$facial_pressure, 
-    neck_pain:$neck_pain,
-    mouth_sores:$mouth_sores, 
-    palpitations:$palpitations,
-    chest_pain:$chest_pain, 
-    lower_extremity_swelling:$lower_extremity_swelling, 
-    chest_burning:$chest_burning,
-    chest_pressure:$chest_pressure,
-    rapid_heart_rate:$rapid_heart_rate,
-    difficulty_breathing_dyspnea:$difficulty_breathing_dyspnea, 
-    cough:$cough,
-    phlegm_in_back_of_throat:$phlegm_in_back_of_throat, 
-    wheezing:$wheezing, 
-    abdominal_pain:$abdominal_pain, 
-    diarrhea:$diarrhea,
-    nausea: $nausea,
-    reflux:$reflux,
-    constipation:$constipation,
-    vomiting:$vomiting,
-    rash:$rash,
-    easy_bruising:$easy_bruising,
-    dry_skin:$dry_skin,
-    itching:$itching, 
-    jaundice:$jaundice,
-    muscleor_body_aches_myalgia:$muscleor_body_aches_myalgia,
-    exercise_intolerance:$exercise_intolerance,
-    joint_pain:$joint_pain, 
-    weakness:$weakness, 
-    back_pain:$back_pain, 
-    erectile_dysfunction:$erectile_dysfunction,
-    amenorrhea:$amenorrhea, 
-    fevers: $fevers, 
-    fatigue:$fatigue, 
-    appetite_loss:$appetite_loss,
-    anxiety:$anxiety, 
-    depression:$depression, 
-    difficulty_sleeping:$difficulty_sleeping,
-    bleeding:$bleeding,
-    clot:$clot, 
-    hair_loss:$hair_loss,
-    night_sweats:$night_sweats,
-    Other:$Other, 
-    Other_text:$Other_text,
-    Are_you_seeing_a_physician_for_these_symptoms: $Are_you_seeing_a_physician_for_these_symptoms,
-    What_medications_are_you_taking_for_these_symptoms:$What_medications_are_you_taking_for_these_symptoms,
-    Have_you_received_the_vaccine: $Have_you_received_the_vaccine,
-    Pfizer1_Moderna2_astrazenaca3_other4: $Pfizer1_Moderna2_astrazenaca3_other4,
-    date_of_first_vaccine: $date_of_first_vaccine,
-    Did_you_receive_the_second_dose:$Did_you_receive_the_second_dose,
-    date_of_second_vaccine: $date_of_second_vaccine
+   Number_of_days_between_PCR_plus_and_first_collection:$Number_of_days_between_PCR_plus_and_first_collection,
+   Date_of_second_collection:$Date_of_second_collection,
+   Number_of_days_between_PCR_plus_and_second_collection:$Number_of_days_between_PCR_plus_and_second_collection,
+   Date_of_third_collection:$Date_of_third_collection,
+   Number_of_days_between_PCR_plus_and_third_collection:$Number_of_days_between_PCR_plus_and_third_collection,
+   Date_of_fourth_collection:$Date_of_fourth_collection,
+   Number_of_days_between_PCR_plus_and_fourth_collection:$Number_of_days_between_PCR_plus_and_fourth_collection,
+   Date_of_fifth_collection:$Date_of_fifth_collection,
+   Number_of_days_between_PCR_plus_and_fifth_collection:$Number_of_days_between_PCR_plus_and_fifth_collection,
+   Hospitalized:$Hospitalized,
+   Intubation:$Intubation,
+   Oxygen_used_at_hospital:$Oxygen_used_at_hospital,
+   If_yes_how_much_oxygen: $If_yes_how_much_oxygen,
+   Diagnosed_with_DVT_or_PE_clot_after_diagnosis:$Diagnosed_with_DVT_or_PE_clot_after_diagnosis,
+   If_yes_to_VTE_was_it_a_PE_or_DVT:$If_yes_to_VTE_was_it_a_PE_or_DVT,
+   If_yes_to_DVT_locations_RLE_RUE_LLE_and_LUE:$If_yes_to_DVT_locations_RLE_RUE_LLE_and_LUE,
+   Medications_Taking_at_Time_of_COVID19_diagnosis:$Medications_Taking_at_Time_of_COVID19_diagnosis,
+   Past_Medical_History: $Past_Medical_History,
+   Other_Complications:$Other_Complications,
+   convalescent_plasma:$convalescent_plasma,
+   first_dose_conval_plasma:$first_dose_conval_plasma,
+   Initial_COVID_Symptoms:$Initial_COVID_Symptoms,
+   visit_count:$visit_count,
+   Visit_date:$Visit_date,
+   days_post_PCR:$days_post_PCR,
+   No_PASC_is_0_PASC_is_1:$No_PASC_is_0_PASC_is_1,
+   any_symptoms:$any_symptoms,
+   headache: $headache,
+   dizziness:$dizziness,
+   loss_of_consciousness: $loss_of_consciousness,
+   deafness:$deafness,
+   numbness_in_extremities:$numbness_in_extremities,
+   tingling_inextremities:$tingling_inextremities,
+   burning_sensation_in_extremities:$burning_sensation_in_extremities,
+   loss_of_taste_if_yes_for_how_long:$loss_of_taste_if_yes_for_how_long,
+   loss_of_smell_if_yes_for_how_long:$loss_of_smell_if_yes_for_how_long,
+   change_in_taste:$change_in_taste,
+   forgetful_or_absent_minded:$forgetful_or_absent_minded,
+   confusion:$confusion,
+   difficulty_concentrating:$difficulty_concentrating,
+   eye_pain:$eye_pain,
+   eye_redness:$eye_redness,
+   eye_tearing:$eye_tearing,
+   light_sensitivity:$light_sensitivity,
+   floaters:$floaters,
+   loss_of_vision:$loss_of_vision,
+   blurry_vision:$blurry_vision,
+   flashes_of_light:$flashes_of_light,
+   eye_burning:$eye_burning,
+   sore_throat:$sore_throat,
+   runny_nose_or_congestestion:$runny_nose_or_congestestion,
+   sinusitis:$sinusitis,
+   facial_pressure:$facial_pressure,
+   neck_pain:$neck_pain,
+   mouth_sores:$mouth_sores,
+   palpitations:$palpitations,
+   chest_pain:$chest_pain,
+   lower_extremity_swelling:$lower_extremity_swelling,
+   chest_burning:$chest_burning,
+   chest_pressure:$chest_pressure,
+   rapid_heart_rate:$rapid_heart_rate,
+   difficulty_breathing_dyspnea:$difficulty_breathing_dyspnea,
+   cough:$cough,
+   phlegm_in_back_of_throat:$phlegm_in_back_of_throat,
+   wheezing:$wheezing,
+   abdominal_pain:$abdominal_pain,
+   diarrhea:$diarrhea,
+   nausea: $nausea,
+   reflux:$reflux,
+   constipation:$constipation,
+   vomiting:$vomiting,
+   rash:$rash,
+   easy_bruising:$easy_bruising,
+   dry_skin:$dry_skin,
+   itching:$itching,
+   jaundice:$jaundice,
+   muscleor_body_aches_myalgia:$muscleor_body_aches_myalgia,
+   exercise_intolerance:$exercise_intolerance,
+   joint_pain:$joint_pain,
+   weakness:$weakness,
+   back_pain:$back_pain,
+   erectile_dysfunction:$erectile_dysfunction,
+   amenorrhea:$amenorrhea,
+   fevers: $fevers,
+   fatigue:$fatigue,
+   appetite_loss:$appetite_loss,
+   anxiety:$anxiety,
+   depression:$depression,
+   difficulty_sleeping:$difficulty_sleeping,
+   bleeding:$bleeding,
+   clot:$clot,
+   hair_loss:$hair_loss,
+   night_sweats:$night_sweats,
+   Other:$Other,
+   Other_text:$Other_text,
+   Are_you_seeing_a_physician_for_these_symptoms: $Are_you_seeing_a_physician_for_these_symptoms,
+   What_medications_are_you_taking_for_these_symptoms:$What_medications_are_you_taking_for_these_symptoms,
+   Have_you_received_the_vaccine: $Have_you_received_the_vaccine,
+   Pfizer1_Moderna2_astrazenaca3_other4: $Pfizer1_Moderna2_astrazenaca3_other4,
+   date_of_first_vaccine: $date_of_first_vaccine,
+   Did_you_receive_the_second_dose:$Did_you_receive_the_second_dose,
+   date_of_second_vaccine: $date_of_second_vaccine
+
+
+    
+    
     
   }}){
       patientMetadatum{
