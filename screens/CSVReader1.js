@@ -10,17 +10,17 @@ import {
   UploadPatient_metadata, UploadPatient_Inventories,UploadUninfected_Metadata,UploadUninfected_Inventory,addPatient_Inventories
 } from "../src/graphql/queries";
 
- 
 import { useMutation } from "@apollo/client";
+import {a,homeScreen} from './homeScreen';
 const buttonRef = React.createRef();
 const apolloClient = client;
 var temp;
 export default function CSVReader1 () {
  
- const [addPatient_metadata, { data1, loading1, error1 }] = useMutation(UploadPatient_metadata)
- const [addPatient_Inventories, { data2, loading2, error2 }] = useMutation(UploadPatient_Inventories)
- const [addUninfected_metadata, { data3, loading3, error3 }] = useMutation(UploadUninfected_Metadata)
- const [addUninfected_Inventory, {data4,loading4, error4}] = useMutation(UploadUninfected_Inventory)
+ var [addPatient_metadata, { data, loading, error }] = useMutation(UploadPatient_metadata)
+ var [addPatient_Inventories, { data, loading, error }] = useMutation(UploadPatient_Inventories)
+ var [addUninfected_metadata, { data, loading, error }] = useMutation(UploadUninfected_Metadata)
+ var [addUninfected_Inventory, {data,loading, error}] = useMutation(UploadUninfected_Inventory)
  const [TableNumber,setTableNumber] = useState(1);
  const itemValues = ['Patient_Metadata','Uninfected_Metadata','Patient_Inventory','Uninfected_Inventory']
    
@@ -34,18 +34,24 @@ export default function CSVReader1 () {
  
  
  const handleOnFileLoad = (data) => {
-  switch(itemValues) {
-
-    case "Patient_Metadata":   
+  switch(a){
+    case 1 :
+      console.log("a1",a)
       return uploadData1(data);
-    case "Patient_Inventory":   
+    case 2 :
+      console.log("a2",a)
       return uploadData2(data);
-    default:      
-      return null;
-  }
+    case 3 :
+      console.log("a3",a)
+      return uploadData3(data);
+    case 4 :
+      console.log("a1",a)
+      return uploadData4(data);
+
+  }  
  };
 
- const uploadData1 = (data1) =>{
+ const uploadData1 = (data) =>{
  var Record_ID
  var Consent_date
  var Date_of_Positive_SARSCOV2_PCR
@@ -171,9 +177,9 @@ export default function CSVReader1 () {
  var date_of_second_vaccine
 
  
- for(var i = 1; i<data1.length-1; i++){
+ for(var i = 1; i<data.length-1; i++){
   
-   temp = data1[i].data
+   temp = data[i].data
   
    try{
      Record_ID = temp[0]
@@ -441,168 +447,168 @@ export default function CSVReader1 () {
 };
 
 
- //declaring variables and parsing for Table2
-//    const uploadData2 = (data2) =>{
-//    var record_id;
-//    var visit_count;
-//    var Date_of_positive_SARS_COV2_PCR;
-//    var date_of_first_collection ;
-//    var number_of_days_betwen_PCR_plus_and_first_collection;
-//    var platelet_panel_1;
-//    var platelet_panel_2;
-//    var platelet_panel_3;
-//    var whole_blood_panel;
-//    var PBMC_panel ;
-//    var plasma ;
-//    var plasma_tubes;
-//    var plasma_ul_per_tube;
-//    var serum;
-//    var serum_tubes;
-//    var serum_ul_per_tube ;
-//    var PBMC_tubes;
-//    var PBMC_location;
-//    var cell_count_per_tube ;
-//    var cell_count_total ;
-//    var NP_tubes ;
-//    var NP_storage;
-//    var NP_PCR_Result;
-//    var NP_CT_value ;
-//    var NP_Plaque_Assay_Titer_PFU_per_ml;
-//    var NP_Plaque_Assay_Ct_Value ;
-//    var Saliva_sample_No ;
-//    var saliva_sample_No_VTM_number_of_tubes ;
-//    var Saliva_Sample_No_VTM_ul_amount_per_tube;
-//    var Saliva_sample_with_VTM;
-//    var Saliva_plus_VTM_tubes ;
-//    var Saliva_plus_VTM_storage_box ;
-//    var Saliva_PCR_Results;
-//    var Saliva_CT_value;
-//    var Saliva_Plaque_Assay_Titer_PFU_per_ml;
-//    var Saliva_Plaque_Assay_Ct_Value;
-//    var Stool_Sample ;
-//    var Stool_Tube_number ;
-//    var Stool_deidentification_number ;
-//    var Stool_RNA_PCR ;
-//    var Stool_RNA_CT_value ;
-//    var Stool_RNA_ddPCR;
-//    var Stool_RNA_ddPCR_value;
+// declaring variables and parsing for Table2
+   const uploadData2 = (data) =>{
+   var record_id;
+   var visit_count;
+   var Date_of_positive_SARS_COV2_PCR;
+   var date_of_first_collection ;
+   var number_of_days_betwen_PCR_plus_and_first_collection;
+   var platelet_panel_1;
+   var platelet_panel_2;
+   var platelet_panel_3;
+   var whole_blood_panel;
+   var PBMC_panel ;
+   var plasma ;
+   var plasma_tubes;
+   var plasma_ul_per_tube;
+   var serum;
+   var serum_tubes;
+   var serum_ul_per_tube ;
+   var PBMC_tubes;
+   var PBMC_location;
+   var cell_count_per_tube ;
+   var cell_count_total ;
+   var NP_tubes ;
+   var NP_storage;
+   var NP_PCR_Result;
+   var NP_CT_value ;
+   var NP_Plaque_Assay_Titer_PFU_per_ml;
+   var NP_Plaque_Assay_Ct_Value ;
+   var Saliva_sample_No ;
+   var saliva_sample_No_VTM_number_of_tubes ;
+   var Saliva_Sample_No_VTM_ul_amount_per_tube;
+   var Saliva_sample_with_VTM;
+   var Saliva_plus_VTM_tubes ;
+   var Saliva_plus_VTM_storage_box ;
+   var Saliva_PCR_Results;
+   var Saliva_CT_value;
+   var Saliva_Plaque_Assay_Titer_PFU_per_ml;
+   var Saliva_Plaque_Assay_Ct_Value;
+   var Stool_Sample ;
+   var Stool_Tube_number ;
+   var Stool_deidentification_number ;
+   var Stool_RNA_PCR ;
+   var Stool_RNA_CT_value ;
+   var Stool_RNA_ddPCR;
+   var Stool_RNA_ddPCR_value;
   
-//  // $Record_ID:String
+ // $Record_ID:String
  
-//  for(var i = 1; i<data2.length-1; i++){
-//    try{
-//     temp = data2[i].data
-//     record_id = temp[0]
-//     visit_count = parseInt(temp[1])
-//     Date_of_positive_SARS_COV2_PCR = new Date(temp[2]).toISOString().slice(0, 10)
-//     date_of_first_collection =  new Date(temp[3]).toISOString().slice(0, 10)
-//     number_of_days_betwen_PCR_plus_and_first_collection =  parseInt(temp[4])
-//     platelet_panel_1 = parseInt(temp[5])
-//     platelet_panel_2 =  parseInt(temp[6])
-//     platelet_panel_3 = parseInt(temp[7])
-//     whole_blood_panel =  parseInt(temp[8])
-//     PBMC_panel =  parseInt(temp[9])
-//     plasma =  parseInt(temp[10])
-//     plasma_tubes =  parseInt(temp[11])
-//     plasma_ul_per_tube =  parseInt(temp[12])
-//     serum=  parseInt(temp[13])
-//     serum_tubes =  parseInt(temp[14])
-//     serum_ul_per_tube =  parseInt(temp[15])
-//     PBMC_tubes =  parseInt(temp[16])
-//     PBMC_location = temp[17]
-//     cell_count_per_tube =  parseInt(temp[18])
-//     cell_count_total =  parseInt(temp[19])
-//     NP_tubes =  parseInt(temp[20])
-//     NP_storage =  parseInt(temp[21])
-//     NP_PCR_Result =  parseInt(temp[22])
-//     NP_CT_value =  parseFloat(temp[23])
-//     NP_Plaque_Assay_Titer_PFU_per_ml =  parseInt(temp[24])
-//     NP_Plaque_Assay_Ct_Value =  parseFloat(temp[25])
-//     Saliva_sample_No =  parseInt(temp[26])
-//     saliva_sample_No_VTM_number_of_tubes =  parseInt(temp[27])
-//     Saliva_Sample_No_VTM_ul_amount_per_tube =  parseInt(temp[28])
-//     Saliva_sample_with_VTM =  parseInt(temp[29])
-//     Saliva_plus_VTM_tubes =  parseInt(temp[30])
-//     Saliva_plus_VTM_storage_box =  parseInt(temp[31])
-//     Saliva_PCR_Results =  parseInt(temp[32])
-//     Saliva_CT_value= parseFloat(temp[33])
-//     Saliva_Plaque_Assay_Titer_PFU_per_ml =  parseInt(temp[34])
-//     Saliva_Plaque_Assay_Ct_Value =  parseFloat(temp[35])
-//     Stool_Sample =  parseInt(temp[36])
-//     Stool_Tube_number =  parseInt(temp[37])
-//     Stool_deidentification_number = temp[38]
-//     Stool_RNA_PCR =  parseInt(temp[39])
-//     Stool_RNA_CT_value =  parseFloat(temp[40])
-//     Stool_RNA_ddPCR =  parseInt(temp[41])
-//     Stool_RNA_ddPCR_value=  parseFloat(temp[42])
+ for(var i = 1; i<data.length-1; i++){
+   try{
+    temp = data[i].data
+    record_id = temp[0]
+    visit_count = parseInt(temp[1])
+    Date_of_positive_SARS_COV2_PCR = new Date(temp[2]).toISOString().slice(0, 10)
+    date_of_first_collection =  new Date(temp[3]).toISOString().slice(0, 10)
+    number_of_days_betwen_PCR_plus_and_first_collection =  parseInt(temp[4])
+    platelet_panel_1 = parseInt(temp[5])
+    platelet_panel_2 =  parseInt(temp[6])
+    platelet_panel_3 = parseInt(temp[7])
+    whole_blood_panel =  parseInt(temp[8])
+    PBMC_panel =  parseInt(temp[9])
+    plasma =  parseInt(temp[10])
+    plasma_tubes =  parseInt(temp[11])
+    plasma_ul_per_tube =  parseInt(temp[12])
+    serum=  parseInt(temp[13])
+    serum_tubes =  parseInt(temp[14])
+    serum_ul_per_tube =  parseInt(temp[15])
+    PBMC_tubes =  parseInt(temp[16])
+    PBMC_location = temp[17]
+    cell_count_per_tube =  parseInt(temp[18])
+    cell_count_total =  parseInt(temp[19])
+    NP_tubes =  parseInt(temp[20])
+    NP_storage =  parseInt(temp[21])
+    NP_PCR_Result =  parseInt(temp[22])
+    NP_CT_value =  parseFloat(temp[23])
+    NP_Plaque_Assay_Titer_PFU_per_ml =  parseInt(temp[24])
+    NP_Plaque_Assay_Ct_Value =  parseFloat(temp[25])
+    Saliva_sample_No =  parseInt(temp[26])
+    saliva_sample_No_VTM_number_of_tubes =  parseInt(temp[27])
+    Saliva_Sample_No_VTM_ul_amount_per_tube =  parseInt(temp[28])
+    Saliva_sample_with_VTM =  parseInt(temp[29])
+    Saliva_plus_VTM_tubes =  parseInt(temp[30])
+    Saliva_plus_VTM_storage_box =  parseInt(temp[31])
+    Saliva_PCR_Results =  parseInt(temp[32])
+    Saliva_CT_value= parseFloat(temp[33])
+    Saliva_Plaque_Assay_Titer_PFU_per_ml =  parseInt(temp[34])
+    Saliva_Plaque_Assay_Ct_Value =  parseFloat(temp[35])
+    Stool_Sample =  parseInt(temp[36])
+    Stool_Tube_number =  parseInt(temp[37])
+    Stool_deidentification_number = temp[38]
+    Stool_RNA_PCR =  parseInt(temp[39])
+    Stool_RNA_CT_value =  parseFloat(temp[40])
+    Stool_RNA_ddPCR =  parseInt(temp[41])
+    Stool_RNA_ddPCR_value=  parseFloat(temp[42])
   
-//    }
-//   catch {
-//      record_id = "going in catch block"
-//     // Date_of_positive_SARS_COV2_PCR= 7/12/2020
+   }
+  catch {
+     record_id = "going in catch block"
+    // Date_of_positive_SARS_COV2_PCR= 7/12/2020
     
-//    }
+   }
  
-// //// Assigning values to variables Table2
-//  addPatient_Inventories({
+//// Assigning values to variables Table2
+ addPatient_Inventories({
 
-//    variables: {
-//     record_id : record_id ,
-//     visit_count : visit_count,
-//      Date_of_positive_SARS_COV2_PCR : Date_of_positive_SARS_COV2_PCR,
-//      date_of_first_collection : date_of_first_collection,
-//      number_of_days_betwen_PCR_plus_and_first_collection : number_of_days_betwen_PCR_plus_and_first_collection,
-//     platelet_panel_1  : platelet_panel_1,
-//     platelet_panel_2 : platelet_panel_2,
-//     platelet_panel_3 :platelet_panel_3,
-//     whole_blood_panel: whole_blood_panel,Date_of_positive_SARS_COV2_PCR,
-//     PBMC_panel :PBMC_panel,
-//     plasma : plasma,
-//     plasma_tubes :plasma_tubes,
-//     plasma_ul_per_tube : plasma_ul_per_tube,
-//     serum :serum,
-//     serum_tubes :serum_tubes,
-//     serum_ul_per_tube : serum_ul_per_tube,
-//     PBMC_tubes:PBMC_tubes,
-//     PBMC_location :PBMC_location,
-//     cell_count_per_tube : cell_count_per_tube,
-//     cell_count_total :cell_count_total,
-//     NP_tubes :NP_tubes,
-//     NP_storage :NP_storage,
-//     NP_PCR_Result :NP_PCR_Result,
-//     NP_CT_value :NP_CT_value,
-//     NP_Plaque_Assay_Titer_PFU_per_ml : NP_Plaque_Assay_Titer_PFU_per_ml,
-//     NP_Plaque_Assay_Ct_Value :NP_Plaque_Assay_Ct_Value,
-//     Saliva_sample_No :Saliva_sample_No,
-//     saliva_sample_No_VTM_number_of_tubes :saliva_sample_No_VTM_number_of_tubes,
-//     Saliva_Sample_No_VTM_ul_amount_per_tube : Saliva_Sample_No_VTM_ul_amount_per_tube,
-//     Saliva_sample_with_VTM : Saliva_sample_with_VTM,
-//     Saliva_plus_VTM_tubes  : Saliva_plus_VTM_tubes,
-//     Saliva_plus_VTM_storage_box : Saliva_plus_VTM_storage_box,
-//     Saliva_PCR_Results : Saliva_PCR_Results,
-//     Saliva_CT_value : Saliva_CT_value,
-//     Saliva_Plaque_Assay_Titer_PFU_per_ml :  Saliva_Plaque_Assay_Titer_PFU_per_ml,
-//     Saliva_Plaque_Assay_Ct_Value : Saliva_Plaque_Assay_Ct_Value,
-//     Stool_Sample :Stool_Sample,
-//     Stool_Tube_number : Stool_Tube_number,
-//     Stool_deidentification_number : Stool_deidentification_number,
-//     Stool_RNA_PCR : Stool_RNA_PCR,
-//     Stool_RNA_CT_value :Stool_RNA_CT_value,
-//     Stool_RNA_ddPCR : Stool_RNA_ddPCR,
-//     Stool_RNA_ddPCR_value : Stool_RNA_ddPCR_value
+   variables: {
+    record_id : record_id ,
+    visit_count : visit_count,
+     Date_of_positive_SARS_COV2_PCR : Date_of_positive_SARS_COV2_PCR,
+     date_of_first_collection : date_of_first_collection,
+     number_of_days_betwen_PCR_plus_and_first_collection : number_of_days_betwen_PCR_plus_and_first_collection,
+    platelet_panel_1  : platelet_panel_1,
+    platelet_panel_2 : platelet_panel_2,
+    platelet_panel_3 :platelet_panel_3,
+    whole_blood_panel: whole_blood_panel,Date_of_positive_SARS_COV2_PCR,
+    PBMC_panel :PBMC_panel,
+    plasma : plasma,
+    plasma_tubes :plasma_tubes,
+    plasma_ul_per_tube : plasma_ul_per_tube,
+    serum :serum,
+    serum_tubes :serum_tubes,
+    serum_ul_per_tube : serum_ul_per_tube,
+    PBMC_tubes:PBMC_tubes,
+    PBMC_location :PBMC_location,
+    cell_count_per_tube : cell_count_per_tube,
+    cell_count_total :cell_count_total,
+    NP_tubes :NP_tubes,
+    NP_storage :NP_storage,
+    NP_PCR_Result :NP_PCR_Result,
+    NP_CT_value :NP_CT_value,
+    NP_Plaque_Assay_Titer_PFU_per_ml : NP_Plaque_Assay_Titer_PFU_per_ml,
+    NP_Plaque_Assay_Ct_Value :NP_Plaque_Assay_Ct_Value,
+    Saliva_sample_No :Saliva_sample_No,
+    saliva_sample_No_VTM_number_of_tubes :saliva_sample_No_VTM_number_of_tubes,
+    Saliva_Sample_No_VTM_ul_amount_per_tube : Saliva_Sample_No_VTM_ul_amount_per_tube,
+    Saliva_sample_with_VTM : Saliva_sample_with_VTM,
+    Saliva_plus_VTM_tubes  : Saliva_plus_VTM_tubes,
+    Saliva_plus_VTM_storage_box : Saliva_plus_VTM_storage_box,
+    Saliva_PCR_Results : Saliva_PCR_Results,
+    Saliva_CT_value : Saliva_CT_value,
+    Saliva_Plaque_Assay_Titer_PFU_per_ml :  Saliva_Plaque_Assay_Titer_PFU_per_ml,
+    Saliva_Plaque_Assay_Ct_Value : Saliva_Plaque_Assay_Ct_Value,
+    Stool_Sample :Stool_Sample,
+    Stool_Tube_number : Stool_Tube_number,
+    Stool_deidentification_number : Stool_deidentification_number,
+    Stool_RNA_PCR : Stool_RNA_PCR,
+    Stool_RNA_CT_value :Stool_RNA_CT_value,
+    Stool_RNA_ddPCR : Stool_RNA_ddPCR,
+    Stool_RNA_ddPCR_value : Stool_RNA_ddPCR_value
     
-//    }
+   }
  
-//  });
-// }
-//    };
+ });
+}
+   };
 
  
 //variables declaring and parsing values to table3
  
 
  
- /*const uploadData = (data3) =>{
+ const uploadData3 = (data) =>{
    var Record_ID;
    var Disease_severity_category;
    var Age;
@@ -626,8 +632,8 @@ export default function CSVReader1 () {
    var Comments;
   
  
- for(var i = 1; i<data3.length-1; i++){
-   temp = data3[i].data
+ for(var i = 1; i<data.length-1; i++){
+   temp = data[i].data
    // var pcr_plus_date = new Date(temp[2]).toISOString().slice(0, 10)?
    try{
     
@@ -662,7 +668,7 @@ export default function CSVReader1 () {
 
      Date_of_Birth = null
    }
- }
+ 
 
  
 ///////// Assigning values to table3
@@ -692,167 +698,167 @@ export default function CSVReader1 () {
    Comments: Comments,
    Age_range: Age_range
     }
- }
- )
+ } )
 }
+ }
 
-*/
+
  
 
 ///////// Variables Declaring and Parsing table4
 
-// const uploadData = (data4) =>{
+const uploadData4 = (data) =>{
  
-//    var Record_ID;
-//    var visit_count;
-//    var Date_of_Positive_SARS_COV2_PCR;
-//    var Date_of_first_collection;
-//    var number_of_days_between_PCR_plus_and_first_collection;
-//    var platelet_panel_1;
-//    var platelet_panel_2;
-//    var platelet_panel_3;
-//    var whole_blood_panel;
-//    var PBMC_panel;
-//    var Plasma ;
-//    var Plasma_tubes;
-//    var plasma_ul_per_tube;
-//    var Serum;
-//    var Serum_tubes;
-//    var Serum_ul_per_tube;
-//    var PBMC_tubes;
-//    var PBMC_location;
-//    var Cell_count_per_tube;
-//    var Cell_count_total;
-//    var NP_tubes;
-//    var NP_storage_box;
-//    var NP_PCR_Result;
-//    var NP_CT_value;
-//    var NP_Plaque_Assay_Titer_PFU_per_ml;
-//    var NP_Plaque_Assay_Ct_Value;
-//    var Saliva_Sample_No_VTM
-//    var Saliva_Sample_No_VTM_number_of_tubes;
-//    var Saliva_sample_No_VTM_ul_amount_per_tube;
-//    var Saliva_Sample_with_VTM;
-//    var Saliva_plus_VTM_tubes;
-//    var Saliva_plus_VTM_Storage_box;
-//    var Saliva_PCR_results;
-//    var Saliva_CT_value;
-//    var Saliva_Plaque_Assay_Titer_PFU_per_ml;
-//    var Saliva_Plaque_Assay_Ct_value;
-//    var Stool_Sample;
-//    var Stool_Tube_number;
-//    var Stool_deidentification_number;
-//    var Stool_RNA_PCR;
-//    var stool_RNA_CT_value;
-//    var Stool_RNA_ddPCR;
-//    var Stool_RNA_ddPCR_value;
+   var Record_ID;
+   var visit_count;
+   var Date_of_Positive_SARS_COV2_PCR;
+   var Date_of_first_collection;
+   var number_of_days_between_PCR_plus_and_first_collection;
+   var platelet_panel_1;
+   var platelet_panel_2;
+   var platelet_panel_3;
+   var whole_blood_panel;
+   var PBMC_panel;
+   var Plasma ;
+   var Plasma_tubes;
+   var plasma_ul_per_tube;
+   var Serum;
+   var Serum_tubes;
+   var Serum_ul_per_tube;
+   var PBMC_tubes;
+   var PBMC_location;
+   var Cell_count_per_tube;
+   var Cell_count_total;
+   var NP_tubes;
+   var NP_storage_box;
+   var NP_PCR_Result;
+   var NP_CT_value;
+   var NP_Plaque_Assay_Titer_PFU_per_ml;
+   var NP_Plaque_Assay_Ct_Value;
+   var Saliva_Sample_No_VTM
+   var Saliva_Sample_No_VTM_number_of_tubes;
+   var Saliva_sample_No_VTM_ul_amount_per_tube;
+   var Saliva_Sample_with_VTM;
+   var Saliva_plus_VTM_tubes;
+   var Saliva_plus_VTM_Storage_box;
+   var Saliva_PCR_results;
+   var Saliva_CT_value;
+   var Saliva_Plaque_Assay_Titer_PFU_per_ml;
+   var Saliva_Plaque_Assay_Ct_value;
+   var Stool_Sample;
+   var Stool_Tube_number;
+   var Stool_deidentification_number;
+   var Stool_RNA_PCR;
+   var stool_RNA_CT_value;
+   var Stool_RNA_ddPCR;
+   var Stool_RNA_ddPCR_value;
 
   
-// for(var i = 1; i<data4.length-1; i++){
-//  temp = data4[i].data
-//  //console.log(temp[0],"fa")
-//  try{
-//    Record_ID = temp[0]
-//    visit_count =  parseInt(temp[1])
-//    Date_of_Positive_SARS_COV2_PCR = new Date(temp[2]).toISOString().slice(0, 10)
-//    Date_of_first_collection = new Date(temp[3]).toISOString().slice(0, 10)
-//    number_of_days_between_PCR_plus_and_first_collection =  parseInt(temp[4])
-//    platelet_panel_1 =  parseInt(temp[5])
-//    platelet_panel_2 =  parseInt(temp[6])
-//    platelet_panel_3 =  parseInt(temp[7])
-//    whole_blood_panel=  parseInt(temp[8])
-//    PBMC_panel= parseInt(temp[9])
-//    Plasma = parseInt(temp[10])
-//    Plasma_tubes =  parseInt(temp[11])
-//    plasma_ul_per_tube =  parseInt(temp[12])
-//    Serum =  parseInt(temp[13])
-//    Serum_tubes =  parseInt(temp[14])
-//    Serum_ul_per_tube =  parseInt(temp[15])
-//    PBMC_tubes =  parseInt(temp[16])
-//    PBMC_location = temp[17]
-//    Cell_count_per_tube =  parseInt(temp[18])
-//    Cell_count_total =  parseInt(temp[19])
-//    NP_tubes =  parseInt(temp[20])
-//    NP_storage_box =  parseInt(temp[21])
-//    NP_PCR_Result =  parseInt(temp[22])
-//    NP_CT_value =  parseFloat(temp[23])
-//    NP_Plaque_Assay_Titer_PFU_per_ml= parseFloat(temp[24])
-//    NP_Plaque_Assay_Ct_Value =  parseFloat(temp[25])
-//    Saliva_Sample_No_VTM =  parseInt(temp[26])
-//    Saliva_Sample_No_VTM_number_of_tubes =  parseInt(temp[27])
-//    Saliva_sample_No_VTM_ul_amount_per_tube =  parseInt(temp[28])
-//    Saliva_Sample_with_VTM =  parseInt(temp[29])
-//    Saliva_plus_VTM_tubes =  parseInt(temp[30])
-//    Saliva_plus_VTM_Storage_box =  parseInt(temp[31])
-//    Saliva_PCR_results =  parseInt(temp[32])
-//    Saliva_CT_value =  parseFloat(temp[33])
-//    Saliva_Plaque_Assay_Titer_PFU_per_ml =  parseInt(temp[34])
-//    Saliva_Plaque_Assay_Ct_value =  parseFloat(temp[35])
-//    Stool_Sample =  parseFloat(temp[36])
-//    Stool_Tube_number =  parseFloat(temp[37])
-//    Stool_deidentification_number = temp[38]
-//    Stool_RNA_PCR =  parseFloat(temp[39])
-//    stool_RNA_CT_value =  parseFloat(temp[40])
-//    Stool_RNA_ddPCR =  parseInt(temp[41])
-//    Stool_RNA_ddPCR_value =  parseFloat(temp[42])
-//  }
-//  catch{
-//   Record_ID = "Enteringcatchblock"
-//  }
-// }
+for(var i = 1; i<data.length-1; i++){
+ temp = data[i].data
+ //console.log(temp[0],"fa")
+ try{
+   Record_ID = temp[0]
+   visit_count =  parseInt(temp[1])
+   Date_of_Positive_SARS_COV2_PCR = new Date(temp[2]).toISOString().slice(0, 10)
+   Date_of_first_collection = new Date(temp[3]).toISOString().slice(0, 10)
+   number_of_days_between_PCR_plus_and_first_collection =  parseInt(temp[4])
+   platelet_panel_1 =  parseInt(temp[5])
+   platelet_panel_2 =  parseInt(temp[6])
+   platelet_panel_3 =  parseInt(temp[7])
+   whole_blood_panel=  parseInt(temp[8])
+   PBMC_panel= parseInt(temp[9])
+   Plasma = parseInt(temp[10])
+   Plasma_tubes =  parseInt(temp[11])
+   plasma_ul_per_tube =  parseInt(temp[12])
+   Serum =  parseInt(temp[13])
+   Serum_tubes =  parseInt(temp[14])
+   Serum_ul_per_tube =  parseInt(temp[15])
+   PBMC_tubes =  parseInt(temp[16])
+   PBMC_location = temp[17]
+   Cell_count_per_tube =  parseInt(temp[18])
+   Cell_count_total =  parseInt(temp[19])
+   NP_tubes =  parseInt(temp[20])
+   NP_storage_box =  parseInt(temp[21])
+   NP_PCR_Result =  parseInt(temp[22])
+   NP_CT_value =  parseFloat(temp[23])
+   NP_Plaque_Assay_Titer_PFU_per_ml= parseFloat(temp[24])
+   NP_Plaque_Assay_Ct_Value =  parseFloat(temp[25])
+   Saliva_Sample_No_VTM =  parseInt(temp[26])
+   Saliva_Sample_No_VTM_number_of_tubes =  parseInt(temp[27])
+   Saliva_sample_No_VTM_ul_amount_per_tube =  parseInt(temp[28])
+   Saliva_Sample_with_VTM =  parseInt(temp[29])
+   Saliva_plus_VTM_tubes =  parseInt(temp[30])
+   Saliva_plus_VTM_Storage_box =  parseInt(temp[31])
+   Saliva_PCR_results =  parseInt(temp[32])
+   Saliva_CT_value =  parseFloat(temp[33])
+   Saliva_Plaque_Assay_Titer_PFU_per_ml =  parseInt(temp[34])
+   Saliva_Plaque_Assay_Ct_value =  parseFloat(temp[35])
+   Stool_Sample =  parseFloat(temp[36])
+   Stool_Tube_number =  parseFloat(temp[37])
+   Stool_deidentification_number = temp[38]
+   Stool_RNA_PCR =  parseFloat(temp[39])
+   stool_RNA_CT_value =  parseFloat(temp[40])
+   Stool_RNA_ddPCR =  parseInt(temp[41])
+   Stool_RNA_ddPCR_value =  parseFloat(temp[42])
+ }
+ catch{
+  Record_ID = "Enteringcatchblock"
+ }
+
  
-// ///assigning values for table4
+///assigning values for table4
  
-//  addUninfected_Inventory({
-//    variables: {
-//    Record_ID : Record_ID,
-//     visit_count : visit_count,
-//    Date_of_Positive_SARS_COV2_PCR : Date_of_Positive_SARS_COV2_PCR,
-//    Date_of_first_collection : Date_of_first_collection,
-//    number_of_days_between_PCR_plus_and_first_collection :number_of_days_between_PCR_plus_and_first_collection,
-//    platelet_panel_1 : platelet_panel_1,
-//    platelet_panel_2 : platelet_panel_2,
-//    platelet_panel_3 : platelet_panel_3,
-//    whole_blood_panel : whole_blood_panel,
-//    PBMC_panel : PBMC_panel,
-//    Plasma : Plasma,
-//    Plasma_tubes :Plasma_tubes,
-//    plasma_ul_per_tube : plasma_ul_per_tube,
-//    Serum : Serum,
-//    Serum_tubes : Serum_tubes,
-//    Serum_ul_per_tube : Serum_ul_per_tube,
-//    PBMC_tubes : PBMC_tubes,
-//    PBMC_location : PBMC_location,
-//    Cell_count_per_tube : Cell_count_per_tube,
-//    Cell_count_total : Cell_count_total,
-//    NP_tubes : NP_tubes,
-//    NP_storage_box : NP_storage_box,
-//    NP_PCR_Result : NP_PCR_Result,
-//    NP_CT_value : NP_CT_value,
-//    NP_Plaque_Assay_Titer_PFU_per_ml : NP_Plaque_Assay_Titer_PFU_per_ml,
-//    NP_Plaque_Assay_Ct_Value : NP_Plaque_Assay_Ct_Value,
-//    Saliva_Sample_No_VTM : Saliva_Sample_No_VTM,
-//    Saliva_Sample_No_VTM_number_of_tubes : Saliva_Sample_No_VTM_number_of_tubes,
-//    Saliva_sample_No_VTM_ul_amount_per_tube : Saliva_sample_No_VTM_ul_amount_per_tube,
-//    Saliva_Sample_with_VTM : Saliva_Sample_with_VTM,
-//    Saliva_plus_VTM_tubes : Saliva_plus_VTM_tubes,
-//    Saliva_plus_VTM_Storage_box : Saliva_plus_VTM_Storage_box,
-//    Saliva_PCR_results : Saliva_PCR_results,
-//    Saliva_CT_value : Saliva_CT_value,
-//    Saliva_Plaque_Assay_Titer_PFU_per_ml : Saliva_Plaque_Assay_Titer_PFU_per_ml,
-//    Saliva_Plaque_Assay_Ct_value : Saliva_Plaque_Assay_Ct_value,
-//    Stool_Sample : Stool_Sample,
-//    Stool_Tube_number : Stool_Tube_number,
-//    Stool_deidentification_number : Stool_deidentification_number,
-//    Stool_RNA_PCR : Stool_RNA_PCR,
-//    stool_RNA_CT_value : stool_RNA_CT_value,
-//    Stool_RNA_ddPCR : Stool_RNA_ddPCR,
-//    Stool_RNA_ddPCR_value : Stool_RNA_ddPCR_value
+ addUninfected_Inventory({
+   variables: {
+   Record_ID : Record_ID,
+    visit_count : visit_count,
+   Date_of_Positive_SARS_COV2_PCR : Date_of_Positive_SARS_COV2_PCR,
+   Date_of_first_collection : Date_of_first_collection,
+   number_of_days_between_PCR_plus_and_first_collection :number_of_days_between_PCR_plus_and_first_collection,
+   platelet_panel_1 : platelet_panel_1,
+   platelet_panel_2 : platelet_panel_2,
+   platelet_panel_3 : platelet_panel_3,
+   whole_blood_panel : whole_blood_panel,
+   PBMC_panel : PBMC_panel,
+   Plasma : Plasma,
+   Plasma_tubes :Plasma_tubes,
+   plasma_ul_per_tube : plasma_ul_per_tube,
+   Serum : Serum,
+   Serum_tubes : Serum_tubes,
+   Serum_ul_per_tube : Serum_ul_per_tube,
+   PBMC_tubes : PBMC_tubes,
+   PBMC_location : PBMC_location,
+   Cell_count_per_tube : Cell_count_per_tube,
+   Cell_count_total : Cell_count_total,
+   NP_tubes : NP_tubes,
+   NP_storage_box : NP_storage_box,
+   NP_PCR_Result : NP_PCR_Result,
+   NP_CT_value : NP_CT_value,
+   NP_Plaque_Assay_Titer_PFU_per_ml : NP_Plaque_Assay_Titer_PFU_per_ml,
+   NP_Plaque_Assay_Ct_Value : NP_Plaque_Assay_Ct_Value,
+   Saliva_Sample_No_VTM : Saliva_Sample_No_VTM,
+   Saliva_Sample_No_VTM_number_of_tubes : Saliva_Sample_No_VTM_number_of_tubes,
+   Saliva_sample_No_VTM_ul_amount_per_tube : Saliva_sample_No_VTM_ul_amount_per_tube,
+   Saliva_Sample_with_VTM : Saliva_Sample_with_VTM,
+   Saliva_plus_VTM_tubes : Saliva_plus_VTM_tubes,
+   Saliva_plus_VTM_Storage_box : Saliva_plus_VTM_Storage_box,
+   Saliva_PCR_results : Saliva_PCR_results,
+   Saliva_CT_value : Saliva_CT_value,
+   Saliva_Plaque_Assay_Titer_PFU_per_ml : Saliva_Plaque_Assay_Titer_PFU_per_ml,
+   Saliva_Plaque_Assay_Ct_value : Saliva_Plaque_Assay_Ct_value,
+   Stool_Sample : Stool_Sample,
+   Stool_Tube_number : Stool_Tube_number,
+   Stool_deidentification_number : Stool_deidentification_number,
+   Stool_RNA_PCR : Stool_RNA_PCR,
+   stool_RNA_CT_value : stool_RNA_CT_value,
+   Stool_RNA_ddPCR : Stool_RNA_ddPCR,
+   Stool_RNA_ddPCR_value : Stool_RNA_ddPCR_value
  
-//    }
-//  }
-//  )
-// }
+   }
+ })
+}
+}
 
 
 

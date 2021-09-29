@@ -15,8 +15,10 @@ import CsvDownload from 'react-json-to-csv'
 import { JsonToTable } from "react-json-to-table";
 import CSVReader1 from './CSVReader1'
 
+
 const apolloClient = client;
 const date = new Date();
+export var a ;
 var csvData;
 const val ="";
 
@@ -54,7 +56,6 @@ function homeScreen(props, route) {
   const getQueryQuestion = () =>{
     console.log("Question NUmber--",questionNumber)
     switch(questionNumber){
-
       case 1: 
       console.log(questionNumber)
       return Question1;
@@ -87,12 +88,12 @@ function homeScreen(props, route) {
         "value": "Patient_Metadata"
       },
       {
-        "name": "Uninfected_Metadata",
-        "value": "Uninfected_Metadata"
-      },
-      {
         "name": "Patient_Inventory",
         "value": "Patient_Inventory"
+      },
+      {
+        "name": "Uninfected_Metadata",
+        "value": "Uninfected_Metadata"
       },
       {
         "name": "Uninfected_Inventory",
@@ -344,12 +345,17 @@ function homeScreen(props, route) {
               onValueChange={(itemValue, itemIndex) =>{
                 
                 setSelectUploadTable(itemValue)
-                console.log("gaddam",itemValue)
-                props.itemValue;
-                console.log("val", typeof(props.itemValue))
+                a = itemIndex
+                console.log("a",a)
+                //const element = (this.itemIndex)=> {return this.itemIndex}
+               // var a = itemIndex
+               //const Greeting =(a) => {return a}
+               //console.log("gaddam greeting",element())
+               // console.log("val", typeof(props))
               }
                 
               }
+              
               
             >
   
@@ -396,6 +402,7 @@ const mapStateToProps = (state) => ({
   jwtToken:state.jwtToken
 });
 export default connect(mapStateToProps)(withNavigation(homeScreen));
+
 
 const styles = StyleSheet.create({
   reset: {
