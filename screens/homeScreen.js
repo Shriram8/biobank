@@ -764,7 +764,7 @@ function homeScreen(props, route) {
 
         
     {/*extra code A starts here */}
-    <View style={{  width: "100%" ,height:20,alignContent:"center",justifyContent:"center"}}>
+    <View >
       <Text
                 style={{
                   fontSize: 30,
@@ -829,6 +829,7 @@ function homeScreen(props, route) {
            </Picker>
          </View>
          </View>
+         
 
     
 
@@ -871,7 +872,7 @@ function homeScreen(props, route) {
                  <Picker.Item label={data.name} value={data.value} />
              ))}
            </Picker></>):<></>}
-         </View>
+           </View>
         
          {selectTable?<Button
            mode="contained"
@@ -901,13 +902,13 @@ function homeScreen(props, route) {
          
 
  {/*extra code B starts here */}
-  {mockData?<CsvDownload
+  {/* {mockData?<CsvDownload
              data={mockData}
              filename="shriram.csv"
          >
            Download Data3 ✨
          </CsvDownload>:<></>
-         } 
+         }  */}
         
           
            {/* <CSVReader onFileLoaded={(data, fileInfo) => {
@@ -917,8 +918,8 @@ function homeScreen(props, route) {
           
           
           
-        </View>
         
+        </View>
       </View>
     </>
   );
