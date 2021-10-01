@@ -26,6 +26,7 @@ function homeScreen(props, route) {
   
   const [renderQuestionResult, setrenderQuestionResult] = useState();
   const [selectedUploadInstrument, setSelectedUploadInstrument] = useState(0);
+  const [selectedInstrument, setSelectedInstrument]= useState(0);
   const [selectTableData,setSelectTableData] = useState(null);
   const [selectUploadTableData,setSelectUploadTableData] = useState(null);
   const [selectTable,setSelectTable] = useState(0);
@@ -103,8 +104,288 @@ function homeScreen(props, route) {
     ]
   
 {/*extra code F starts here */}
+// const instrumentData =
+//    [
+//      {
+//        "name": "Choose Instrument",
+//        "value": "Choose Instrument"
+//      },
+//      {
+//        "name": "Demographics",
+//        "value": "Demographics"
+//      },
+//      {
+//        "name": "Symptoms",
+//        "value": "Symptoms"
+//      },
+//      {
+//        "name": "NoCo COBIO Inventory TestSamples",
+//        "value":"nocoTestSamples"
+//      }
+//    ]
   
 {/*extra code E starts here */}
+// const Demographics =
+//    [
+//      {
+//        "name": "Choose Table",
+//        "value": "Choose Table"
+//      },
+//      {
+//        "name": "Acute1",
+//        "value": "Acute"
+//      },
+//      {
+//        "name": "Convoluscent",
+//        "value": "Convolucsent"
+//      },
+//      {
+//        "name": "Control",
+//        "value": "Control"
+//      }
+ 
+//     ]
+   // const Demographics =
+   // [
+   //   {
+   //     "name": "Choose Table",
+   //     "value": "Choose Table"
+   //   },
+   //   {
+   //     "name": "Acute",
+   //     "value": "Acute"
+   //   },
+   //   {
+   //     "name": "Convoluscent",
+   //     "value": "Convolucsent"
+   //   },
+   //   {
+   //     "name": "Control",
+   //     "value": "Control"
+   //   }
+ 
+   // ]
+ 
+  //  const DemographicsSubTable =
+  //  [
+  //    {
+  //      "name": "Choose Table",
+  //      "value": "Choose Table"
+  //    },
+  //    {
+  //      "name": "D-Convalesent",
+  //      "value": "D-Convalesent"
+  //    },
+  //    {
+  //      "name": "D-Control",
+  //      "value": "D-Control"
+  //    },
+  //    {
+  //      "name": "D-Acute",
+  //      "value": "D-Acute"
+  //    }
+ 
+  //  ]
+ 
+  //  const Symptoms =
+  //  [
+  //    {
+  //      "name": "Choose Table",
+  //      "value": "Choose Table"
+  //    },
+  //    {
+  //      "name": "Acute",
+  //      "value": "Acute"
+  //    },
+  //    {
+  //      "name": "Convoluscent",
+  //      "value": "Convolucsent"
+  //    },
+  //    {
+  //      "name": "Control",
+  //      "value": "Control"
+  //    }
+ 
+  //  ]
+ 
+  //  const symptomsControl =
+  //  [
+  //    {
+  //      "name" : "choose different Control symptoms",
+  //      "value": "choose different Control symptoms"
+ 
+  //    },
+  //    {
+  //      "name": "Symptoms Control Generals",
+  //      "value":"Symptoms Control Generals"
+  //    },
+  //    {
+  //      "name": "Symptoms Control Head and Necks",
+  //      "value": "Symptoms Control Head and Necks"
+ 
+  //    },
+  //    {
+  //      "name": "Symptoms Control medications",
+  //      "value":"Symptoms Control medications"
+      
+  //    },
+  //    {
+  //      "name": "Symptoms Control musculoskeletals",
+  //      "value":"Symptoms Control musculoskeletals"
+  //    },
+  //    {
+  //      "name": "Symptoms Control neurologics",
+  //      "value":"Symptoms Control neurologics"
+  //    },
+  //    {
+  //      "name": "Symptoms Control no symptoms",
+  //      "value":"Symptoms Control no symptoms"
+ 
+  //    },
+  //    {
+  //      "name": "Symptoms Control oculars",
+  //      "value": "Symptoms Control oculars"
+  //    },
+  //    {
+  //      "name": "Symptoms Control physicians",
+  //      "value": "Symptoms Control physicians"
+  //    },
+  //    {
+  //      "name": "Symptoms Control pulmonaries",
+  //      "value": "Symptoms Control pulmonaries"
+      
+  //    },
+  //    {
+  //      "name": "Symptoms Control reproductives",
+  //      "value": "Symptoms Control reproductives"
+  //    } ,
+ 
+  //    {
+  //      "name": "Symptoms Control skins",
+  //      "value": "Symptoms Control skins"
+ 
+  //    }
+    
+  //  ]
+  
+ 
+  //  const nocoTestSamples =
+  //  [
+  //    {
+  //      "name": "Choose Table",
+  //      "value": "Choose Table"
+  //    },
+  //    {
+  //      "name": "Acute",
+  //      "value": "Acute"
+  //    },
+  //    {
+  //      "name": "Convoluscent",
+  //      "value": "Convolucsent"
+  //    },
+  //    {
+  //      "name": "Control",
+  //      "value": "Control"
+  //    }
+ 
+  //  ]
+ 
+  //  const nocoCobioSamples =
+ 
+  //  [
+  //    {
+  //      "name": "Choose Table",
+  //      "value": "Choose Table"
+  //    },
+  //    {
+  //      "name": "Acute",
+  //      "value": "Acute"
+  //    },
+  //    {
+  //      "name": "Convoluscent",
+  //      "value": "Convolucsent"
+  //    },
+ 
+  //    {
+  //      "name": "Control",
+  //      "value": "Control"
+  //    }
+ 
+  //  ]
+ 
+  //  const nocoCobioSamplesControl =
+ 
+  //  [
+  //    {
+  //      "name": "Control Blood",
+  //      "value": "Control Blood"
+  //    },
+ 
+  //    {
+  //      "name": "Control Nasal",
+  //      "value": "Control Nasal"
+ 
+  //    },
+  //    {
+  //      "name": "Control Saliva",
+  //      "value": "Control Saliva"
+  //    },
+  //    {
+  //      "name": "Control Stool",
+  //      "name": "Control Stool"
+  //    }
+ 
+  //  ]
+ 
+  //  const nocoCobioSamplesConvalscent =
+ 
+  //  [
+  //    {
+  //      "name": "Convalscent Blood",
+  //      "value": "Convalscent Blood"
+  //    },
+ 
+  //    {
+  //      "name": "Convalscent Nasal",
+  //      "value": "Convalscent Nasal"
+ 
+  //    },
+  //    {
+  //      "name": "Convalscent Saliva",
+  //      "value": "Convalscent Saliva"
+  //    },
+  //    {
+  //      "name": "Convalscent Stool",
+  //      "name": "Convalscent Stool"
+  //    }
+ 
+  //  ]
+ 
+  //  const nocoCobioSamplesAcute =
+ 
+  //  [
+  //    {
+  //      "name": "Acute Blood",
+  //      "value": "Acute Blood"
+  //    },
+ 
+  //    {
+  //      "name": "Acute Nasal",
+  //      "value": "Acute Nasal"
+ 
+  //    },
+  //    {
+  //      "name": "Acute Saliva",
+  //      "value": "Acute Saliva"
+  //    },
+  //    {
+  //      "name": "Acute Stool",
+  //      "name": "Acute Stool"
+  //    }
+ 
+  //  ]
+ 
+
    
   React.useEffect(() => {
     const unsubscribe = props.navigation.addListener("focus", () => {
@@ -184,7 +465,7 @@ function homeScreen(props, route) {
                   marginVertical: 16,
                 }}
               >
-                Shriram
+                {props.userId}
               </Text>
             </View>
             {/* <Divider
@@ -269,7 +550,48 @@ function homeScreen(props, route) {
               </Text>
               
             </View>
- {/*extra code C starts here */}
+ {/*extra code C starts here  unused*/}
+  {/* <View style={{ 
+               flexDirection:"row",
+               alignItems: "center",
+               justifyContent: "center",
+               marginHorizontal:50,
+               marginVertical: 10,
+             }}>
+               <Text style={[styles.appButtonText, { flex: 1, marginBottom: 16 ,textAlign:"center"}]}>
+               uploading:
+             </Text>
+            
+           <Picker
+             selectedValue={selectedUploadInstrument}
+             enabled={true}
+             style={{
+               height: 40,
+               borderRadius: 7,
+               backgroundColor: "white",
+               borderColor: "#959595",
+               borderWidth: 1,
+               fontSize: 16,
+               color: "#959595",
+               fontWeight: "bold",
+               marginHorizontal:50,
+             }}
+ 
+             onValueChange={(itemValue, itemIndex) =>{
+               setSelectedUploadInstrument(itemValue);
+               setSelectUploadTableData(Demographics);
+ 
+             }
+              
+             }
+            
+           >
+              {instrumentData.map((data) => (
+                 <Picker.Item label={data.name} value={data.value} />
+             ))}
+           </Picker>
+         </View> 
+         */}
 
          
 
@@ -366,6 +688,7 @@ function homeScreen(props, route) {
           </View>
 
         {/* Extra Code D Starts here  */}
+        
 
           {selectUploadTable?<View style={{width:"100%",alignItems:"center"}}>
             <View style={{width:"60%"}}>
@@ -376,12 +699,221 @@ function homeScreen(props, route) {
           
           
         {/* 10 Query Questions Code Starts Here*/ }
+        {renderQuestionResult?
+         <>
+         <Picker
+           // selectedValue={dict[item.id]}
+           // enabled={!disableButtons}
+           mode='dropdown'
+           style={{
+             height: 40,
+             borderRadius: 7,
+             backgroundColor: "white",
+             borderColor: "#959595",
+             borderWidth: 1,
+             fontSize: 16,
+             color: "#959595",
+             fontWeight: "bold",
+             margin:20
+           }}
+           onValueChange={(itemValue, itemIndex) =>{
+             // console.log(itemValue+1)
+             setQuestionData(null);
+             setQuestionNumber(parseInt(itemValue)+1)
+           }
+           }
+         >
+           <Picker.Item label="Select Question" value="0" />
+           {renderQuestionResult.map((item, index) => {
+             return (
+             <Picker.Item label={renderQuestionResult[index].question} value={index} />
+           );
+           })}
+         </Picker>
+         <Button
+           mode="contained"
+           color={"#3c7d4d"}
+           loading = {sendQueryLoad}
+           uppercase={false}
+           style={[styles.reset,{marginHorizontal:20,marginVertical:10}]}
+           labelStyle={{ fontSize: 16 }}
+           onPress={()=>{
+             setSendQueryLoad(true)
+             getQuestionInfo()
+           }}
+         >
+           Send Query
+         </Button>
+             {mockDataQuery?
+            // <ScrollView  horizontal={true} style={{width:"100%"}}>
+               <JsonToTable json={mockDataQuery} />:<></>
+            // </ScrollView>:<></>
+             }
+         { console.log("mock data1.1 query" ,mockDataQuery)}
+        { mockDataQuery?<CsvDownload
+             data={mockDataQuery}
+             filename="QuerydataDownload.csv"
+            
+         >
+           Download Query Data✨
+         </CsvDownload>:<></>
+         }
+       </>
+    : <></>
+         }
+
+        
     {/*extra code A starts here */}
+    <View style={{  width: "100%" ,height:20,alignContent:"center",justifyContent:"center"}}>
+      <Text
+                style={{
+                  fontSize: 30,
+                  color: "black",
+                  marginVertical: 10,
+                  textAlign:"center",
+                  fontWeight: "bold",
+                }}
+              >
+                Download Data
+              </Text>
+              </View>
+    <View
+             style={{
+              
+               flex: 1,
+               alignItems: "center",
+               justifyContent: "center",
+               alignSelf: "stretch",
+               marginVertical: 5,
+               marginTop: 10,
+             }}
+           >
+             <View style={{
+               flexDirection:"row",
+               alignItems: "center",
+               justifyContent: "center",
+               marginHorizontal:10,
+               marginVertical: 10,
+             }}>
+               <Text style={[styles.appButtonText, { flex: 1, marginBottom: 10 }]}>
+               Download Data
+             </Text>
+            
+           <Picker
+             selectedValue={allData}
+             enabled={true}
+             style={{
+               height: 30,
+               borderRadius: 7,
+               backgroundColor: "white",
+               borderColor: "#959595",
+               borderWidth: 1,
+               fontSize: 16,
+               color: "#959595",
+               fontWeight: "bold",
+               marginHorizontal:50,
+             }}
+ 
+             onValueChange={(itemValue, itemIndex) =>{
+               setSelectedInstrument(itemValue);
+               setSelectTableData(allData);
+ 
+             }
+              
+             }
+            
+           >
+              {allData.map((data) => (
+                 <Picker.Item label={data.name} value={data.value} />
+             ))}
+           </Picker>
+         </View>
+         </View>
+
     
 
         {/* Download Part  */}
+        <View style={{
+               flexDirection:"row",
+               alignItems: "center",
+               justifyContent: "center",
+               marginHorizontal:50,
+               marginVertical: 10,
+             }}>
+              
+           {selectTableData != null?(
+             <>
+             <Text style={[styles.appButtonText, { flex: 1, marginBottom: 16 }]}>
+               Select Table
+             </Text>
+           <Picker
+             selectedValue={selectTable}
+             enabled={true}
+             style={{
+               height: 40,
+               borderRadius: 7,
+               backgroundColor: "white",
+               borderColor: "#959595",
+               borderWidth: 1,
+               fontSize: 16,
+               color: "#959595",
+               fontWeight: "bold",
+             }}
+ 
+             onValueChange={(itemValue, itemIndex) =>{
+               setSelectTable(itemValue)
+             }
+              
+             }
+            
+           >
+              {selectTableData.map((data) => (
+                 <Picker.Item label={data.name} value={data.value} />
+             ))}
+           </Picker></>):<></>}
+         </View>
+        
+         {selectTable?<Button
+           mode="contained"
+           color={"#3c7d4d"}
+           uppercase={false}
+           style={styles.reset}
+           labelStyle={{ fontSize: 16 }}
+           onPress={getData}
+         >
+ 
+           Get Data
+         </Button>:<></>}
+        
+         {mockData?
+             <ScrollView  horizontal={true} vertical ={true} style={{width:"100%"}}>
+               <JsonToTable json={mockData} />:<></>
+             </ScrollView>:<></>
+             }
+         { console.log("mock data1.2" ,mockData)}
+        { mockData?<CsvDownload
+             data={mockData}
+             filename="Patientmetadata_Download.csv"
+         >
+           Download CSV Data ✨
+         </CsvDownload>:<></>
+         }
+         
 
  {/*extra code B starts here */}
+  {mockData?<CsvDownload
+             data={mockData}
+             filename="shriram.csv"
+         >
+           Download Data3 ✨
+         </CsvDownload>:<></>
+         } 
+        
+          
+           {/* <CSVReader onFileLoaded={(data, fileInfo) => {
+               uploadData(data)
+             }
+           } /> */}
           
           
           
@@ -399,6 +931,7 @@ const mapStateToProps = (state) => ({
   userId: state.userId,
   userType: state.userType,
   branch: state.branch,
+  userName: state.userName,
   jwtToken:state.jwtToken
 });
 export default connect(mapStateToProps)(withNavigation(homeScreen));

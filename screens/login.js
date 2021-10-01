@@ -68,18 +68,20 @@ function login(props, navigation) {
       apolloClient
         .query({
           query: GetDetailsWithEmployeeId,
-          
+          variables: {employeeid:userId},
           fetchPolicy: "network-only",
         })
         .then((Result) => {
           // setmockData(Result.data.dAcutes);
+          console.log("Result--",Result.data)
           if (Result.data.appUsers[0].password === password) {
             props.changeLogin(
-              Result.data.appUsers[0].id,
+              Result.data.appUsers[0].name,
               Result.data.appUsers[0].userType,
             );
             navigation.navigate("homeScreen", {
-              userId: userId,
+              userId:userId,
+              userName: userId,
               userType: Result.data.appUsers[0].userType,
             });
           } else {
@@ -479,14 +481,14 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    changeLogin: (userId, userType, branch, branchName, jwtToken) =>
+    changeLogin: (userId, userType, branch, userName, jwtToken) =>
       dispatch({
         type: "CHANGE_LOGIN",
         payload: {
           userId,
           userType,
           branch,
-          branchName,
+          userName,
           jwtToken
         },
       }),
