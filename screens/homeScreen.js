@@ -19,6 +19,7 @@ import CSVReader1 from './CSVReader1'
 const apolloClient = client;
 const date = new Date();
 export var a ;
+var T;
 var csvData;
 const val ="";
 
@@ -53,6 +54,15 @@ function homeScreen(props, route) {
 
   //Viewing for Downloading
   
+  const getTableData = () =>{
+    switch(T){
+      case 1 :
+        console.log(T, "table1")
+        return 
+        
+    }
+
+  }
  
   const getQueryQuestion = () =>{
     console.log("Question NUmber--",questionNumber)
@@ -104,286 +114,10 @@ function homeScreen(props, route) {
     ]
   
 {/*extra code F starts here */}
-// const instrumentData =
-//    [
-//      {
-//        "name": "Choose Instrument",
-//        "value": "Choose Instrument"
-//      },
-//      {
-//        "name": "Demographics",
-//        "value": "Demographics"
-//      },
-//      {
-//        "name": "Symptoms",
-//        "value": "Symptoms"
-//      },
-//      {
-//        "name": "NoCo COBIO Inventory TestSamples",
-//        "value":"nocoTestSamples"
-//      }
-//    ]
+
   
 {/*extra code E starts here */}
-// const Demographics =
-//    [
-//      {
-//        "name": "Choose Table",
-//        "value": "Choose Table"
-//      },
-//      {
-//        "name": "Acute1",
-//        "value": "Acute"
-//      },
-//      {
-//        "name": "Convoluscent",
-//        "value": "Convolucsent"
-//      },
-//      {
-//        "name": "Control",
-//        "value": "Control"
-//      }
- 
-//     ]
-   // const Demographics =
-   // [
-   //   {
-   //     "name": "Choose Table",
-   //     "value": "Choose Table"
-   //   },
-   //   {
-   //     "name": "Acute",
-   //     "value": "Acute"
-   //   },
-   //   {
-   //     "name": "Convoluscent",
-   //     "value": "Convolucsent"
-   //   },
-   //   {
-   //     "name": "Control",
-   //     "value": "Control"
-   //   }
- 
-   // ]
- 
-  //  const DemographicsSubTable =
-  //  [
-  //    {
-  //      "name": "Choose Table",
-  //      "value": "Choose Table"
-  //    },
-  //    {
-  //      "name": "D-Convalesent",
-  //      "value": "D-Convalesent"
-  //    },
-  //    {
-  //      "name": "D-Control",
-  //      "value": "D-Control"
-  //    },
-  //    {
-  //      "name": "D-Acute",
-  //      "value": "D-Acute"
-  //    }
- 
-  //  ]
- 
-  //  const Symptoms =
-  //  [
-  //    {
-  //      "name": "Choose Table",
-  //      "value": "Choose Table"
-  //    },
-  //    {
-  //      "name": "Acute",
-  //      "value": "Acute"
-  //    },
-  //    {
-  //      "name": "Convoluscent",
-  //      "value": "Convolucsent"
-  //    },
-  //    {
-  //      "name": "Control",
-  //      "value": "Control"
-  //    }
- 
-  //  ]
- 
-  //  const symptomsControl =
-  //  [
-  //    {
-  //      "name" : "choose different Control symptoms",
-  //      "value": "choose different Control symptoms"
- 
-  //    },
-  //    {
-  //      "name": "Symptoms Control Generals",
-  //      "value":"Symptoms Control Generals"
-  //    },
-  //    {
-  //      "name": "Symptoms Control Head and Necks",
-  //      "value": "Symptoms Control Head and Necks"
- 
-  //    },
-  //    {
-  //      "name": "Symptoms Control medications",
-  //      "value":"Symptoms Control medications"
-      
-  //    },
-  //    {
-  //      "name": "Symptoms Control musculoskeletals",
-  //      "value":"Symptoms Control musculoskeletals"
-  //    },
-  //    {
-  //      "name": "Symptoms Control neurologics",
-  //      "value":"Symptoms Control neurologics"
-  //    },
-  //    {
-  //      "name": "Symptoms Control no symptoms",
-  //      "value":"Symptoms Control no symptoms"
- 
-  //    },
-  //    {
-  //      "name": "Symptoms Control oculars",
-  //      "value": "Symptoms Control oculars"
-  //    },
-  //    {
-  //      "name": "Symptoms Control physicians",
-  //      "value": "Symptoms Control physicians"
-  //    },
-  //    {
-  //      "name": "Symptoms Control pulmonaries",
-  //      "value": "Symptoms Control pulmonaries"
-      
-  //    },
-  //    {
-  //      "name": "Symptoms Control reproductives",
-  //      "value": "Symptoms Control reproductives"
-  //    } ,
- 
-  //    {
-  //      "name": "Symptoms Control skins",
-  //      "value": "Symptoms Control skins"
- 
-  //    }
-    
-  //  ]
-  
- 
-  //  const nocoTestSamples =
-  //  [
-  //    {
-  //      "name": "Choose Table",
-  //      "value": "Choose Table"
-  //    },
-  //    {
-  //      "name": "Acute",
-  //      "value": "Acute"
-  //    },
-  //    {
-  //      "name": "Convoluscent",
-  //      "value": "Convolucsent"
-  //    },
-  //    {
-  //      "name": "Control",
-  //      "value": "Control"
-  //    }
- 
-  //  ]
- 
-  //  const nocoCobioSamples =
- 
-  //  [
-  //    {
-  //      "name": "Choose Table",
-  //      "value": "Choose Table"
-  //    },
-  //    {
-  //      "name": "Acute",
-  //      "value": "Acute"
-  //    },
-  //    {
-  //      "name": "Convoluscent",
-  //      "value": "Convolucsent"
-  //    },
- 
-  //    {
-  //      "name": "Control",
-  //      "value": "Control"
-  //    }
- 
-  //  ]
- 
-  //  const nocoCobioSamplesControl =
- 
-  //  [
-  //    {
-  //      "name": "Control Blood",
-  //      "value": "Control Blood"
-  //    },
- 
-  //    {
-  //      "name": "Control Nasal",
-  //      "value": "Control Nasal"
- 
-  //    },
-  //    {
-  //      "name": "Control Saliva",
-  //      "value": "Control Saliva"
-  //    },
-  //    {
-  //      "name": "Control Stool",
-  //      "name": "Control Stool"
-  //    }
- 
-  //  ]
- 
-  //  const nocoCobioSamplesConvalscent =
- 
-  //  [
-  //    {
-  //      "name": "Convalscent Blood",
-  //      "value": "Convalscent Blood"
-  //    },
- 
-  //    {
-  //      "name": "Convalscent Nasal",
-  //      "value": "Convalscent Nasal"
- 
-  //    },
-  //    {
-  //      "name": "Convalscent Saliva",
-  //      "value": "Convalscent Saliva"
-  //    },
-  //    {
-  //      "name": "Convalscent Stool",
-  //      "name": "Convalscent Stool"
-  //    }
- 
-  //  ]
- 
-  //  const nocoCobioSamplesAcute =
- 
-  //  [
-  //    {
-  //      "name": "Acute Blood",
-  //      "value": "Acute Blood"
-  //    },
- 
-  //    {
-  //      "name": "Acute Nasal",
-  //      "value": "Acute Nasal"
- 
-  //    },
-  //    {
-  //      "name": "Acute Saliva",
-  //      "value": "Acute Saliva"
-  //    },
-  //    {
-  //      "name": "Acute Stool",
-  //      "name": "Acute Stool"
-  //    }
- 
-  //  ]
+
  
 
    
@@ -397,9 +131,11 @@ function homeScreen(props, route) {
 
   
   const getData = () => {
-        apolloClient
+    switch(T)
+    { case 1:
+        return apolloClient
           .query({
-            query: GetUninfected_Inventories,
+            query: GetPatient_metadata,
             
             fetchPolicy: "network-only",
           })
@@ -409,14 +145,63 @@ function homeScreen(props, route) {
             //console.log(Result.data.uninfectedMetadata)
             //console.log(Result.data.uninfectedInventories)
 
-
-            setmockData(Result.data.uninfectedInventories);
+            setmockData(Result.data.patientMetadata);
             //setmockData(tempData);
             
           })
           .catch(() => {
             setmockData(tempData);
           });
+      case 2:
+        return apolloClient
+          .query({
+            query: GetPatient_Inventories,
+            
+            fetchPolicy: "network-only",
+          })
+          .then((Result) => {
+            setmockData(Result.data.patientInventories);
+              
+          })
+          .catch(() => {
+            setmockData(tempData);
+          });
+
+      case 3:
+        return apolloClient
+          .query({
+            query: GetUninfected_Metadata,
+            
+            fetchPolicy: "network-only",
+          })
+          .then((Result) => {
+            setmockData(Result.data.uninfectedMetadata);
+              
+          })
+          .catch(() => {
+            setmockData(tempData);
+          });
+
+      case 4:
+        return apolloClient
+          .query({
+            query: GetUninfected_Inventories,
+            
+            fetchPolicy: "network-only",
+          })
+          .then((Result) => {
+            setmockData(Result.data.uninfectedInventories);
+              
+          })
+          .catch(() => {
+            setmockData(tempData);
+          });
+
+        
+
+
+        }
+
 
   }
   const getQuestions = () => {
@@ -767,6 +552,20 @@ function homeScreen(props, route) {
 
 
     {/*extra code A starts here */}
+    <View style={{  width: "100%" ,height:50,alignContent:"center",justifyContent:"center"}}>
+              <Text
+                style={{
+                  fontSize: 30,
+                  color: "black",
+                  marginVertical: 16,
+                  textAlign:"center",
+                  fontWeight: "bold",
+                }}
+              >
+                Download Data
+              </Text>
+              
+            </View>
     <View
              style={{
               
@@ -786,10 +585,11 @@ function homeScreen(props, route) {
                marginVertical: 10,
              }}>
                <Text style={[styles.appButtonText, { flex: 1, marginBottom: 10 }]}>
-               Download DataV1.1
+               Download Data
              </Text>
             
            <Picker
+            //selectedValue={selectUploadTable}
              selectedValue={allData}
              enabled={true}
              style={{
@@ -806,6 +606,8 @@ function homeScreen(props, route) {
  
              onValueChange={(itemValue, itemIndex) =>{
                setSelectedInstrument(itemValue);
+               T= itemIndex
+               console.log("T",T)
                setSelectTableData(allData);
  
              }
@@ -889,7 +691,7 @@ function homeScreen(props, route) {
          { console.log("mock data1.2" ,mockData)}
         { mockData?<CsvDownload
              data={mockData}
-             filename="Patientmetadata_Download.csv"
+             filename="data_Download.csv"
          >
            Download CSV Data ✨
          </CsvDownload>:<></>
