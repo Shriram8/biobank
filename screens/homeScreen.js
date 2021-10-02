@@ -136,11 +136,13 @@ function homeScreen(props, route) {
         return apolloClient
           .query({
             query: GetPatient_metadata,
+           
+            
             
             fetchPolicy: "network-only",
           })
           .then((Result) => {
-            //console.log(Result.data.patientMetadata)
+            //console.log(Result.data.patientMetadata,"gggggg")
             //console.log(Result.data.patientInventories)
             //console.log(Result.data.uninfectedMetadata)
             //console.log(Result.data.uninfectedInventories)
@@ -211,15 +213,15 @@ function homeScreen(props, route) {
        fetchPolicy: "network-only",
      })
      .then((Result) => {
-    console.log("questions here",Result)
+    //console.log("questions here",Result)
     setrenderQuestionResult(Result.data.quetions)
     });
 
   }
 
-  const uploadData = (data) => {
-    console.log("Upload data--",data)
-  }
+  // const uploadData = (data) => {
+  //   console.log("Upload data--",data)
+  // }
 
   return (
     <>
@@ -453,7 +455,7 @@ function homeScreen(props, route) {
                 
                 setSelectUploadTable(itemValue)
                 a = itemIndex
-                console.log("a",a)
+                //console.log("a",a)
                 //const element = (this.itemIndex)=> {return this.itemIndex}
                // var a = itemIndex
                //const Greeting =(a) => {return a}
@@ -534,7 +536,7 @@ function homeScreen(props, route) {
                <JsonToTable json={mockDataQuery} />:<></>
             // </ScrollView>:<></>
              }
-         { console.log("mock data1.1 query" ,mockDataQuery)}
+         {/* console.log("mock data1.1 query" ,mockDataQuery) */}
         { mockDataQuery?<CsvDownload
              data={mockDataQuery}
              filename="QuerydataDownload.csv"
@@ -688,7 +690,7 @@ function homeScreen(props, route) {
                <JsonToTable json={mockData} />:<></>
              </ScrollView>:<></>
              }
-         { console.log("mock data1.2" ,mockData)}
+          {/* console.log("mock data1.2" ,mockData) */}
         { mockData?<CsvDownload
              data={mockData}
              filename="data_Download.csv"
