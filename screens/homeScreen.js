@@ -763,20 +763,10 @@ function homeScreen(props, route) {
          }
 
         
+        {/* Downloaderrrrr */}
+
+
     {/*extra code A starts here */}
-    <View >
-      <Text
-                style={{
-                  fontSize: 30,
-                  color: "black",
-                  marginVertical: 10,
-                  textAlign:"center",
-                  fontWeight: "bold",
-                }}
-              >
-                Download Data
-              </Text>
-              </View>
     <View
              style={{
               
@@ -796,7 +786,7 @@ function homeScreen(props, route) {
                marginVertical: 10,
              }}>
                <Text style={[styles.appButtonText, { flex: 1, marginBottom: 10 }]}>
-               Download Data
+               Download DataV1.1
              </Text>
             
            <Picker
@@ -827,7 +817,7 @@ function homeScreen(props, route) {
                  <Picker.Item label={data.name} value={data.value} />
              ))}
            </Picker>
-         </View>
+         
          </View>
          
 
@@ -872,19 +862,24 @@ function homeScreen(props, route) {
                  <Picker.Item label={data.name} value={data.value} />
              ))}
            </Picker></>):<></>}
-           </View>
+         </View>
         
          {selectTable?<Button
            mode="contained"
            color={"#3c7d4d"}
            uppercase={false}
-           style={styles.reset}
+           //style={styles.reset}
+           style={[styles.reset,{marginHorizontal:20,marginVertical:10}]}
            labelStyle={{ fontSize: 16 }}
            onPress={getData}
          >
  
            Get Data
          </Button>:<></>}
+         
+         
+
+         {/* Scrollable data and downloading csv below */}
         
          {mockData?
              <ScrollView  horizontal={true} vertical ={true} style={{width:"100%"}}>
@@ -900,6 +895,8 @@ function homeScreen(props, route) {
          </CsvDownload>:<></>
          }
          
+         
+         </View>
 
  {/*extra code B starts here */}
   {/* {mockData?<CsvDownload
@@ -917,10 +914,9 @@ function homeScreen(props, route) {
            } /> */}
           
           
-          
-        
+          </View>
         </View>
-      </View>
+      
     </>
   );
 
