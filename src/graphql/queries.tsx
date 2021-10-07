@@ -463,6 +463,11 @@ mutation(
       }}){
         uninfectedMetadatum{
         Record_ID
+        Disease_severity_category
+        Age
+        Date_of_Birth
+
+
       }}}`;
 
   //// Table4 uploading .....

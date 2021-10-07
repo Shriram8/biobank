@@ -215,10 +215,10 @@ function login(props, navigation) {
               Linking.openURL('https://clinicaltrials.gov/');
             }}
           >  </Button> */}
-          <Text style={{fontSize: 40,
-            color: "blue",
+          <Text style={{fontSize: 30,
+            color: "#55b9e3", fontWeight: 'bold'
             }}>NCT04603677</Text>
-          <Text style={{textDecorationLine: 'underline', color: 'blue', fontSize:30, fontWeight: 'bold'}}
+          <Text style={{textDecorationLine: 'underline', color: '#55b9e3', fontSize:30, fontWeight: 'bold'}}
             onPress={() => Linking.openURL('https://clinicaltrials.gov/')}>
            https://clinicaltrials.gov/
           </Text>
